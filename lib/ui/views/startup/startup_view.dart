@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:stacked/stacked.dart';
+import 'package:nest/ui/common/app_custom_button.dart';
+import 'package:nest/ui/common/app_strings.dart';
+import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
-
+import 'package:nest/ui/views/startup/widgets/dots_widget.dart';
+import 'package:stacked/stacked.dart';
+import 'package:nest/ui/common/app_colors.dart';
 import 'startup_viewmodel.dart';
 
 class StartupView extends StackedView<StartupViewModel> {
@@ -14,29 +17,53 @@ class StartupView extends StackedView<StartupViewModel> {
     StartupViewModel viewModel,
     Widget? child,
   ) {
-    return const Scaffold(
-      body: Center(
+    return Scaffold(
+      backgroundColor: kcDarkColor,
+      body: SizedBox(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'STACKED',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
+            Expanded(
+              child: Image.asset(
+                splash,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Loading ...', style: TextStyle(fontSize: 16)),
-                horizontalSpaceSmall,
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                    strokeWidth: 6,
+            Expanded(
+              child: Column(
+                children: [
+                  Text(
+                    'We make it\nhappen baby!',
+                    style: titleTextLarge,
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
+                  verticalSpaceMedium,
+                  Text(
+                    'Nest connects you to exclusive\nnightlife events and your favorite\nhosts.',
+                    style: bodyTextMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  verticalSpaceLarge,
+                  buildDotWidget(),
+                  verticalSpaceMedium,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: AppButton(
+                      labelText: 'Get Started',
+                      onTap: () {},
+                    ),
+                  ),
+                  verticalSpaceMedium,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: AppButton(
+                      labelText: 'Skip',
+                      buttonColor: Colors.transparent,
+                      onTap: () {},
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -46,8 +73,4 @@ class StartupView extends StackedView<StartupViewModel> {
 
   @override
   StartupViewModel viewModelBuilder(BuildContext context) => StartupViewModel();
-
-  @override
-  void onViewModelReady(StartupViewModel viewModel) => SchedulerBinding.instance
-      .addPostFrameCallback((timeStamp) => viewModel.runStartupLogic());
 }
