@@ -7,6 +7,8 @@ const svgsPath = 'assets/svgs';
 
 //svgs
 const logo = '$svgsPath/logo.svg';
+const loc = '$svgsPath/loc.svg';
+const pin = '$svgsPath/pin.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

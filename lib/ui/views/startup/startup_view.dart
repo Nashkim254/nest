@@ -44,13 +44,13 @@ class StartupView extends StackedView<StartupViewModel> {
                     textAlign: TextAlign.center,
                   ),
                   verticalSpaceLarge,
-                  buildDotWidget(),
+                  DotWidget(),
                   verticalSpaceMedium,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: AppButton(
                       labelText: 'Get Started',
-                      onTap: () {},
+                      onTap: () => viewModel.getStarted(),
                     ),
                   ),
                   verticalSpaceMedium,
