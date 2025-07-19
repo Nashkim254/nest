@@ -6,6 +6,7 @@ import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:nest/ui/views/interest_selection/interest_selection_view.dart';
 import 'package:nest/ui/views/location/location_view.dart';
+import 'package:nest/ui/views/login/login_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -14,6 +15,7 @@ import 'package:nest/ui/views/location/location_view.dart';
     MaterialRoute(page: StartupView),
     MaterialRoute(page: InterestSelectionView),
     MaterialRoute(page: LocationView),
+    MaterialRoute(page: LoginView),
 // @stacked-route
   ],
   dependencies: [

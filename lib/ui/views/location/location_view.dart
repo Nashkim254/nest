@@ -101,7 +101,7 @@ class LocationView extends StackedView<LocationViewModel> with $LocationView {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: AppButton(
           labelText: 'Finish',
-          onTap: () {},
+          onTap: () => viewModel.goToLoginView(),
         ),
       ),
     );
