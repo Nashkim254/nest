@@ -25,4 +25,5 @@ const Color kcTGreyTextColor = Color(0xFF757575);
 const Color kcVeryLightGrey = Color(0xFFE3E3E3);
 const Color kcContainerBorderColor = Color(0xFF333333);
 const Color kcSubtitleTextColor = Color(0xFFDDDDDD);
+const Color kcProfileColor = Color(0xFFF0F0F0);
 const Color kcBackgroundColor = kcDarkGreyColor;

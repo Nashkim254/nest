@@ -135,14 +135,17 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                   ),
                 ),
                 Align(
-                  child: Text(
-                    "Sign up",
-                    style: titleTextMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: kcPrimaryColor,
+                  child: TextButton(
+                    onPressed: () => viewModel.signup(),
+                    child: Text(
+                      "Sign up",
+                      style: titleTextMedium.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: kcPrimaryColor,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ],

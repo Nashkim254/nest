@@ -12,6 +12,7 @@ const pin = '$svgsPath/pin.svg';
 const chrome = '$svgsPath/chrome.svg';
 const apple = '$svgsPath/apple.svg';
 const whatsapp = '$svgsPath/whatsapp.svg';
+const camera = '$svgsPath/camera.svg';
 
 //images
 const splash = '$imagesPath/splash.png';
