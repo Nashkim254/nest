@@ -4,7 +4,10 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class LoginViewModel extends FormViewModel {
-  login() {}
+  login() {
+    locator<NavigationService>().navigateToNavigationView();
+
+  }
 
   void signup() {
     locator<NavigationService>().navigateToRegisterView();
