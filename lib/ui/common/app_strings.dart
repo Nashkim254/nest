@@ -20,6 +20,10 @@ const profile = '$svgsPath/profile.svg';
 const tickets = '$svgsPath/tickets.svg';
 const search = '$svgsPath/search.svg';
 const notification = '$svgsPath/notification.svg';
+const share = '$svgsPath/share.svg';
+const instagram = '$svgsPath/instagram.svg';
+const x = '$svgsPath/x.svg';
+const linkedin= '$svgsPath/linkedin.svg';
 
 //images
 const splash = '$imagesPath/splash.png';
