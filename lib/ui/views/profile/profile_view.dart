@@ -192,54 +192,108 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
-                      verticalSpaceSmall,
-                      Row(
-                        children: [
-                          SvgPicture.asset(instagram, width: 24, height: 24),
-                          horizontalSpaceSmall,
-                          Text(
-                            "Instagram",
-                            style: titleTextMedium.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: kcWhiteColor,
-                            ),
+                      ListTile(
+                        leading:
+                            SvgPicture.asset(instagram, width: 24, height: 24),
+                        title: Text(
+                          "Instagram",
+                          style: titleTextMedium.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: kcWhiteColor,
                           ),
-                        ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "@johndoe_official",
+                              style: titleTextMedium.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: kcFollowColor,
+                              ),
+                            ),
+                            horizontalSpaceMedium,
+                            Icon(
+                              Icons.adaptive.arrow_forward,
+                              color: kcFollowColor,
+                            ),
+                          ],
+                        ),
                       ),
-                      verticalSpaceSmall,
-                      Row(
-                        children: [
-                          SvgPicture.asset(x, width: 24, height: 24),
-                          horizontalSpaceSmall,
-                          Text(
-                            "Twitter",
-                            style: titleTextMedium.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: kcWhiteColor,
-                            ),
+                      ListTile(
+                        leading: SvgPicture.asset(x, width: 24, height: 24),
+                        title: Text(
+                          "Twitter",
+                          style: titleTextMedium.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: kcWhiteColor,
                           ),
-                        ],
-                      ),      verticalSpaceSmall,
-                      Row(
-                        children: [
-                          SvgPicture.asset(linkedin, width: 24, height: 24),
-                          horizontalSpaceSmall,
-                          Text(
-                            "Linkein",
-                            style: titleTextMedium.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: kcWhiteColor,
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "@johndoe_x",
+                              style: titleTextMedium.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: kcFollowColor,
+                              ),
                             ),
+                            horizontalSpaceMedium,
+                            Icon(
+                              Icons.adaptive.arrow_forward,
+                              color: kcFollowColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        leading:
+                            SvgPicture.asset(linkedin, width: 24, height: 24),
+                        title: Text(
+                          "Linkein",
+                          style: titleTextMedium.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: kcWhiteColor,
                           ),
-                        ],
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "URL (Optional)",
+                              style: titleTextMedium.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: kcFollowColor,
+                              ),
+                            ),
+                            horizontalSpaceMedium,
+                            Icon(
+                              Icons.adaptive.arrow_forward,
+                              color: kcFollowColor,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
+                verticalSpaceMedium,
+                Text(
+                  "Events Activity",
+                  style: titleTextMedium.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: kcWhiteColor,
+                  ),
+                ),
+                verticalSpaceMedium,
               ],
             ),
           ),
