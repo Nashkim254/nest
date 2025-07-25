@@ -77,30 +77,28 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
                   }).toList(),
                 ),
                 verticalSpaceMedium,
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Column(
-                      children: [
-                        ...viewModel.people.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final person = entry.value;
+                LayoutBuilder(builder: (context, constraints) {
+                  return Column(
+                    children: [
+                      ...viewModel.people.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final person = entry.value;
 
-                          return Column(
-                            children: [
-                              buildPeopleCard(
-                                avatar: person.imageUrl ?? '',
-                                name: person.name ?? 'Unknown',
-                                role: person.role ?? 'No role',
-                              ),
-                              if (index < viewModel.people.length - 1)
-                                verticalSpaceSmall,
-                            ],
-                          );
-                        }).toList(),
-                      ],
-                    );
-                  }
-                ),
+                        return Column(
+                          children: [
+                            buildPeopleCard(
+                              avatar: person.imageUrl ?? '',
+                              name: person.name ?? 'Unknown',
+                              role: person.role ?? 'No role',
+                            ),
+                            if (index < viewModel.people.length - 1)
+                              verticalSpaceSmall,
+                          ],
+                        );
+                      }).toList(),
+                    ],
+                  );
+                }),
               ],
             ),
           ),

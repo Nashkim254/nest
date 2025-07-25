@@ -6,7 +6,6 @@ import 'package:stacked_services/stacked_services.dart';
 class LoginViewModel extends FormViewModel {
   login() {
     locator<NavigationService>().navigateToNavigationView();
-
   }
 
   void signup() {

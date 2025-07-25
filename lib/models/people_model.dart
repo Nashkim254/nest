@@ -1,4 +1,4 @@
-class People{
+class People {
   final String name;
   final String imageUrl;
   final String role;

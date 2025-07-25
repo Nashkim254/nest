@@ -10,10 +10,10 @@ class NavigationView extends StackedView<NavigationViewModel> {
 
   @override
   Widget builder(
-      BuildContext context,
-      NavigationViewModel viewModel,
-      Widget? child,
-      ) {
+    BuildContext context,
+    NavigationViewModel viewModel,
+    Widget? child,
+  ) {
     return PopScope(
       onPopInvoked: (bool didPop) async {
         if (didPop) {
@@ -66,7 +66,7 @@ class NavigationView extends StackedView<NavigationViewModel> {
 
   @override
   NavigationViewModel viewModelBuilder(
-      BuildContext context,
-      ) =>
+    BuildContext context,
+  ) =>
       NavigationViewModel();
 }

@@ -29,6 +29,7 @@ const Color kcProfileColor = Color(0xFFF0F0F0);
 const Color kcUnselectedColor = Color(0xFF949494);
 const Color kcOffGreyColor = Color(0xFF3A3A3A);
 const Color kcContainerColor = Color(0xFF242424);
+const Color kcGreyButtonColor = Color(0xFF222222);
 const Color kcSubtitleColor = Color(0xFFAAAAAA);
 const Color kcFollowColor = Color(0xFF888888);
 const Color kcBackgroundColor = kcDarkGreyColor;

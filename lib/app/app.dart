@@ -15,6 +15,8 @@ import 'package:nest/ui/views/tickets/tickets_view.dart';
 import 'package:nest/ui/views/profile/profile_view.dart';
 import 'package:nest/ui/views/navigation/navigation_view.dart';
 import 'package:nest/services/global_service.dart';
+import 'package:nest/ui/views/edit_profile/edit_profile_view.dart';
+import 'package:nest/ui/views/event_activity/event_activity_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -31,6 +33,8 @@ import 'package:nest/services/global_service.dart';
     MaterialRoute(page: TicketsView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: NavigationView),
+    MaterialRoute(page: EditProfileView),
+    MaterialRoute(page: EventActivityView),
 // @stacked-route
   ],
   dependencies: [

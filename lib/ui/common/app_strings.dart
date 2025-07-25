@@ -23,8 +23,17 @@ const notification = '$svgsPath/notification.svg';
 const share = '$svgsPath/share.svg';
 const instagram = '$svgsPath/instagram.svg';
 const x = '$svgsPath/x.svg';
-const linkedin= '$svgsPath/linkedin.svg';
+const linkedin = '$svgsPath/linkedin.svg';
+const like = '$svgsPath/like.svg';
+const comment = '$svgsPath/comment.svg';
+const send = '$svgsPath/send.svg';
 
 //images
 const splash = '$imagesPath/splash.png';
 const avatar = '$imagesPath/profile.png';
+const ev1 = '$imagesPath/ev1.png';
+const ev2 = '$imagesPath/ev2.png';
+const ev3 = '$imagesPath/ev3.png';
+const ev4 = '$imagesPath/ev4.png';
+const ev5 = '$imagesPath/ev5.png';
+const ev6 = '$imagesPath/ev3.png';

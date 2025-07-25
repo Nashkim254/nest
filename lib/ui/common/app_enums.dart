@@ -3,3 +3,9 @@ enum DiscoverableType {
   people,
   organizations,
 }
+
+enum SettingsType {
+  everyone,
+  friends,
+  none,
+}

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/views/discover/widgets/selector_widget.dart';
+import 'package:nest/ui/views/profile/widgets/event_grid_layout.dart';
+import 'package:nest/ui/views/profile/widgets/socials.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../common/app_strings.dart';
@@ -144,10 +147,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     ? Align(
                         child: SizedBox(
                           width: 150,
-                          child: buildSelector(
-                            label: 'Edit Profile',
-                            isSelected: true,
-                            onTap: () {},
+                          child: AppButton(
+                            labelText: 'Edit Profile',
+                            onTap: () => viewModel.onEditProfile(),
                           ),
                         ),
                       )
@@ -156,18 +158,18 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         children: [
                           SizedBox(
                             width: 160,
-                            child: buildSelector(
-                              label: 'Follow',
-                              isSelected: true,
+                            child: AppButton(
+                              labelText: 'Follow',
                               onTap: () {},
                             ),
                           ),
+                          horizontalSpaceMedium,
                           SizedBox(
                             width: 160,
-                            child: buildSelector(
-                              label: 'Message',
-                              isSelected: false,
+                            child: AppButton(
+                              labelText: 'Message',
                               onTap: () {},
+                              buttonColor: kcGreyButtonColor,
                             ),
                           ),
                         ],
@@ -186,100 +188,29 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
                     color: kcOffWhite8Grey,
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: kcContainerBorderColor),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ListTile(
-                        leading:
-                            SvgPicture.asset(instagram, width: 24, height: 24),
-                        title: Text(
-                          "Instagram",
-                          style: titleTextMedium.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: kcWhiteColor,
-                          ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "@johndoe_official",
-                              style: titleTextMedium.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: kcFollowColor,
-                              ),
-                            ),
-                            horizontalSpaceMedium,
-                            Icon(
-                              Icons.adaptive.arrow_forward,
-                              color: kcFollowColor,
-                            ),
-                          ],
-                        ),
+                      Socials(
+                        avatar: instagram,
+                        name: "Instagram",
+                        handle: "@johndoe_official",
+                        onTap: () {},
                       ),
-                      ListTile(
-                        leading: SvgPicture.asset(x, width: 24, height: 24),
-                        title: Text(
-                          "Twitter",
-                          style: titleTextMedium.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: kcWhiteColor,
-                          ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "@johndoe_x",
-                              style: titleTextMedium.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: kcFollowColor,
-                              ),
-                            ),
-                            horizontalSpaceMedium,
-                            Icon(
-                              Icons.adaptive.arrow_forward,
-                              color: kcFollowColor,
-                            ),
-                          ],
-                        ),
+                      Socials(
+                        avatar: x,
+                        name: "X (Twitter)",
+                        handle: "@johndoe_x",
+                        onTap: () {},
                       ),
-                      ListTile(
-                        leading:
-                            SvgPicture.asset(linkedin, width: 24, height: 24),
-                        title: Text(
-                          "Linkein",
-                          style: titleTextMedium.copyWith(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: kcWhiteColor,
-                          ),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "URL (Optional)",
-                              style: titleTextMedium.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: kcFollowColor,
-                              ),
-                            ),
-                            horizontalSpaceMedium,
-                            Icon(
-                              Icons.adaptive.arrow_forward,
-                              color: kcFollowColor,
-                            ),
-                          ],
-                        ),
+                      Socials(
+                        avatar: linkedin,
+                        name: "Linkein",
+                        handle: "URL (Optional)",
+                        onTap: () {},
                       ),
                     ],
                   ),
@@ -294,10 +225,27 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   ),
                 ),
                 verticalSpaceMedium,
+                EventGalleryGrid(
+                  eventActivities: viewModel.eventActivities,
+                  onTap: viewModel.handleEventTap,
+                ),
               ],
             ),
           ),
         ),
+        floatingActionButton: viewModel.isUser
+            ? FloatingActionButton(
+                shape: const CircleBorder(),
+                onPressed: () {
+                  // Handle edit profile action
+                },
+                backgroundColor: kcPrimaryColor,
+                child: const Icon(
+                  Icons.add,
+                  color: kcWhiteColor,
+                ),
+              )
+            : null,
       ),
     );
   }
