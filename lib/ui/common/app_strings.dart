@@ -21,12 +21,15 @@ const tickets = '$svgsPath/tickets.svg';
 const search = '$svgsPath/search.svg';
 const notification = '$svgsPath/notification.svg';
 const share = '$svgsPath/share.svg';
+const msg = '$svgsPath/msg.svg';
 const instagram = '$svgsPath/instagram.svg';
 const x = '$svgsPath/x.svg';
 const linkedin = '$svgsPath/linkedin.svg';
 const like = '$svgsPath/like.svg';
 const comment = '$svgsPath/comment.svg';
 const send = '$svgsPath/send.svg';
+const attach = '$svgsPath/attach.svg';
+const emoji = '$svgsPath/emoji.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

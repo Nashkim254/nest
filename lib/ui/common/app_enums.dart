@@ -9,3 +9,8 @@ enum SettingsType {
   friends,
   none,
 }
+
+enum MessageType {
+  sent,
+  received,
+}

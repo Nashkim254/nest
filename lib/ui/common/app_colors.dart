@@ -32,4 +32,6 @@ const Color kcContainerColor = Color(0xFF242424);
 const Color kcGreyButtonColor = Color(0xFF222222);
 const Color kcSubtitleColor = Color(0xFFAAAAAA);
 const Color kcFollowColor = Color(0xFF888888);
+const Color kcSubtitleText2Color = Color(0xFFBBBBBB);
+const Color kcMyTextColor = Color(0xFF2A2A2A);
 const Color kcBackgroundColor = kcDarkGreyColor;

@@ -168,7 +168,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                             width: 160,
                             child: AppButton(
                               labelText: 'Message',
-                              onTap: () {},
+                              onTap: () => viewModel.goToChatView(),
                               buttonColor: kcGreyButtonColor,
                             ),
                           ),

@@ -5,10 +5,11 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../models/event_activity.dart';
+import '../../../services/global_service.dart';
 
-class ProfileViewModel extends BaseViewModel {
+class ProfileViewModel extends ReactiveViewModel {
   bool get isUser => false;
-
+  final globalService = locator<GlobalService>();
   onEditProfile() {
     locator<NavigationService>().navigateTo(Routes.editProfileView);
   }
@@ -103,4 +104,11 @@ class ProfileViewModel extends BaseViewModel {
       ),
     );
   }
+
+  void goToChatView() {
+    globalService.setIndex = 2; // Assuming index 2 is for messages
+  }
+
+  @override
+  List<ListenableServiceMixin> get listenableServices => [globalService];
 }

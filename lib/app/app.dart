@@ -17,6 +17,7 @@ import 'package:nest/ui/views/navigation/navigation_view.dart';
 import 'package:nest/services/global_service.dart';
 import 'package:nest/ui/views/edit_profile/edit_profile_view.dart';
 import 'package:nest/ui/views/event_activity/event_activity_view.dart';
+import 'package:nest/ui/views/chat/chat_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -35,6 +36,7 @@ import 'package:nest/ui/views/event_activity/event_activity_view.dart';
     MaterialRoute(page: NavigationView),
     MaterialRoute(page: EditProfileView),
     MaterialRoute(page: EventActivityView),
+    MaterialRoute(page: ChatView),
 // @stacked-route
   ],
   dependencies: [

@@ -8,8 +8,9 @@ import '../../../common/app_styles.dart';
 
 class EventActivityCard extends StatelessWidget {
   final EventActivity activity;
-final int index;
-  const EventActivityCard({super.key, required this.activity, required this.index});
+  final int index;
+  const EventActivityCard(
+      {super.key, required this.activity, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +63,18 @@ final int index;
           ),
 
           // Event Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Hero(
-              tag: index,
-              child: Image.asset(
-                activity.eventImageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+
+          Hero(
+            tag: index,
+            child: Image.asset(
+              activity.eventImageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
             ),
           ),
 
           // Actions
-           Padding(
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               children: [
@@ -93,11 +92,15 @@ final int index;
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
               'Liked by ${activity.likedByUser} and ${activity.likeCount} others',
-              style: bodyTextMedium.copyWith(color: Colors.grey.shade400),
+              style: bodyTextMedium.copyWith(
+                color: kcFollowColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
 
-          const SizedBox(height: 6),
+          verticalSpaceSmall,
 
           // Caption
           Padding(
@@ -122,8 +125,7 @@ final int index;
               ),
             ),
           ),
-
-          const SizedBox(height: 12),
+          verticalSpaceMedium,
         ],
       ),
     );

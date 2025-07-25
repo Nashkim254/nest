@@ -8,14 +8,14 @@ class EventGalleryGrid extends StatelessWidget {
   final List<EventActivity> eventActivities;
   final Function(EventActivity selectedActivity) onTap;
   const EventGalleryGrid(
-      {super.key,
-      required this.eventActivities,
-      required this.onTap});
+      {super.key, required this.eventActivities, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: eventActivities.isNotEmpty ? null : 100, // Adjust height based on activity
+      height: eventActivities.isNotEmpty
+          ? null
+          : 100, // Adjust height based on activity
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: kcOffWhite8Grey,
