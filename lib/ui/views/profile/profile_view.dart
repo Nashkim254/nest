@@ -236,9 +236,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
         floatingActionButton: viewModel.isUser
             ? FloatingActionButton(
                 shape: const CircleBorder(),
-                onPressed: () {
-                  // Handle edit profile action
-                },
+                onPressed: () => viewModel.cretePost(),
                 backgroundColor: kcPrimaryColor,
                 child: const Icon(
                   Icons.add,

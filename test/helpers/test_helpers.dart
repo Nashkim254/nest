@@ -3,6 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:nest/services/global_service.dart';
+import 'package:nest/services/image_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -14,6 +15,7 @@ import 'test_helpers.mocks.dart';
     MockSpec<BottomSheetService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<GlobalService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<ImageService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -22,6 +24,7 @@ void registerServices() {
   getAndRegisterBottomSheetService();
   getAndRegisterDialogService();
   getAndRegisterGlobalService();
+  getAndRegisterImageService();
 // @stacked-mock-register
 }
 
@@ -83,6 +86,13 @@ MockGlobalService getAndRegisterGlobalService() {
   _removeRegistrationIfExists<GlobalService>();
   final service = MockGlobalService();
   locator.registerSingleton<GlobalService>(service);
+  return service;
+}
+
+MockImageService getAndRegisterImageService() {
+  _removeRegistrationIfExists<ImageService>();
+  final service = MockImageService();
+  locator.registerSingleton<ImageService>(service);
   return service;
 }
 // @stacked-mock-create

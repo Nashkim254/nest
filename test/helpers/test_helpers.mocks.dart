@@ -4,12 +4,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
+import 'dart:io' as _i9;
 import 'dart:ui' as _i6;
 
 import 'package:flutter/material.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
 import 'package:nest/services/global_service.dart' as _i7;
+import 'package:nest/services/image_service.dart' as _i8;
 import 'package:stacked_services/stacked_services.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -748,4 +750,50 @@ class MockGlobalService extends _i1.Mock implements _i7.GlobalService {
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [ImageService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockImageService extends _i1.Mock implements _i8.ImageService {
+  @override
+  _i5.Future<bool> requestPermissions() => (super.noSuchMethod(
+        Invocation.method(
+          #requestPermissions,
+          [],
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<_i9.File?> pickImageFromCamera() => (super.noSuchMethod(
+        Invocation.method(
+          #pickImageFromCamera,
+          [],
+        ),
+        returnValue: _i5.Future<_i9.File?>.value(),
+        returnValueForMissingStub: _i5.Future<_i9.File?>.value(),
+      ) as _i5.Future<_i9.File?>);
+
+  @override
+  _i5.Future<_i9.File?> pickImageFromGallery() => (super.noSuchMethod(
+        Invocation.method(
+          #pickImageFromGallery,
+          [],
+        ),
+        returnValue: _i5.Future<_i9.File?>.value(),
+        returnValueForMissingStub: _i5.Future<_i9.File?>.value(),
+      ) as _i5.Future<_i9.File?>);
+
+  @override
+  _i5.Future<List<_i9.File>> pickMultipleImages() => (super.noSuchMethod(
+        Invocation.method(
+          #pickMultipleImages,
+          [],
+        ),
+        returnValue: _i5.Future<List<_i9.File>>.value(<_i9.File>[]),
+        returnValueForMissingStub:
+            _i5.Future<List<_i9.File>>.value(<_i9.File>[]),
+      ) as _i5.Future<List<_i9.File>>);
 }

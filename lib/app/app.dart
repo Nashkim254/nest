@@ -18,6 +18,11 @@ import 'package:nest/services/global_service.dart';
 import 'package:nest/ui/views/edit_profile/edit_profile_view.dart';
 import 'package:nest/ui/views/event_activity/event_activity_view.dart';
 import 'package:nest/ui/views/chat/chat_view.dart';
+import 'package:nest/ui/views/create_post/create_post_view.dart';
+import 'package:nest/services/image_service.dart';
+import 'package:nest/ui/bottom_sheets/image_source/image_source_sheet.dart';
+import 'package:nest/ui/bottom_sheets/add_location/add_location_sheet.dart';
+import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet.dart';
 // @stacked-import
 
 @StackedApp(
@@ -37,6 +42,7 @@ import 'package:nest/ui/views/chat/chat_view.dart';
     MaterialRoute(page: EditProfileView),
     MaterialRoute(page: EventActivityView),
     MaterialRoute(page: ChatView),
+    MaterialRoute(page: CreatePostView),
 // @stacked-route
   ],
   dependencies: [
@@ -44,11 +50,15 @@ import 'package:nest/ui/views/chat/chat_view.dart';
     LazySingleton(classType: DialogService),
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: GlobalService),
+    LazySingleton(classType: ImageService),
 // @stacked-service
   ],
   bottomsheets: [
     StackedBottomsheet(classType: NoticeSheet),
-    // @stacked-bottom-sheet
+    StackedBottomsheet(classType: ImageSourceSheet),
+    StackedBottomsheet(classType: AddLocationSheet),
+    StackedBottomsheet(classType: TagPeopleSheet),
+// @stacked-bottom-sheet
   ],
   dialogs: [
     StackedDialog(classType: InfoAlertDialog),

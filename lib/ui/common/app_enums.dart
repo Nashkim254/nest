@@ -14,3 +14,5 @@ enum MessageType {
   sent,
   received,
 }
+
+enum ImageSourceType { camera, gallery, multiple }

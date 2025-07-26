@@ -8,7 +8,7 @@ import '../../../models/event_activity.dart';
 import '../../../services/global_service.dart';
 
 class ProfileViewModel extends ReactiveViewModel {
-  bool get isUser => false;
+  bool get isUser => true;
   final globalService = locator<GlobalService>();
   onEditProfile() {
     locator<NavigationService>().navigateTo(Routes.editProfileView);
@@ -107,6 +107,10 @@ class ProfileViewModel extends ReactiveViewModel {
 
   void goToChatView() {
     globalService.setIndex = 2; // Assuming index 2 is for messages
+  }
+
+  cretePost() {
+    locator<NavigationService>().navigateTo(Routes.createPostView);
   }
 
   @override

@@ -30,6 +30,8 @@ const comment = '$svgsPath/comment.svg';
 const send = '$svgsPath/send.svg';
 const attach = '$svgsPath/attach.svg';
 const emoji = '$svgsPath/emoji.svg';
+const addImg = '$svgsPath/addImg.svg';
+const at = '$svgsPath/at.svg';
 
 //images
 const splash = '$imagesPath/splash.png';
