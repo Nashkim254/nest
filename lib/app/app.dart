@@ -23,6 +23,7 @@ import 'package:nest/services/image_service.dart';
 import 'package:nest/ui/bottom_sheets/image_source/image_source_sheet.dart';
 import 'package:nest/ui/bottom_sheets/add_location/add_location_sheet.dart';
 import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet.dart';
+import 'package:nest/ui/views/tickets/tickets_view.dart';
 // @stacked-import
 
 @StackedApp(

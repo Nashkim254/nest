@@ -52,7 +52,7 @@ class TagPeopleSheetModel extends BaseViewModel {
       notifyListeners();
       return users;
     }
-     users
+    users
         .where((user) => user.name
             .toLowerCase()
             .contains(searchController.text.toLowerCase()))

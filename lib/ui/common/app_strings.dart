@@ -32,6 +32,7 @@ const attach = '$svgsPath/attach.svg';
 const emoji = '$svgsPath/emoji.svg';
 const addImg = '$svgsPath/addImg.svg';
 const at = '$svgsPath/at.svg';
+const wallet = '$svgsPath/wallet.svg';
 
 //images
 const splash = '$imagesPath/splash.png';
@@ -42,3 +43,5 @@ const ev3 = '$imagesPath/ev3.png';
 const ev4 = '$imagesPath/ev4.png';
 const ev5 = '$imagesPath/ev5.png';
 const ev6 = '$imagesPath/ev3.png';
+const qr = '$imagesPath/qr.png';
+const scan = '$imagesPath/QR Code.png';

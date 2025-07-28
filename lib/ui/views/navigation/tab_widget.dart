@@ -5,6 +5,7 @@ import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/views/discover/discover_view.dart';
 import 'package:nest/ui/views/hosting/hosting_view.dart';
 import 'package:nest/ui/views/messages/messages_view.dart';
+import 'package:nest/ui/views/tickets/tickets_view.dart';
 
 import '../../../app/app.locator.dart';
 import '../../../models/page_item_model.dart';
@@ -37,6 +38,14 @@ List<PageItem> tabPages({
         bottomNavigationBarItem: customBottomNavigationBarItem(
           assetUrl: messages,
           label: "Messages",
+          currentIndex: 2,
+        ),
+      ),
+      PageItem(
+        page: const TicketsView(),
+        bottomNavigationBarItem: customBottomNavigationBarItem(
+          assetUrl: tickets,
+          label: "Tickets",
           currentIndex: 2,
         ),
       ),
