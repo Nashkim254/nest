@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_styles.dart';
-import 'package:nest/ui/views/discover/widgets/selector_widget.dart';
+import 'package:nest/ui/views/discover_find_people/widgets/selector_widget.dart';
 
 import '../../../common/ui_helpers.dart';
 

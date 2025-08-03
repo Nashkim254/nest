@@ -4,7 +4,7 @@ import 'package:stacked/stacked.dart';
 import '../../../models/ticket.dart';
 
 class TicketsViewModel extends BaseViewModel {
-   List<Ticket> getSampleTickets() {
+  List<Ticket> getSampleTickets() {
     return [
       Ticket(
         id: '1',

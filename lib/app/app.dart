@@ -24,6 +24,7 @@ import 'package:nest/ui/bottom_sheets/image_source/image_source_sheet.dart';
 import 'package:nest/ui/bottom_sheets/add_location/add_location_sheet.dart';
 import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet.dart';
 import 'package:nest/ui/views/tickets/tickets_view.dart';
+import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -44,6 +45,7 @@ import 'package:nest/ui/views/tickets/tickets_view.dart';
     MaterialRoute(page: EventActivityView),
     MaterialRoute(page: ChatView),
     MaterialRoute(page: CreatePostView),
+    MaterialRoute(page: DiscoverFindPeopleView),
 // @stacked-route
   ],
   dependencies: [

@@ -46,13 +46,16 @@ List<PageItem> tabPages({
         bottomNavigationBarItem: customBottomNavigationBarItem(
           assetUrl: tickets,
           label: "Tickets",
-          currentIndex: 2,
+          currentIndex: 3,
         ),
       ),
       PageItem(
         page: const ProfileView(),
         bottomNavigationBarItem: customBottomNavigationBarItem(
-            assetUrl: profile, label: "Profile", currentIndex: 3),
+          assetUrl: profile,
+          label: "Profile",
+          currentIndex: 4,
+        ),
       ),
     ];
 BottomNavigationBarItem customBottomNavigationBarItem({

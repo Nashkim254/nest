@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_styles.dart';
-import 'package:nest/ui/views/discover/widgets/selector_widget.dart';
 import 'package:nest/ui/views/profile/widgets/event_grid_layout.dart';
 import 'package:nest/ui/views/profile/widgets/socials.dart';
 import 'package:stacked/stacked.dart';

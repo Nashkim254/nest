@@ -16,7 +16,8 @@ class UpcomingTicketsTab extends StatelessWidget {
             ticket: viewModel.getSampleTickets()[index],
           );
         },
-        separatorBuilder: (BuildContext context, int index) => verticalSpaceSmall,
+        separatorBuilder: (BuildContext context, int index) =>
+            verticalSpaceSmall,
         itemCount: viewModel.getSampleTickets().length,
       ),
     );
