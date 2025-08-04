@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nest/ui/common/app_colors.dart';
 
 import '../../../../models/feed_post.dart';
+import '../../../common/app_styles.dart';
 
 class FeedUserInfoWidget extends StatelessWidget {
   final FeedPost post;
@@ -30,8 +32,7 @@ class FeedUserInfoWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 post.username,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: titleTextMedium.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -45,7 +46,7 @@ class FeedUserInfoWidget extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.orange,
+                    color: kcPrimaryColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Text(
@@ -84,14 +85,14 @@ class FeedUserInfoWidget extends StatelessWidget {
                 TextSpan(
                   text: post.venue,
                   style: const TextStyle(
-                    color: Colors.orange,
+                    color: kcPrimaryColor,
                     fontSize: 14,
                   ),
                 ),
                 TextSpan(
                   text: ' ${post.hashtags}',
                   style: const TextStyle(
-                    color: Colors.orange,
+                    color: kcPrimaryColor,
                     fontSize: 14,
                   ),
                 ),

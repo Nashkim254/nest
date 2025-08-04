@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nest/ui/common/app_strings.dart';
 
 class FeedActionsWidget extends StatelessWidget {
   final int likes;
@@ -26,19 +28,19 @@ class FeedActionsWidget extends StatelessWidget {
       child: Column(
         children: [
           _buildActionButton(
-            icon: Icons.favorite_border,
+            icon: like,
             count: _formatCount(likes),
             onTap: onLike,
           ),
           const SizedBox(height: 24),
           _buildActionButton(
-            icon: Icons.mode_comment_outlined,
+            icon: comment,
             count: _formatCount(comments),
             onTap: onComment,
           ),
           const SizedBox(height: 24),
           _buildActionButton(
-            icon: Icons.share_outlined,
+            icon: share,
             count: _formatCount(shares),
             onTap: onShare,
           ),
@@ -48,7 +50,7 @@ class FeedActionsWidget extends StatelessWidget {
   }
 
   Widget _buildActionButton({
-    required IconData icon,
+    required String icon,
     required String count,
     required VoidCallback onTap,
   }) {
@@ -59,14 +61,10 @@ class FeedActionsWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.black26,
+              // color: Colors.black26,
               borderRadius: BorderRadius.circular(24),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: SvgPicture.asset(icon),
           ),
           const SizedBox(height: 4),
           Text(

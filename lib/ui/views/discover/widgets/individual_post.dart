@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/views/discover/widgets/right_side_actions.dart';
 import 'package:nest/ui/views/discover/widgets/user_info.dart';
+import 'package:nest/ui/views/discover/widgets/video_player.dart';
 
 import '../../../../models/feed_post.dart';
 import 'feed_tab_bar.dart';
@@ -11,6 +12,8 @@ class FeedPostWidget extends StatelessWidget {
   final VoidCallback onFollow;
   final VoidCallback onComment;
   final VoidCallback onShare;
+  final bool isVisible;
+
 
   const FeedPostWidget({
     Key? key,
@@ -19,31 +22,18 @@ class FeedPostWidget extends StatelessWidget {
     required this.onFollow,
     required this.onComment,
     required this.onShare,
+    required this.isVisible,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background Video/Image
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black54,
-              ],
-            ),
-          ),
-          child: Image.asset(
-            'assets/images/fireworks_bg.jpg',
-            fit: BoxFit.cover,
-          ),
+        VideoPlayerWidget(
+          videoUrl: post.videoUrl,
+          isVisible: isVisible,
         ),
+
 
         // Tab Bar
         const FeedTabBarWidget(),

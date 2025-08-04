@@ -16,3 +16,9 @@ enum MessageType {
 }
 
 enum ImageSourceType { camera, gallery, multiple }
+
+enum ContentType {
+  fyp,
+  upcoming,
+  following,
+}

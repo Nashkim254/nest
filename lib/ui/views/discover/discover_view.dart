@@ -32,6 +32,7 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
                   onFollow: () => viewModel.toggleFollow(viewModel.posts[index].id),
                   onComment: () => viewModel.openComments(viewModel.posts[index].id),
                   onShare: () => viewModel.sharePost(viewModel.posts[index].id),
+                  isVisible: true,
                 );
               },
             ),

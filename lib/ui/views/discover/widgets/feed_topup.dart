@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../../../common/app_strings.dart';
+import '../../../common/app_styles.dart';
+import '../../../common/ui_helpers.dart';
 
 class FeedTopBarWidget extends StatelessWidget {
   const FeedTopBarWidget({Key? key}) : super(key: key);
@@ -15,27 +20,25 @@ class FeedTopBarWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'My Nest',
-                style: TextStyle(
-                  color: Colors.white,
+                style: titleTextMedium.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               Row(
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.white,
-                      size: 24,
-                    ),
+                  InkWell(
+                    onTap: () {
+                      // Handle search action
+                    },
+                    child: SvgPicture.asset(notification),
                   ),
+                  horizontalSpaceSmall,
                   const CircleAvatar(
                     radius: 16,
-                    backgroundImage: AssetImage('assets/images/profile.jpg'),
+                    backgroundImage: AssetImage(avatar),
                   ),
                 ],
               ),
