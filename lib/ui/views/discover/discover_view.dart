@@ -18,7 +18,7 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kcDarkColor,
-        body:  Stack(
+        body: Stack(
           children: [
             // Video Feed
             PageView.builder(
@@ -29,8 +29,10 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
                 return FeedPostWidget(
                   post: viewModel.posts[index],
                   onLike: () => viewModel.toggleLike(viewModel.posts[index].id),
-                  onFollow: () => viewModel.toggleFollow(viewModel.posts[index].id),
-                  onComment: () => viewModel.openComments(viewModel.posts[index].id),
+                  onFollow: () =>
+                      viewModel.toggleFollow(viewModel.posts[index].id),
+                  onComment: () =>
+                      viewModel.openComments(viewModel.posts[index].id),
                   onShare: () => viewModel.sharePost(viewModel.posts[index].id),
                   isVisible: true,
                 );

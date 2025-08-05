@@ -14,7 +14,6 @@ class FeedPostWidget extends StatelessWidget {
   final VoidCallback onShare;
   final bool isVisible;
 
-
   const FeedPostWidget({
     Key? key,
     required this.post,
@@ -33,7 +32,6 @@ class FeedPostWidget extends StatelessWidget {
           videoUrl: post.videoUrl,
           isVisible: isVisible,
         ),
-
 
         // Tab Bar
         const FeedTabBarWidget(),
