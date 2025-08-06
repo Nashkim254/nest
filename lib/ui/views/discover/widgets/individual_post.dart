@@ -12,6 +12,7 @@ class FeedPostWidget extends StatelessWidget {
   final VoidCallback onFollow;
   final VoidCallback onComment;
   final VoidCallback onShare;
+  final VoidCallback onRepost;
   final bool isVisible;
 
   const FeedPostWidget({
@@ -21,6 +22,7 @@ class FeedPostWidget extends StatelessWidget {
     required this.onFollow,
     required this.onComment,
     required this.onShare,
+    required this.onRepost,
     required this.isVisible,
   }) : super(key: key);
 
@@ -44,6 +46,8 @@ class FeedPostWidget extends StatelessWidget {
           onLike: onLike,
           onComment: onComment,
           onShare: onShare,
+          onRepost: onRepost,
+          reposts: post.reposts, // Placeholder for repost action
         ),
 
         // Bottom User Info

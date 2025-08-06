@@ -9,6 +9,7 @@ class FeedPost {
   final int likes;
   final int comments;
   final int shares;
+  final int reposts;
   final String videoUrl;
   final bool isFollowing;
 
@@ -23,6 +24,7 @@ class FeedPost {
     required this.likes,
     required this.comments,
     required this.shares,
+    required this.reposts,
     required this.videoUrl,
     this.isFollowing = false,
   });

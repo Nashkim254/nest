@@ -21,6 +21,7 @@ const tickets = '$svgsPath/tickets.svg';
 const search = '$svgsPath/search.svg';
 const notification = '$svgsPath/notification.svg';
 const share = '$svgsPath/share.svg';
+const sharePost = '$svgsPath/share-post.svg';
 const msg = '$svgsPath/msg.svg';
 const instagram = '$svgsPath/instagram.svg';
 const x = '$svgsPath/x.svg';
@@ -33,6 +34,9 @@ const emoji = '$svgsPath/emoji.svg';
 const addImg = '$svgsPath/addImg.svg';
 const at = '$svgsPath/at.svg';
 const wallet = '$svgsPath/wallet.svg';
+const repost = '$svgsPath/repost.svg';
+const copy = '$svgsPath/copy.svg';
+const report = '$svgsPath/report.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

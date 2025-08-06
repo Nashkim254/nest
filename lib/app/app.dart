@@ -26,6 +26,7 @@ import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet.dart';
 import 'package:nest/ui/views/tickets/tickets_view.dart';
 import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dart';
 import 'package:nest/ui/dialogs/comments/comments_dialog.dart';
+import 'package:nest/ui/bottom_sheets/share/share_sheet.dart';
 // @stacked-import
 
 @StackedApp(
@@ -62,6 +63,7 @@ import 'package:nest/ui/dialogs/comments/comments_dialog.dart';
     StackedBottomsheet(classType: ImageSourceSheet),
     StackedBottomsheet(classType: AddLocationSheet),
     StackedBottomsheet(classType: TagPeopleSheet),
+    StackedBottomsheet(classType: ShareSheet),
 // @stacked-bottom-sheet
   ],
   dialogs: [

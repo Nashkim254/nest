@@ -10,6 +10,7 @@ import 'app.locator.dart';
 import '../ui/bottom_sheets/add_location/add_location_sheet.dart';
 import '../ui/bottom_sheets/image_source/image_source_sheet.dart';
 import '../ui/bottom_sheets/notice/notice_sheet.dart';
+import '../ui/bottom_sheets/share/share_sheet.dart';
 import '../ui/bottom_sheets/tag_people/tag_people_sheet.dart';
 
 enum BottomSheetType {
@@ -17,6 +18,7 @@ enum BottomSheetType {
   imageSource,
   addLocation,
   tagPeople,
+  share,
 }
 
 void setupBottomSheetUi() {
@@ -31,6 +33,8 @@ void setupBottomSheetUi() {
         AddLocationSheet(request: request, completer: completer),
     BottomSheetType.tagPeople: (context, request, completer) =>
         TagPeopleSheet(request: request, completer: completer),
+    BottomSheetType.share: (context, request, completer) =>
+        ShareSheet(request: request, completer: completer),
   };
 
   bottomsheetService.setCustomSheetBuilders(builders);

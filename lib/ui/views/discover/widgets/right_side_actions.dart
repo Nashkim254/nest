@@ -5,19 +5,23 @@ import 'package:nest/ui/common/app_strings.dart';
 class FeedActionsWidget extends StatelessWidget {
   final int likes;
   final int comments;
+  final int reposts;
   final int shares;
   final VoidCallback onLike;
   final VoidCallback onComment;
   final VoidCallback onShare;
+  final VoidCallback onRepost;
 
   const FeedActionsWidget({
     Key? key,
     required this.likes,
     required this.comments,
+    required this.reposts,
     required this.shares,
     required this.onLike,
     required this.onComment,
     required this.onShare,
+    required this.onRepost,
   }) : super(key: key);
 
   @override
@@ -40,7 +44,13 @@ class FeedActionsWidget extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           _buildActionButton(
-            icon: share,
+            icon: repost,
+            count: _formatCount(reposts),
+            onTap: onRepost,
+          ),
+          const SizedBox(height: 24),
+          _buildActionButton(
+            icon: sharePost,
             count: _formatCount(shares),
             onTap: onShare,
           ),

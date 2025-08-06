@@ -270,7 +270,8 @@ class CommentsInputWidget extends StatelessWidget {
                   color: Colors.white,
                   fontSize: 14,
                 ),
-                decoration: AppInputDecoration.standard(hintText: 'Add a comment..'),
+                decoration:
+                    AppInputDecoration.standard(hintText: 'Add a comment..'),
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
               ),

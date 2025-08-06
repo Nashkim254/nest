@@ -5,6 +5,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.dialogs.dart';
 import '../../../models/feed_post.dart';
 import '../../common/app_enums.dart';
@@ -14,6 +15,7 @@ class DiscoverViewModel extends BaseViewModel {
   bool _isInitialized = false;
   String? _currentVideoUrl;
   final dialogService = locator<DialogService>();
+  final bottomSheet = locator<BottomSheetService>();
   VideoPlayerController? get controller => _controller;
   bool get isInitialized => _isInitialized;
 
@@ -88,6 +90,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 2500,
       comments: 512,
       shares: 150,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     ),
@@ -101,6 +104,7 @@ class DiscoverViewModel extends BaseViewModel {
       timeAgo: '8 hours ago',
       likes: 1800,
       comments: 324,
+      reposts: 120,
       shares: 89,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
@@ -116,6 +120,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 3200,
       comments: 678,
       shares: 234,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     ),
@@ -130,6 +135,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 1450,
       comments: 287,
       shares: 156,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     ),
@@ -144,6 +150,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 2100,
       comments: 445,
       shares: 198,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     ),
@@ -158,6 +165,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 1750,
       comments: 356,
       shares: 127,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     ),
@@ -172,6 +180,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 2800,
       comments: 567,
       shares: 289,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     ),
@@ -186,6 +195,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 1200,
       comments: 234,
       shares: 78,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
     ),
@@ -200,6 +210,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 1650,
       comments: 298,
       shares: 145,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
     ),
@@ -214,6 +225,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 1980,
       comments: 423,
       shares: 167,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     ),
@@ -228,6 +240,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 2250,
       comments: 478,
       shares: 201,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     ),
@@ -242,6 +255,7 @@ class DiscoverViewModel extends BaseViewModel {
       likes: 1350,
       comments: 267,
       shares: 93,
+      reposts: 120,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
     ),
@@ -265,7 +279,6 @@ class DiscoverViewModel extends BaseViewModel {
   }
 
   void openComments(String postId) {
-    print('----------------------$postId');
     final result = dialogService.showCustomDialog(
       variant: DialogType.comments,
       title: 'Comments',
@@ -278,6 +291,17 @@ class DiscoverViewModel extends BaseViewModel {
   }
 
   void sharePost(String postId) {
+    final result = bottomSheet.showCustomSheet(
+      variant: BottomSheetType.share,
+      title: 'Share',
+      data: postId,
+    );
+    result.then((value) {
+      if (value != null && value.confirmed) {}
+    });
+  }
+
+  void repost(String postId) {
     // Implementation for sharing post
   }
   ContentType contentType = ContentType.fyp;
