@@ -22,3 +22,15 @@ enum ContentType {
   upcoming,
   following,
 }
+enum ReportReason {
+  spam('Spam'),
+  nudityOrSexualActivity('Nudity or sexual activity'),
+  hateSpeechOrSymbols('Hate speech or symbols'),
+  violenceOrDangerousOrganizations('Violence or dangerous organizations'),
+  bullyingOrHarassment('Bullying or harassment'),
+  intellectualPropertyViolation('Intellectual property violation'),
+  scamOrFraud('Scam or fraud'),
+  falseInformation('False information');
+  const ReportReason(this.displayName);
+  final String displayName;
+}

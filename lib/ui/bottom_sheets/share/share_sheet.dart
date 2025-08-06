@@ -95,7 +95,10 @@ Widget _buildSocialWidget(Map<String, dynamic> social) {
           shape: BoxShape.circle,
         ),
         child: Center(
-          child: SvgPicture.asset(social['icon'], color: kcWhiteColor,),
+          child: SvgPicture.asset(
+            social['icon'],
+            color: kcWhiteColor,
+          ),
         ),
       ),
       verticalSpaceSmall,
