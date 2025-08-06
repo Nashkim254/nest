@@ -34,4 +34,6 @@ const Color kcSubtitleColor = Color(0xFFAAAAAA);
 const Color kcFollowColor = Color(0xFF888888);
 const Color kcSubtitleText2Color = Color(0xFFBBBBBB);
 const Color kcMyTextColor = Color(0xFF2A2A2A);
+const Color kcGrey3Color = Color(0xFF222222);
+const Color kcGrey4Color = Color(0xFFA0A0A0);
 const Color kcBackgroundColor = kcDarkGreyColor;

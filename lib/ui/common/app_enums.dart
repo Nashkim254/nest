@@ -22,6 +22,7 @@ enum ContentType {
   upcoming,
   following,
 }
+
 enum ReportReason {
   spam('Spam'),
   nudityOrSexualActivity('Nudity or sexual activity'),
@@ -31,6 +32,16 @@ enum ReportReason {
   intellectualPropertyViolation('Intellectual property violation'),
   scamOrFraud('Scam or fraud'),
   falseInformation('False information');
+
   const ReportReason(this.displayName);
+  final String displayName;
+}
+
+enum HostingSelector {
+  events('Events'),
+  analytics('Analytics'),
+  quickActions('Quick Actions');
+
+  const HostingSelector(this.displayName);
   final String displayName;
 }

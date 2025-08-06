@@ -37,6 +37,8 @@ const wallet = '$svgsPath/wallet.svg';
 const repost = '$svgsPath/repost.svg';
 const copy = '$svgsPath/copy.svg';
 const report = '$svgsPath/report.svg';
+const prize = '$svgsPath/prize.svg';
+const calendar = '$svgsPath/calendar.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

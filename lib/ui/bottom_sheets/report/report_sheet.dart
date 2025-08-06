@@ -37,20 +37,15 @@ class ReportSheet extends StackedView<ReportSheetModel> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            // Header
             ReportHeaderWidget(
               onClose: viewModel.closeSheet,
             ),
-
-            // Report Options List
             Flexible(
               child: ReportOptionsListWidget(
                 selectedReason: viewModel.selectedReason,
                 onReasonSelected: viewModel.selectReason,
               ),
             ),
-
-            // Submit Button
             ReportSubmitButtonWidget(
               canSubmit: viewModel.canSubmit,
               onSubmit: viewModel.submitReport,
