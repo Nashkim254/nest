@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:nest/ui/common/app_colors.dart';
+
 enum DiscoverableType {
   all,
   people,
@@ -44,4 +48,31 @@ enum HostingSelector {
 
   const HostingSelector(this.displayName);
   final String displayName;
+}
+
+enum EventStatus {
+  live(
+    'LIVE',
+    kcTertiaryColor,
+  ),
+  upcoming(
+    'UPCOMING',
+    kcPrimaryColor,
+  ),
+  ended(
+    'ENDED',
+    kcRedColor,
+  ),
+  soldOut(
+    'SOLD OUT',
+    kcRedColor,
+  ),
+  cancelled(
+    'CANCELLED',
+    kcGreyColor,
+  );
+
+  const EventStatus(this.label, this.color);
+  final String label;
+  final Color color;
 }

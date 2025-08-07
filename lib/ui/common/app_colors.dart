@@ -36,4 +36,5 @@ const Color kcSubtitleText2Color = Color(0xFFBBBBBB);
 const Color kcMyTextColor = Color(0xFF2A2A2A);
 const Color kcGrey3Color = Color(0xFF222222);
 const Color kcGrey4Color = Color(0xFFA0A0A0);
+const Color kcEventCardColor = Color(0xFF111111);
 const Color kcBackgroundColor = kcDarkGreyColor;
