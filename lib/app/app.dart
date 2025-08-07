@@ -28,6 +28,7 @@ import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dar
 import 'package:nest/ui/dialogs/comments/comments_dialog.dart';
 import 'package:nest/ui/bottom_sheets/share/share_sheet.dart';
 import 'package:nest/ui/bottom_sheets/report/report_sheet.dart';
+import 'package:nest/ui/views/create_event/create_event_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -49,6 +50,7 @@ import 'package:nest/ui/bottom_sheets/report/report_sheet.dart';
     MaterialRoute(page: ChatView),
     MaterialRoute(page: CreatePostView),
     MaterialRoute(page: DiscoverFindPeopleView),
+    MaterialRoute(page: CreateEventView),
 // @stacked-route
   ],
   dependencies: [

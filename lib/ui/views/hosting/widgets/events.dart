@@ -11,7 +11,7 @@ import '../hosting_viewmodel.dart';
 
 class EventTab extends StatelessWidget {
   const EventTab({super.key, required this.viewModel});
-final HostingViewModel viewModel;
+  final HostingViewModel viewModel;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

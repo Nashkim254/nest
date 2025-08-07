@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../ui/common/app_enums.dart';

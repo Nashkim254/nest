@@ -83,7 +83,9 @@ class HostingView extends StackedView<HostingViewModel> {
   buildView(HostingViewModel viewModel) {
     switch (viewModel.selectedSelector) {
       case HostingSelector.events:
-        return  EventTab(viewModel: viewModel,);
+        return EventTab(
+          viewModel: viewModel,
+        );
       case HostingSelector.analytics:
         return const AnalyticsTab();
       case HostingSelector.quickActions:

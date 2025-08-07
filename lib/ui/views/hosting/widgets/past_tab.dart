@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nest/app/app.locator.dart';
+import 'package:nest/app/app.router.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../../../common/app_colors.dart';
 import '../../../common/app_custom_button.dart';
@@ -64,7 +67,7 @@ class PastTab extends StatelessWidget {
         width: 200,
         leadingIcon: add,
         labelText: 'Create New Event',
-        onTap: () {},
+        onTap: () => locator<NavigationService>().navigateToCreateEventView(),
       ),
     );
   }

@@ -94,22 +94,23 @@ class EventCardHeaderWidget extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: titleStyle ?? const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
+            style: titleStyle ??
+                const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
         // if (onMenuTap != null)
-          GestureDetector(
-            onTap: onMenuTap,
-            child: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-              size: 20,
-            ),
+        GestureDetector(
+          onTap: onMenuTap,
+          child: const Icon(
+            Icons.more_vert,
+            color: Colors.white,
+            size: 20,
           ),
+        ),
       ],
     );
   }
@@ -130,11 +131,12 @@ class EventCardDateTimeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       dateTime,
-      style: style ?? const TextStyle(
-        color: Colors.grey,
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-      ),
+      style: style ??
+          const TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
     );
   }
 }
@@ -178,11 +180,12 @@ class EventCardStatusWidget extends StatelessWidget {
         Expanded(
           child: Text(
             statusText,
-            style: statusTextStyle ?? const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+            style: statusTextStyle ??
+                const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ),
       ],
@@ -192,7 +195,6 @@ class EventCardStatusWidget extends StatelessWidget {
 
 // Factory Methods for Common Use Cases
 class EventCardFactory {
-
   // Live Event Card
   static EventCardWidget live({
     required String title,

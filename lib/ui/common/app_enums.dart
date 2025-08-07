@@ -76,3 +76,11 @@ enum EventStatus {
   final String label;
   final Color color;
 }
+
+enum EventMode {
+  rsvp('RSVP Only'),
+  paid('Paid Tickets');
+
+  const EventMode(this.label);
+  final String label;
+}

@@ -5,11 +5,12 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i19;
+import 'package:flutter/material.dart' as _i20;
 import 'package:flutter/material.dart';
-import 'package:nest/models/chats.dart' as _i21;
-import 'package:nest/models/event_activity.dart' as _i20;
+import 'package:nest/models/chats.dart' as _i22;
+import 'package:nest/models/event_activity.dart' as _i21;
 import 'package:nest/ui/views/chat/chat_view.dart' as _i16;
+import 'package:nest/ui/views/create_event/create_event_view.dart' as _i19;
 import 'package:nest/ui/views/create_post/create_post_view.dart' as _i17;
 import 'package:nest/ui/views/discover/discover_view.dart' as _i8;
 import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dart'
@@ -29,7 +30,7 @@ import 'package:nest/ui/views/register/register_view.dart' as _i7;
 import 'package:nest/ui/views/startup/startup_view.dart' as _i3;
 import 'package:nest/ui/views/tickets/tickets_view.dart' as _i11;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i22;
+import 'package:stacked_services/stacked_services.dart' as _i23;
 
 class Routes {
   static const homeView = '/home-view';
@@ -66,6 +67,8 @@ class Routes {
 
   static const discoverFindPeopleView = '/discover-find-people-view';
 
+  static const createEventView = '/create-event-view';
+
   static const all = <String>{
     homeView,
     startupView,
@@ -84,6 +87,7 @@ class Routes {
     chatView,
     createPostView,
     discoverFindPeopleView,
+    createEventView,
   };
 }
 
@@ -157,90 +161,94 @@ class StackedRouter extends _i1.RouterBase {
       Routes.discoverFindPeopleView,
       page: _i18.DiscoverFindPeopleView,
     ),
+    _i1.RouteDef(
+      Routes.createEventView,
+      page: _i19.CreateEventView,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i2.HomeView(),
         settings: data,
       );
     },
     _i3.StartupView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.StartupView(),
         settings: data,
       );
     },
     _i4.InterestSelectionView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i4.InterestSelectionView(),
         settings: data,
       );
     },
     _i5.LocationView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i5.LocationView(),
         settings: data,
       );
     },
     _i6.LoginView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i6.LoginView(),
         settings: data,
       );
     },
     _i7.RegisterView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i7.RegisterView(),
         settings: data,
       );
     },
     _i8.DiscoverView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i8.DiscoverView(),
         settings: data,
       );
     },
     _i9.HostingView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i9.HostingView(),
         settings: data,
       );
     },
     _i10.MessagesView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i10.MessagesView(),
         settings: data,
       );
     },
     _i11.TicketsView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i11.TicketsView(),
         settings: data,
       );
     },
     _i12.ProfileView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i12.ProfileView(),
         settings: data,
       );
     },
     _i13.NavigationView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i13.NavigationView(),
         settings: data,
       );
     },
     _i14.EditProfileView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i14.EditProfileView(),
         settings: data,
       );
     },
     _i15.EventActivityView: (data) {
       final args = data.getArgs<EventActivityViewArguments>(nullOk: false);
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => _i15.EventActivityView(
             key: args.key, eventActivities: args.eventActivities),
         settings: data,
@@ -248,20 +256,26 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i16.ChatView: (data) {
       final args = data.getArgs<ChatViewArguments>(nullOk: false);
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => _i16.ChatView(key: args.key, chat: args.chat),
         settings: data,
       );
     },
     _i17.CreatePostView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i17.CreatePostView(),
         settings: data,
       );
     },
     _i18.DiscoverFindPeopleView: (data) {
-      return _i19.MaterialPageRoute<dynamic>(
+      return _i20.MaterialPageRoute<dynamic>(
         builder: (context) => const _i18.DiscoverFindPeopleView(),
+        settings: data,
+      );
+    },
+    _i19.CreateEventView: (data) {
+      return _i20.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i19.CreateEventView(),
         settings: data,
       );
     },
@@ -280,9 +294,9 @@ class EventActivityViewArguments {
     required this.eventActivities,
   });
 
-  final _i19.Key? key;
+  final _i20.Key? key;
 
-  final List<_i20.EventActivity> eventActivities;
+  final List<_i21.EventActivity> eventActivities;
 
   @override
   String toString() {
@@ -307,9 +321,9 @@ class ChatViewArguments {
     required this.chat,
   });
 
-  final _i19.Key? key;
+  final _i20.Key? key;
 
-  final _i21.Chats chat;
+  final _i22.Chats chat;
 
   @override
   String toString() {
@@ -328,7 +342,7 @@ class ChatViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i22.NavigationService {
+extension NavigatorStateExtension on _i23.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -512,8 +526,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToEventActivityView({
-    _i19.Key? key,
-    required List<_i20.EventActivity> eventActivities,
+    _i20.Key? key,
+    required List<_i21.EventActivity> eventActivities,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -530,8 +544,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> navigateToChatView({
-    _i19.Key? key,
-    required _i21.Chats chat,
+    _i20.Key? key,
+    required _i22.Chats chat,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -568,6 +582,20 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition,
   ]) async {
     return navigateTo<dynamic>(Routes.discoverFindPeopleView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> navigateToCreateEventView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.createEventView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -757,8 +785,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithEventActivityView({
-    _i19.Key? key,
-    required List<_i20.EventActivity> eventActivities,
+    _i20.Key? key,
+    required List<_i21.EventActivity> eventActivities,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -775,8 +803,8 @@ extension NavigatorStateExtension on _i22.NavigationService {
   }
 
   Future<dynamic> replaceWithChatView({
-    _i19.Key? key,
-    required _i21.Chats chat,
+    _i20.Key? key,
+    required _i22.Chats chat,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -813,6 +841,20 @@ extension NavigatorStateExtension on _i22.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.discoverFindPeopleView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithCreateEventView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.createEventView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

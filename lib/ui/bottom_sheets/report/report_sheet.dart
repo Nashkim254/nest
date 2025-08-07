@@ -176,8 +176,7 @@ class ReportOptionItemWidget extends StatelessWidget {
                       child: Icon(
                         Icons.circle,
                         size: 8,
-                        color: kcWhiteColor
-                        ,
+                        color: kcWhiteColor,
                       ),
                     )
                   : null,

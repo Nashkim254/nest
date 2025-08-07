@@ -55,15 +55,15 @@ class AnalyticsTab extends StatelessWidget {
           prize,
         ),
         verticalSpaceMedium,
-      AppButton(
-        labelText: 'Create New Event',
-        onTap: () {},
-      ),
+        AppButton(
+          labelText: 'Create New Event',
+          onTap: () {},
+        ),
       ],
     );
   }
-
 }
+
 Widget buildSelector({
   required String label,
   required bool isSelected,
@@ -132,15 +132,17 @@ Widget buildPlaceHolder(BuildContext context, String title, String icon) {
 }
 
 Widget buildInsightWidget(
-    BuildContext context,
-    String title,
-    String description,
-    Color color,
-    String icon,
-    ) {
+  BuildContext context,
+  String title,
+  String description,
+  Color color,
+  String icon,
+) {
   return Container(
     width: double.infinity,
-    padding: const EdgeInsets.symmetric(horizontal: 10, ),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 10,
+    ),
     decoration: BoxDecoration(
       color: kcDarkGreyColor,
       borderRadius: BorderRadius.circular(10),
