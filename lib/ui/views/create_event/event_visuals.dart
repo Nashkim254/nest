@@ -11,7 +11,7 @@ class EventVisuals extends StatelessWidget {
   final CreateEventViewModel viewModel;
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
       child: SingleChildScrollView(
         child: Column(

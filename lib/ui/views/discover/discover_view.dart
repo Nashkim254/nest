@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/views/discover/widgets/feed_tab_bar.dart';
 import 'package:nest/ui/views/discover/widgets/feed_topup.dart';
-import 'package:nest/ui/views/discover/widgets/individual_post.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../common/ui_helpers.dart';
 import 'discover_viewmodel.dart';
 
 class DiscoverView extends StackedView<DiscoverViewModel> {
   const DiscoverView({Key? key}) : super(key: key);
-
+@override
+  void onViewModelReady(DiscoverViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
   @override
   Widget builder(
     BuildContext context,
@@ -18,30 +23,27 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kcDarkColor,
-        body: Stack(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Video Feed
-            PageView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: viewModel.posts.length,
-              onPageChanged: viewModel.onPageChanged,
-              itemBuilder: (context, index) {
-                return FeedPostWidget(
-                  post: viewModel.posts[index],
-                  onLike: () => viewModel.toggleLike(viewModel.posts[index].id),
-                  onFollow: () =>
-                      viewModel.toggleFollow(viewModel.posts[index].id),
-                  onComment: () =>
-                      viewModel.openComments(viewModel.posts[index].id),
-                  onShare: () => viewModel.sharePost(viewModel.posts[index].id),
-                  isVisible: true,
-                  onRepost: () => viewModel.repost(viewModel.posts[index].id),
-                );
-              },
-            ),
-
-            // Top Navigation Bar
             const FeedTopBarWidget(),
+            spacedDivider,
+            const FeedTabBarWidget(),
+             verticalSpaceSmall,
+            const  Divider(
+               height: 1,
+              color: kcContainerBorderColor,
+            ),
+            verticalSpaceMedium,
+            Expanded(
+              child: PageView.builder(
+                controller: viewModel.pageController,
+                itemCount: viewModel.tabPages.length,
+                physics: const NeverScrollableScrollPhysics(),
+                onPageChanged: viewModel.onPageChanged,
+                itemBuilder: (context, index) => viewModel.tabPages[index],
+              ),
+            ),
           ],
         ),
       ),

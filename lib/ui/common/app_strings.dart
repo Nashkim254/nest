@@ -40,6 +40,7 @@ const report = '$svgsPath/report.svg';
 const prize = '$svgsPath/prize.svg';
 const calendar = '$svgsPath/calendar.svg';
 const add = '$svgsPath/add.svg';
+const qrcode = '$svgsPath/qrcode.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

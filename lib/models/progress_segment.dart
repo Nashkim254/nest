@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class ProgressSegment {
   final double value;
   final Color color;

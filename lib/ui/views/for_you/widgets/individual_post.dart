@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:nest/ui/views/discover/widgets/right_side_actions.dart';
-import 'package:nest/ui/views/discover/widgets/user_info.dart';
-import 'package:nest/ui/views/discover/widgets/video_player.dart';
+import 'package:nest/ui/views/for_you/widgets/right_side_actions.dart';
+import 'package:nest/ui/views/for_you/widgets/user_info.dart';
+import 'package:nest/ui/views/for_you/widgets/video_player.dart';
 
 import '../../../../models/feed_post.dart';
-import 'feed_tab_bar.dart';
+import '../../discover/widgets/feed_tab_bar.dart';
 
 class FeedPostWidget extends StatelessWidget {
   final FeedPost post;
@@ -35,8 +35,6 @@ class FeedPostWidget extends StatelessWidget {
           isVisible: isVisible,
         ),
 
-        // Tab Bar
-        const FeedTabBarWidget(),
 
         // Right Side Actions
         FeedActionsWidget(

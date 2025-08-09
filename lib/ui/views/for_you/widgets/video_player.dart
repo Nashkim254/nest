@@ -3,9 +3,9 @@ import 'package:nest/ui/common/app_colors.dart';
 import 'package:stacked/stacked.dart';
 import 'package:video_player/video_player.dart';
 
-import '../discover_viewmodel.dart';
+import '../for_you_viewmodel.dart';
 
-class VideoPlayerWidget extends StackedView<DiscoverViewModel> {
+class VideoPlayerWidget extends StackedView<ForYouViewModel> {
   final String videoUrl;
   final bool isVisible;
 
@@ -17,7 +17,7 @@ class VideoPlayerWidget extends StackedView<DiscoverViewModel> {
 
   @override
   Widget builder(
-      BuildContext context, DiscoverViewModel viewModel, Widget? child) {
+      BuildContext context, ForYouViewModel viewModel, Widget? child) {
     // Initialize video when widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.initializeVideo(videoUrl);
@@ -55,6 +55,5 @@ class VideoPlayerWidget extends StackedView<DiscoverViewModel> {
   }
 
   @override
-  DiscoverViewModel viewModelBuilder(BuildContext context) =>
-      DiscoverViewModel();
+  ForYouViewModel viewModelBuilder(BuildContext context) => ForYouViewModel();
 }

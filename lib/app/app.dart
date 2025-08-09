@@ -23,12 +23,14 @@ import 'package:nest/services/image_service.dart';
 import 'package:nest/ui/bottom_sheets/image_source/image_source_sheet.dart';
 import 'package:nest/ui/bottom_sheets/add_location/add_location_sheet.dart';
 import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet.dart';
-import 'package:nest/ui/views/tickets/tickets_view.dart';
 import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dart';
 import 'package:nest/ui/dialogs/comments/comments_dialog.dart';
 import 'package:nest/ui/bottom_sheets/share/share_sheet.dart';
 import 'package:nest/ui/bottom_sheets/report/report_sheet.dart';
 import 'package:nest/ui/views/create_event/create_event_view.dart';
+import 'package:nest/ui/views/upcoming/upcoming_view.dart';
+import 'package:nest/ui/views/for_you/for_you_view.dart';
+import 'package:nest/ui/views/following/following_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -51,6 +53,9 @@ import 'package:nest/ui/views/create_event/create_event_view.dart';
     MaterialRoute(page: CreatePostView),
     MaterialRoute(page: DiscoverFindPeopleView),
     MaterialRoute(page: CreateEventView),
+    MaterialRoute(page: UpcomingView),
+    MaterialRoute(page: ForYouView),
+    MaterialRoute(page: FollowingView),
 // @stacked-route
   ],
   dependencies: [

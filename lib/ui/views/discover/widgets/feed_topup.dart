@@ -10,41 +10,34 @@ class FeedTopBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'My Nest',
+            style: titleTextMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Row(
             children: [
-              Text(
-                'My Nest',
-                style: titleTextMedium.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+              InkWell(
+                onTap: () {
+                  // Handle search action
+                },
+                child: SvgPicture.asset(notification),
               ),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      // Handle search action
-                    },
-                    child: SvgPicture.asset(notification),
-                  ),
-                  horizontalSpaceSmall,
-                  const CircleAvatar(
-                    radius: 16,
-                    backgroundImage: AssetImage(avatar),
-                  ),
-                ],
+              horizontalSpaceSmall,
+              const CircleAvatar(
+                radius: 16,
+                backgroundImage: AssetImage(avatar),
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'package:nest/ui/common/app_colors.dart';
 
 import '../../../models/progress_segment.dart';
 
-
 class StackedProgressBar extends StatelessWidget {
   const StackedProgressBar({super.key});
 
