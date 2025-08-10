@@ -185,7 +185,6 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                         style: titleTextMedium.copyWith(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
-
                         ),
                         textAlign: TextAlign.center,
                       ),

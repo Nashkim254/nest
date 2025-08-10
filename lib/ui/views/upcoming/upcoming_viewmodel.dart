@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nest/app/app.locator.dart';
+import 'package:nest/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -144,5 +145,12 @@ class UpcomingViewModel extends BaseViewModel {
         print('Find Events cancelled');
       }
     });
+  }
+
+  viewAllPeopleAndOrgs() {
+    locator<NavigationService>().navigateToFindPeopleAndOrgsView();
+  }
+  viewAllEvents() {
+    locator<NavigationService>().navigateToExploreEventsView();
   }
 }

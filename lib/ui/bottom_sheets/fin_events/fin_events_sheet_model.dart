@@ -4,7 +4,6 @@ import 'package:nest/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-
 class FinEventsSheetModel extends BaseViewModel {
   Function(SheetResponse)? _completer;
   final searchController = TextEditingController();
@@ -119,5 +118,4 @@ class FinEventsSheetModel extends BaseViewModel {
     searchQuery = '';
     notifyListeners();
   }
-
 }

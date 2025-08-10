@@ -16,7 +16,6 @@ class EventCardData {
   final String? imageUrl;
   final String? location;
 
-
   EventCardData({
     required this.title,
     required this.dateTime,

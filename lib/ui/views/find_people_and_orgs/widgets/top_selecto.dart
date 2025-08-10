@@ -1,35 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:nest/ui/common/app_colors.dart';
-import 'package:nest/ui/common/app_enums.dart';
 import 'package:stacked/stacked.dart';
-import '../discover_viewmodel.dart';
 
-class FeedTabBarWidget extends ViewModelWidget<DiscoverViewModel> {
-  const FeedTabBarWidget({Key? key}) : super(key: key);
+import '../../../common/app_colors.dart';
+import '../../../common/app_enums.dart';
+import '../find_people_and_orgs_viewmodel.dart';
+
+class FindTabBarWidget extends ViewModelWidget<FindPeopleAndOrgsViewModel> {
+  const FindTabBarWidget({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, DiscoverViewModel viewModel) {
+  Widget build(BuildContext context, FindPeopleAndOrgsViewModel viewModel) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildTabItem(
-            'For you',
-            viewModel.contentType == ContentType.fyp,
-            onPressed: () => viewModel.setContentType(ContentType.fyp),
+            'All',
+            viewModel.finderType == FinderType.all,
+            onPressed: () => viewModel.setFinderType(FinderType.all),
           ),
           const SizedBox(width: 32),
           _buildTabItem(
-            'Upcoming',
-            viewModel.contentType == ContentType.upcoming,
-            onPressed: () => viewModel.setContentType(ContentType.upcoming),
+            'People',
+            viewModel.finderType == FinderType.people,
+            onPressed: () => viewModel.setFinderType(FinderType.people),
           ),
           const SizedBox(width: 32),
           _buildTabItem(
-            'Following',
-            viewModel.contentType == ContentType.following,
-            onPressed: () => viewModel.setContentType(ContentType.following),
+            'Organizations',
+            viewModel.finderType == FinderType.organizations,
+            onPressed: () => viewModel.setFinderType(FinderType.organizations),
           ),
         ],
       ),
@@ -43,7 +44,7 @@ Widget _buildTabItem(String title, bool isActive, {VoidCallback? onPressed}) {
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive ? kcPrimaryColor : Colors.transparent,
+        color: isActive ? kcPrimaryColor : kcOffGreyColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

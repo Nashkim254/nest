@@ -33,6 +33,7 @@ import 'package:nest/ui/views/for_you/for_you_view.dart';
 import 'package:nest/ui/views/following/following_view.dart';
 import 'package:nest/ui/bottom_sheets/fin_events/fin_events_sheet.dart';
 import 'package:nest/ui/views/explore_events/explore_events_view.dart';
+import 'package:nest/ui/views/find_people_and_orgs/find_people_and_orgs_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -59,6 +60,7 @@ import 'package:nest/ui/views/explore_events/explore_events_view.dart';
     MaterialRoute(page: ForYouView),
     MaterialRoute(page: FollowingView),
     MaterialRoute(page: ExploreEventsView),
+    MaterialRoute(page: FindPeopleAndOrgsView),
 // @stacked-route
   ],
   dependencies: [

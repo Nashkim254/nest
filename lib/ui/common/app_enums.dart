@@ -27,6 +27,12 @@ enum ContentType {
   following,
 }
 
+enum FinderType {
+  all,
+  people,
+  organizations,
+}
+
 enum ReportReason {
   spam('Spam'),
   nudityOrSexualActivity('Nudity or sexual activity'),

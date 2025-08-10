@@ -20,10 +20,10 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
 
   @override
   Widget builder(
-      BuildContext context,
-      DiscoverViewModel viewModel,
-      Widget? child,
-      ) {
+    BuildContext context,
+    DiscoverViewModel viewModel,
+    Widget? child,
+  ) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kcDarkColor,

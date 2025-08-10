@@ -48,9 +48,22 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                   ),
                 ),
                 verticalSpaceMedium,
-                Text(
-                  'People & Organizations',
-                  style: titleTextMedium,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'People & Organizations',
+                      style: titleTextMedium,
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: AppButton(
+                        height: 30,
+                        labelText: 'View all',
+                        onTap: () => viewModel.viewAllPeopleAndOrgs(),
+                      ),
+                    ),
+                  ],
                 ),
                 verticalSpaceSmall,
                 SizedBox(
@@ -110,8 +123,9 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                     SizedBox(
                       width: 100,
                       child: AppButton(
+                        height: 30,
                         labelText: 'View all',
-                        onTap: () {},
+                        onTap: () => viewModel.viewAllEvents(),
                       ),
                     ),
                   ],
