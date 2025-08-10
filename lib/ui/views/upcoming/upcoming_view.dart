@@ -187,7 +187,7 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                     ),
                   ),
                 ),
-               verticalSpaceMedium,
+                verticalSpaceMedium,
               ],
             ),
           ),
@@ -196,7 +196,7 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
           width: 200,
           leadingIcon: search,
           labelText: 'Find Events',
-          onTap: () {},
+          onTap: () => viewModel.findEvents(),
         ),
       ),
     );

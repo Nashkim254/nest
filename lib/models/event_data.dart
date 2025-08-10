@@ -13,6 +13,9 @@ class EventCardData {
   final TextStyle? titleStyle;
   final TextStyle? dateTimeStyle;
   final TextStyle? statusTextStyle;
+  final String? imageUrl;
+  final String? location;
+
 
   EventCardData({
     required this.title,
@@ -25,5 +28,7 @@ class EventCardData {
     this.titleStyle,
     this.dateTimeStyle,
     this.statusTextStyle,
+    this.imageUrl,
+    this.location,
   });
 }

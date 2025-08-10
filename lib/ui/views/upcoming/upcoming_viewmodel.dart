@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nest/app/app.locator.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.bottomsheets.dart';
 import '../../../models/ticket.dart';
 import '../../common/app_strings.dart';
 
@@ -28,6 +31,7 @@ class UpcomingViewModel extends BaseViewModel {
     if (days > 0) return '${days}d ${hours}h left';
     return '${hours}h ${timeUntilEvent.inMinutes % 60}m left';
   }
+
   List<Ticket> getSampleTickets() {
     return [
       Ticket(
@@ -71,6 +75,7 @@ class UpcomingViewModel extends BaseViewModel {
       ),
     ];
   }
+
   void initialize(TickerProvider vsync) {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
@@ -121,5 +126,23 @@ class UpcomingViewModel extends BaseViewModel {
     _animationController.dispose();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  findEvents() {
+    final result = locator<BottomSheetService>().showCustomSheet(
+      variant: BottomSheetType.finEvents,
+      title: 'Find Events',
+      isScrollControlled: true,
+      barrierDismissible: true,
+    );
+    result.then((value) {
+      if (value != null && value.confirmed) {
+        // Handle confirmed action
+        print('Find Events confirmed');
+      } else {
+        // Handle cancellation
+        print('Find Events cancelled');
+      }
+    });
   }
 }

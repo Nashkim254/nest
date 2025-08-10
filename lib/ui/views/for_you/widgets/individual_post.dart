@@ -35,7 +35,6 @@ class FeedPostWidget extends StatelessWidget {
           isVisible: isVisible,
         ),
 
-
         // Right Side Actions
         FeedActionsWidget(
           likes: post.likes,

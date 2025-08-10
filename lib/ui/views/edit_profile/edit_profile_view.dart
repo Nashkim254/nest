@@ -24,11 +24,7 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
       child: Scaffold(
         backgroundColor: kcDarkColor,
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.adaptive.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
-            color: kcWhiteColor,
-          ),
+        automaticallyImplyLeading: false,
           backgroundColor: kcDarkColor,
           title: Text(
             "Edit Profile",

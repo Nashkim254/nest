@@ -13,6 +13,7 @@ class AppButton extends StatelessWidget {
     this.height = 52,
     this.width = double.infinity,
     this.leadingIcon,
+    this.isBusy = false,
   }) : super(key: key);
   final String labelText;
   final VoidCallback onTap;
@@ -21,6 +22,7 @@ class AppButton extends StatelessWidget {
   final double? height;
   final double? width;
   final String? leadingIcon;
+  final bool? isBusy;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -36,19 +38,25 @@ class AppButton extends StatelessWidget {
           ),
         ),
         child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              leadingIcon == null
-                  ? const SizedBox()
-                  : SvgPicture.asset(leadingIcon!),
-              leadingIcon == null ? const SizedBox() : const SizedBox(width: 8),
-              Text(
-                labelText,
-                style: bodyTextMedium,
-              ),
-            ],
-          ),
+          child: isBusy!
+              ? const CircularProgressIndicator(
+                  color: kcWhiteColor,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    leadingIcon == null
+                        ? const SizedBox()
+                        : SvgPicture.asset(leadingIcon!),
+                    leadingIcon == null
+                        ? const SizedBox()
+                        : const SizedBox(width: 8),
+                    Text(
+                      labelText,
+                      style: bodyTextMedium,
+                    ),
+                  ],
+                ),
         ),
       ),
     );

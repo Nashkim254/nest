@@ -31,6 +31,8 @@ import 'package:nest/ui/views/create_event/create_event_view.dart';
 import 'package:nest/ui/views/upcoming/upcoming_view.dart';
 import 'package:nest/ui/views/for_you/for_you_view.dart';
 import 'package:nest/ui/views/following/following_view.dart';
+import 'package:nest/ui/bottom_sheets/fin_events/fin_events_sheet.dart';
+import 'package:nest/ui/views/explore_events/explore_events_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -56,6 +58,7 @@ import 'package:nest/ui/views/following/following_view.dart';
     MaterialRoute(page: UpcomingView),
     MaterialRoute(page: ForYouView),
     MaterialRoute(page: FollowingView),
+    MaterialRoute(page: ExploreEventsView),
 // @stacked-route
   ],
   dependencies: [
@@ -73,6 +76,7 @@ import 'package:nest/ui/views/following/following_view.dart';
     StackedBottomsheet(classType: TagPeopleSheet),
     StackedBottomsheet(classType: ShareSheet),
     StackedBottomsheet(classType: ReportSheet),
+    StackedBottomsheet(classType: FinEventsSheet),
 // @stacked-bottom-sheet
   ],
   dialogs: [

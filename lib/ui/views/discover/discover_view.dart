@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/common/app_enums.dart';
 import 'package:nest/ui/views/discover/widgets/feed_tab_bar.dart';
 import 'package:nest/ui/views/discover/widgets/feed_topup.dart';
 import 'package:stacked/stacked.dart';
@@ -9,17 +10,20 @@ import 'discover_viewmodel.dart';
 
 class DiscoverView extends StackedView<DiscoverViewModel> {
   const DiscoverView({Key? key}) : super(key: key);
-@override
+
+  @override
   void onViewModelReady(DiscoverViewModel viewModel) {
-    viewModel.init();
     super.onViewModelReady(viewModel);
+
+    viewModel.setContentType(ContentType.upcoming);
   }
+
   @override
   Widget builder(
-    BuildContext context,
-    DiscoverViewModel viewModel,
-    Widget? child,
-  ) {
+      BuildContext context,
+      DiscoverViewModel viewModel,
+      Widget? child,
+      ) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kcDarkColor,
@@ -29,11 +33,8 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
             const FeedTopBarWidget(),
             spacedDivider,
             const FeedTabBarWidget(),
-             verticalSpaceSmall,
-            const  Divider(
-               height: 1,
-              color: kcContainerBorderColor,
-            ),
+            verticalSpaceSmall,
+            const Divider(height: 1, color: kcContainerBorderColor),
             verticalSpaceMedium,
             Expanded(
               child: PageView.builder(
@@ -51,8 +52,6 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
   }
 
   @override
-  DiscoverViewModel viewModelBuilder(
-    BuildContext context,
-  ) =>
+  DiscoverViewModel viewModelBuilder(BuildContext context) =>
       DiscoverViewModel();
 }
