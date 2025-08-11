@@ -70,30 +70,12 @@ class HostingView extends StackedView<HostingViewModel> {
                     ),
                   ),
                 ),
-                verticalSpaceMedium,
-                buildView(viewModel),
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  buildView(HostingViewModel viewModel) {
-    switch (viewModel.selectedSelector) {
-      case HostingSelector.events:
-        return EventTab(
-          viewModel: viewModel,
-        );
-      case HostingSelector.analytics:
-        return const AnalyticsTab();
-      case HostingSelector.quickActions:
-        return const Placeholder();
-
-      case null:
-        throw UnimplementedError();
-    }
   }
 
   @override

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:stacked/stacked.dart';
@@ -9,14 +8,7 @@ import '../../../models/ticket.dart';
 import '../../common/app_strings.dart';
 
 class UpcomingViewModel extends BaseViewModel {
-  late AnimationController _animationController;
-  late AnimationController _pulseController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _pulseAnimation;
   //getters
-
-  Animation<double> get pulseAnimation => _pulseAnimation;
-  Animation<double> get scaleAnimation => _scaleAnimation;
 
   bool _isPressed = false;
   bool get isPressed => _isPressed;
@@ -77,56 +69,19 @@ class UpcomingViewModel extends BaseViewModel {
     ];
   }
 
-  void initialize(TickerProvider vsync) {
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: vsync,
-    );
-
-    _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: vsync,
-    )..repeat();
-
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _pulseAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _pulseController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
   void onPressDown() {
     _isPressed = true;
-    _animationController.forward();
     notifyListeners();
   }
 
   void onPressUp() {
     _isPressed = false;
-    _animationController.reverse();
     notifyListeners();
   }
 
   void onTap() {
     // Handle ticket tap - navigate to details
     print('Techno Pulse ticket tapped');
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _pulseController.dispose();
-    super.dispose();
   }
 
   findEvents() {
@@ -150,7 +105,11 @@ class UpcomingViewModel extends BaseViewModel {
   viewAllPeopleAndOrgs() {
     locator<NavigationService>().navigateToFindPeopleAndOrgsView();
   }
+
   viewAllEvents() {
     locator<NavigationService>().navigateToExploreEventsView();
+  }
+  viewEventDetails() {
+    locator<NavigationService>().navigateToViewEventView();
   }
 }

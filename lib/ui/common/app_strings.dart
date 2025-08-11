@@ -27,6 +27,8 @@ const instagram = '$svgsPath/instagram.svg';
 const x = '$svgsPath/x.svg';
 const linkedin = '$svgsPath/linkedin.svg';
 const like = '$svgsPath/like.svg';
+const fb = '$svgsPath/fb.svg';
+const web = '$svgsPath/web.svg';
 const comment = '$svgsPath/comment.svg';
 const send = '$svgsPath/send.svg';
 const attach = '$svgsPath/attach.svg';
@@ -45,6 +47,7 @@ const qrcode = '$svgsPath/qrcode.svg';
 //images
 const splash = '$imagesPath/splash.png';
 const avatar = '$imagesPath/profile.png';
+const event = '$imagesPath/event.png';
 const ev1 = '$imagesPath/ev1.png';
 const ev2 = '$imagesPath/ev2.png';
 const ev3 = '$imagesPath/ev3.png';

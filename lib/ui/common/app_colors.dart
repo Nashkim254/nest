@@ -13,6 +13,7 @@ Color kcTertiaryWithOpacityColor =
 const Color kcPrimaryColorDark = Color(0xFF300151);
 const Color kcDarkGreyColor = Color(0xFF1A1A1A);
 const Color kcDarkColor = Color(0xFF111111);
+const Color kcBlackColor = Color(0xFF000000);
 const Color kcMediumGrey = Color(0xFF474A54);
 Color kcOffWhite5Grey = const Color(0xFFFFFFFF).withAlpha((.5 * 255).toInt());
 Color kcOffWhite8Grey = const Color.fromRGBO(255, 255, 255, 0.08);

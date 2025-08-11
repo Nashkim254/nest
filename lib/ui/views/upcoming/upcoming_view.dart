@@ -157,13 +157,15 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                                   height: 60,
                                   width: 60,
                                   decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(13),
-                                      ),
-                                      image: DecorationImage(
-                                          image: AssetImage(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(13),
+                                    ),
+                                    image: DecorationImage(
+                                      image: AssetImage(
                                         ev2,
-                                      ))),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                               Expanded(
@@ -190,7 +192,7 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                                   width: 100,
                                   child: AppButton(
                                     labelText: 'View',
-                                    onTap: () {},
+                                    onTap: () => viewModel.viewEventDetails(),
                                   ),
                                 ),
                               ),
