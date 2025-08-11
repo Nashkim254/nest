@@ -113,5 +113,8 @@ class ChatView extends StackedView<ChatViewModel> {
   ChatViewModel viewModelBuilder(
     BuildContext context,
   ) =>
-      ChatViewModel();
+      ChatViewModel(
+        conversationId: chat.id,
+        receiverId: 2,
+      );
 }

@@ -12,6 +12,9 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
 import 'package:nest/services/global_service.dart' as _i7;
 import 'package:nest/services/image_service.dart' as _i8;
+import 'package:nest/services/message_service.dart' as _i12;
+import 'package:nest/services/websocket_service.dart' as _i10;
+import 'package:nest/ui/common/app_enums.dart' as _i11;
 import 'package:stacked_services/stacked_services.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -797,3 +800,150 @@ class MockImageService extends _i1.Mock implements _i8.ImageService {
             _i5.Future<List<_i9.File>>.value(<_i9.File>[]),
       ) as _i5.Future<List<_i9.File>>);
 }
+
+/// A class which mocks [WebsocketService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWebsocketService extends _i1.Mock implements _i10.WebsocketService {
+  @override
+  _i5.Stream<_i11.WebSocketConnectionStatus> get connectionStatus =>
+      (super.noSuchMethod(
+        Invocation.getter(#connectionStatus),
+        returnValue: _i5.Stream<_i11.WebSocketConnectionStatus>.empty(),
+        returnValueForMissingStub:
+            _i5.Stream<_i11.WebSocketConnectionStatus>.empty(),
+      ) as _i5.Stream<_i11.WebSocketConnectionStatus>);
+
+  @override
+  _i5.Stream<dynamic> get messageStream => (super.noSuchMethod(
+        Invocation.getter(#messageStream),
+        returnValue: _i5.Stream<dynamic>.empty(),
+        returnValueForMissingStub: _i5.Stream<dynamic>.empty(),
+      ) as _i5.Stream<dynamic>);
+
+  @override
+  _i5.Stream<dynamic> get typingStream => (super.noSuchMethod(
+        Invocation.getter(#typingStream),
+        returnValue: _i5.Stream<dynamic>.empty(),
+        returnValueForMissingStub: _i5.Stream<dynamic>.empty(),
+      ) as _i5.Stream<dynamic>);
+
+  @override
+  _i5.Stream<dynamic> get onlineStatusStream => (super.noSuchMethod(
+        Invocation.getter(#onlineStatusStream),
+        returnValue: _i5.Stream<dynamic>.empty(),
+        returnValueForMissingStub: _i5.Stream<dynamic>.empty(),
+      ) as _i5.Stream<dynamic>);
+
+  @override
+  bool get isConnected => (super.noSuchMethod(
+        Invocation.getter(#isConnected),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  _i11.WebSocketConnectionStatus get currentStatus => (super.noSuchMethod(
+        Invocation.getter(#currentStatus),
+        returnValue: _i11.WebSocketConnectionStatus.disconnected,
+        returnValueForMissingStub: _i11.WebSocketConnectionStatus.disconnected,
+      ) as _i11.WebSocketConnectionStatus);
+
+  @override
+  _i5.Future<void> connect(
+    String? serverUrl,
+    String? authToken,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #connect,
+          [
+            serverUrl,
+            authToken,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<bool> sendMessage({
+    required int? receiverId,
+    required String? content,
+    String? messageType = 'text',
+    String? conversationId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendMessage,
+          [],
+          {
+            #receiverId: receiverId,
+            #content: content,
+            #messageType: messageType,
+            #conversationId: conversationId,
+          },
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> sendTypingIndicator({
+    required String? conversationId,
+    required bool? isTyping,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #sendTypingIndicator,
+          [],
+          {
+            #conversationId: conversationId,
+            #isTyping: isTyping,
+          },
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  _i5.Future<bool> markMessageAsRead({
+    required int? messageId,
+    required String? conversationId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #markMessageAsRead,
+          [],
+          {
+            #messageId: messageId,
+            #conversationId: conversationId,
+          },
+        ),
+        returnValue: _i5.Future<bool>.value(false),
+        returnValueForMissingStub: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
+
+  @override
+  void disconnect() => super.noSuchMethod(
+        Invocation.method(
+          #disconnect,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void dispose() => super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [MessageService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMessageService extends _i1.Mock implements _i12.MessageService {}

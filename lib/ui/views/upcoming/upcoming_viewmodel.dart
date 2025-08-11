@@ -109,6 +109,7 @@ class UpcomingViewModel extends BaseViewModel {
   viewAllEvents() {
     locator<NavigationService>().navigateToExploreEventsView();
   }
+
   viewEventDetails() {
     locator<NavigationService>().navigateToViewEventView();
   }

@@ -35,6 +35,8 @@ import 'package:nest/ui/bottom_sheets/fin_events/fin_events_sheet.dart';
 import 'package:nest/ui/views/explore_events/explore_events_view.dart';
 import 'package:nest/ui/views/find_people_and_orgs/find_people_and_orgs_view.dart';
 import 'package:nest/ui/views/view_event/view_event_view.dart';
+import 'package:nest/services/websocket_service.dart';
+import 'package:nest/services/message_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -71,6 +73,8 @@ import 'package:nest/ui/views/view_event/view_event_view.dart';
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: GlobalService),
     LazySingleton(classType: ImageService),
+    LazySingleton(classType: WebsocketService),
+    LazySingleton(classType: MessageService),
 // @stacked-service
   ],
   bottomsheets: [

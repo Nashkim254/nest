@@ -4,6 +4,8 @@ import 'package:nest/app/app.locator.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:nest/services/global_service.dart';
 import 'package:nest/services/image_service.dart';
+import 'package:nest/services/websocket_service.dart';
+import 'package:nest/services/message_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -16,6 +18,8 @@ import 'test_helpers.mocks.dart';
     MockSpec<DialogService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<GlobalService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<ImageService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<WebsocketService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<MessageService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -25,6 +29,8 @@ void registerServices() {
   getAndRegisterDialogService();
   getAndRegisterGlobalService();
   getAndRegisterImageService();
+  getAndRegisterWebsocketService();
+  getAndRegisterMessageService();
 // @stacked-mock-register
 }
 
@@ -93,6 +99,20 @@ MockImageService getAndRegisterImageService() {
   _removeRegistrationIfExists<ImageService>();
   final service = MockImageService();
   locator.registerSingleton<ImageService>(service);
+  return service;
+}
+
+MockWebsocketService getAndRegisterWebsocketService() {
+  _removeRegistrationIfExists<WebsocketService>();
+  final service = MockWebsocketService();
+  locator.registerSingleton<WebsocketService>(service);
+  return service;
+}
+
+MockMessageService getAndRegisterMessageService() {
+  _removeRegistrationIfExists<MessageService>();
+  final service = MockMessageService();
+  locator.registerSingleton<MessageService>(service);
   return service;
 }
 // @stacked-mock-create

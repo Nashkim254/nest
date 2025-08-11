@@ -90,3 +90,10 @@ enum EventMode {
   const EventMode(this.label);
   final String label;
 }
+
+enum WebSocketConnectionStatus {
+  disconnected,
+  connecting,
+  connected,
+  error,
+}
