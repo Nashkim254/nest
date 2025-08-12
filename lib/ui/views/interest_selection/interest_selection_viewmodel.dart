@@ -1,7 +1,10 @@
+import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+
+import '../../../models/registration_model.dart';
 
 class InterestSelectionViewModel extends BaseViewModel {
   final List<String> interests = [
@@ -61,8 +64,19 @@ class InterestSelectionViewModel extends BaseViewModel {
   }
 
   void submitInterests() {
-    // Add your submission or navigation logic
-    print('User selected: $selectedInterests');
-    locator<NavigationService>().navigateToLocationView();
+    RegistrationModel registrationModel = const RegistrationModel(
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      interests: [],
+    );
+    registrationModel = registrationModel.copyWith(
+      interests: selectedInterests.toList(),
+    );
+    Logger().wtf('User selected interests: ${registrationModel.toJson()}');
+    locator<NavigationService>()
+        .navigateToLocationView(registrationModel: registrationModel);
   }
 }

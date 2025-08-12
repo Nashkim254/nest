@@ -9,6 +9,6 @@ class LoginViewModel extends FormViewModel {
   }
 
   void signup() {
-    locator<NavigationService>().navigateToRegisterView();
+    locator<NavigationService>().navigateToInterestSelectionView();
   }
 }

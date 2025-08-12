@@ -37,6 +37,10 @@ import 'package:nest/ui/views/find_people_and_orgs/find_people_and_orgs_view.dar
 import 'package:nest/ui/views/view_event/view_event_view.dart';
 import 'package:nest/services/websocket_service.dart';
 import 'package:nest/services/message_service.dart';
+import 'package:nest/services/api_service.dart';
+import 'package:nest/services/auth_service.dart';
+import 'package:nest/services/location_service.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -75,6 +79,12 @@ import 'package:nest/services/message_service.dart';
     LazySingleton(classType: ImageService),
     LazySingleton(classType: WebsocketService),
     LazySingleton(classType: MessageService),
+    LazySingleton(classType: ApiService),
+    LazySingleton(classType: AuthService),
+    LazySingleton(classType: LocationService),
+    InitializableSingleton(
+      classType: SharedPreferencesService,
+    ),
 // @stacked-service
   ],
   bottomsheets: [

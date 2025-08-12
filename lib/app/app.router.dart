@@ -7,8 +7,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:flutter/material.dart' as _i26;
 import 'package:flutter/material.dart';
-import 'package:nest/models/chats.dart' as _i28;
-import 'package:nest/models/event_activity.dart' as _i27;
+import 'package:nest/models/chats.dart' as _i29;
+import 'package:nest/models/event_activity.dart' as _i28;
+import 'package:nest/models/registration_model.dart' as _i27;
 import 'package:nest/ui/views/chat/chat_view.dart' as _i16;
 import 'package:nest/ui/views/create_event/create_event_view.dart' as _i19;
 import 'package:nest/ui/views/create_post/create_post_view.dart' as _i17;
@@ -37,7 +38,7 @@ import 'package:nest/ui/views/tickets/tickets_view.dart' as _i11;
 import 'package:nest/ui/views/upcoming/upcoming_view.dart' as _i20;
 import 'package:nest/ui/views/view_event/view_event_view.dart' as _i25;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i29;
+import 'package:stacked_services/stacked_services.dart' as _i30;
 
 class Routes {
   static const homeView = '/home-view';
@@ -236,8 +237,10 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i5.LocationView: (data) {
+      final args = data.getArgs<LocationViewArguments>(nullOk: false);
       return _i26.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i5.LocationView(),
+        builder: (context) => _i5.LocationView(
+            key: args.key, registrationModel: args.registrationModel),
         settings: data,
       );
     },
@@ -248,8 +251,10 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i7.RegisterView: (data) {
+      final args = data.getArgs<RegisterViewArguments>(nullOk: false);
       return _i26.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i7.RegisterView(),
+        builder: (context) => _i7.RegisterView(
+            key: args.key, registrationModel: args.registrationModel),
         settings: data,
       );
     },
@@ -373,6 +378,60 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
+class LocationViewArguments {
+  const LocationViewArguments({
+    this.key,
+    required this.registrationModel,
+  });
+
+  final _i26.Key? key;
+
+  final _i27.RegistrationModel registrationModel;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "registrationModel": "$registrationModel"}';
+  }
+
+  @override
+  bool operator ==(covariant LocationViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.registrationModel == registrationModel;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ registrationModel.hashCode;
+  }
+}
+
+class RegisterViewArguments {
+  const RegisterViewArguments({
+    this.key,
+    required this.registrationModel,
+  });
+
+  final _i26.Key? key;
+
+  final _i27.RegistrationModel registrationModel;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "registrationModel": "$registrationModel"}';
+  }
+
+  @override
+  bool operator ==(covariant RegisterViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.registrationModel == registrationModel;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ registrationModel.hashCode;
+  }
+}
+
 class EventActivityViewArguments {
   const EventActivityViewArguments({
     this.key,
@@ -381,7 +440,7 @@ class EventActivityViewArguments {
 
   final _i26.Key? key;
 
-  final List<_i27.EventActivity> eventActivities;
+  final List<_i28.EventActivity> eventActivities;
 
   @override
   String toString() {
@@ -408,7 +467,7 @@ class ChatViewArguments {
 
   final _i26.Key? key;
 
-  final _i28.Chats chat;
+  final _i29.Chats chat;
 
   @override
   String toString() {
@@ -427,7 +486,7 @@ class ChatViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i29.NavigationService {
+extension NavigatorStateExtension on _i30.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -470,14 +529,18 @@ extension NavigatorStateExtension on _i29.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToLocationView([
+  Future<dynamic> navigateToLocationView({
+    _i26.Key? key,
+    required _i27.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.locationView,
+        arguments: LocationViewArguments(
+            key: key, registrationModel: registrationModel),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -498,14 +561,18 @@ extension NavigatorStateExtension on _i29.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToRegisterView([
+  Future<dynamic> navigateToRegisterView({
+    _i26.Key? key,
+    required _i27.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.registerView,
+        arguments: RegisterViewArguments(
+            key: key, registrationModel: registrationModel),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -612,7 +679,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
 
   Future<dynamic> navigateToEventActivityView({
     _i26.Key? key,
-    required List<_i27.EventActivity> eventActivities,
+    required List<_i28.EventActivity> eventActivities,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -630,7 +697,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
 
   Future<dynamic> navigateToChatView({
     _i26.Key? key,
-    required _i28.Chats chat,
+    required _i29.Chats chat,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -813,14 +880,18 @@ extension NavigatorStateExtension on _i29.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithLocationView([
+  Future<dynamic> replaceWithLocationView({
+    _i26.Key? key,
+    required _i27.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.locationView,
+        arguments: LocationViewArguments(
+            key: key, registrationModel: registrationModel),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -841,14 +912,18 @@ extension NavigatorStateExtension on _i29.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithRegisterView([
+  Future<dynamic> replaceWithRegisterView({
+    _i26.Key? key,
+    required _i27.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.registerView,
+        arguments: RegisterViewArguments(
+            key: key, registrationModel: registrationModel),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -955,7 +1030,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
 
   Future<dynamic> replaceWithEventActivityView({
     _i26.Key? key,
-    required List<_i27.EventActivity> eventActivities,
+    required List<_i28.EventActivity> eventActivities,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -973,7 +1048,7 @@ extension NavigatorStateExtension on _i29.NavigationService {
 
   Future<dynamic> replaceWithChatView({
     _i26.Key? key,
-    required _i28.Chats chat,
+    required _i29.Chats chat,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,

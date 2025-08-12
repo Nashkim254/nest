@@ -58,7 +58,7 @@ enum HostingSelector {
 
 enum EventStatus {
   live(
-    'LIVE',
+    'ACTIVE',
     kcTertiaryColor,
   ),
   upcoming(
@@ -75,7 +75,7 @@ enum EventStatus {
   ),
   cancelled(
     'CANCELLED',
-    kcGreyColor,
+    kcRedColor,
   );
 
   const EventStatus(this.label, this.color);

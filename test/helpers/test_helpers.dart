@@ -6,6 +6,10 @@ import 'package:nest/services/global_service.dart';
 import 'package:nest/services/image_service.dart';
 import 'package:nest/services/websocket_service.dart';
 import 'package:nest/services/message_service.dart';
+import 'package:nest/services/api_service.dart';
+import 'package:nest/services/auth_service.dart';
+import 'package:nest/services/location_service.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -20,6 +24,11 @@ import 'test_helpers.mocks.dart';
     MockSpec<ImageService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<WebsocketService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<MessageService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<ApiService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<AuthService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<LocationService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<SharedPreferencesService>(
+        onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -31,6 +40,10 @@ void registerServices() {
   getAndRegisterImageService();
   getAndRegisterWebsocketService();
   getAndRegisterMessageService();
+  getAndRegisterApiService();
+  getAndRegisterAuthService();
+  getAndRegisterLocationService();
+  getAndRegisterSharedPreferencesService();
 // @stacked-mock-register
 }
 
@@ -113,6 +126,34 @@ MockMessageService getAndRegisterMessageService() {
   _removeRegistrationIfExists<MessageService>();
   final service = MockMessageService();
   locator.registerSingleton<MessageService>(service);
+  return service;
+}
+
+MockApiService getAndRegisterApiService() {
+  _removeRegistrationIfExists<ApiService>();
+  final service = MockApiService();
+  locator.registerSingleton<ApiService>(service);
+  return service;
+}
+
+MockAuthService getAndRegisterAuthService() {
+  _removeRegistrationIfExists<AuthService>();
+  final service = MockAuthService();
+  locator.registerSingleton<AuthService>(service);
+  return service;
+}
+
+MockLocationService getAndRegisterLocationService() {
+  _removeRegistrationIfExists<LocationService>();
+  final service = MockLocationService();
+  locator.registerSingleton<LocationService>(service);
+  return service;
+}
+
+MockSharedPreferencesService getAndRegisterSharedPreferencesService() {
+  _removeRegistrationIfExists<SharedPreferencesService>();
+  final service = MockSharedPreferencesService();
+  locator.registerSingleton<SharedPreferencesService>(service);
   return service;
 }
 // @stacked-mock-create

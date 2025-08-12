@@ -10,6 +10,7 @@ class AppButton extends StatelessWidget {
     required this.onTap,
     this.buttonColor = kcPrimaryColor,
     this.borderColor = Colors.transparent,
+    this.labelColor = kcWhiteColor,
     this.height = 52,
     this.width = double.infinity,
     this.leadingIcon,
@@ -19,6 +20,7 @@ class AppButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color? buttonColor;
   final Color? borderColor;
+  final Color? labelColor;
   final double? height;
   final double? width;
   final String? leadingIcon;
@@ -53,7 +55,7 @@ class AppButton extends StatelessWidget {
                         : const SizedBox(width: 8),
                     Text(
                       labelText,
-                      style: bodyTextMedium,
+                      style: bodyTextMedium.copyWith(color: labelColor),
                     ),
                   ],
                 ),

@@ -29,6 +29,7 @@ const linkedin = '$svgsPath/linkedin.svg';
 const like = '$svgsPath/like.svg';
 const fb = '$svgsPath/fb.svg';
 const web = '$svgsPath/web.svg';
+const settings = '$svgsPath/settings.svg';
 const comment = '$svgsPath/comment.svg';
 const send = '$svgsPath/send.svg';
 const attach = '$svgsPath/attach.svg';
@@ -43,6 +44,8 @@ const prize = '$svgsPath/prize.svg';
 const calendar = '$svgsPath/calendar.svg';
 const add = '$svgsPath/add.svg';
 const qrcode = '$svgsPath/qrcode.svg';
+const addOutlined = '$svgsPath/add-outlined.svg';
+const analytics = '$svgsPath/analytics.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

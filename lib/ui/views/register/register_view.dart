@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nest/models/registration_model.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/views/register/register_view.form.dart';
 import 'package:stacked/stacked.dart';
@@ -19,8 +20,9 @@ import 'register_viewmodel.dart';
   FormTextField(name: 'name'),
 ])
 class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
-  const RegisterView({Key? key}) : super(key: key);
-
+  const RegisterView({Key? key, required this.registrationModel})
+      : super(key: key);
+  final RegistrationModel registrationModel;
   @override
   Widget builder(
     BuildContext context,
@@ -87,32 +89,39 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
                 ),
                 verticalSpaceMedium,
                 TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: nameController,
                   decoration: AppInputDecoration.standard(
                       hintText: 'Name', borderColor: kcBorderColor),
                 ),
                 verticalSpaceMedium,
                 TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: emailController,
                   decoration: AppInputDecoration.standard(
                       hintText: 'Email', borderColor: kcBorderColor),
                 ),
                 verticalSpaceMedium,
                 TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: phoneController,
                   decoration: AppInputDecoration.standard(
                       hintText: 'Phone', borderColor: kcBorderColor),
                 ),
                 verticalSpaceMedium,
                 TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: passwordController,
                   decoration: AppInputDecoration.standard(
                       hintText: 'Password', borderColor: kcBorderColor),
                 ),
                 verticalSpaceMedium,
                 AppButton(
+                  isBusy: viewModel.isBusy,
                   labelText: 'Create My Account',
-                  onTap: () {},
+                  onTap: () => viewModel.register(
+                    registrationModel,
+                  ),
                 ),
                 Row(
                   children: [
@@ -144,6 +153,31 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: kcGreyColor,
+                  ),
+                ),
+                Align(
+                  child: Text(
+                    "Already have an account?",
+                    style: titleTextMedium.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: kcGreyColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Align(
+                  child: TextButton(
+                    onPressed: () => viewModel.signin(),
+                    child: Text(
+                      "Sign in",
+                      style: titleTextMedium.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: kcPrimaryColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ],

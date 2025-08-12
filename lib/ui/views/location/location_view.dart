@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nest/models/registration_model.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_inputdecoration.dart';
@@ -16,8 +17,9 @@ import 'package:stacked/stacked_annotations.dart';
   FormTextField(name: 'manualLocation'),
 ])
 class LocationView extends StackedView<LocationViewModel> with $LocationView {
-  const LocationView({Key? key}) : super(key: key);
-
+  const LocationView({Key? key, required this.registrationModel})
+      : super(key: key);
+  final RegistrationModel registrationModel;
   @override
   Widget builder(
     BuildContext context,
@@ -53,36 +55,44 @@ class LocationView extends StackedView<LocationViewModel> with $LocationView {
               verticalSpaceMedium,
               DotWidget(),
               verticalSpaceMedium,
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: kcContainerBorderColor),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(8),
+              InkWell(
+                onTap: () => viewModel.getCurrentLocation(),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: kcContainerBorderColor),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(8),
+                    ),
+                    color: kcOffWhite8Grey,
                   ),
-                  color: kcOffWhite8Grey,
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(loc),
-                      horizontalSpaceSmall,
-                      Text(
-                        "Use current location",
-                        style: titleTextMedium.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: kcWhiteColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  child: Center(
+                    child: viewModel.isBusy
+                        ? const CircularProgressIndicator(
+                            color: kcPrimaryColor,
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(loc),
+                              horizontalSpaceSmall,
+                              Text(
+                                "Use current location",
+                                style: titleTextMedium.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: kcWhiteColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ),
               spacedDivider,
               TextFormField(
+                style: titleTextMedium.copyWith(color: kcWhiteColor),
                 controller: manualLocationController,
                 decoration: AppInputDecoration.standard(
                     prefixIcon: SvgPicture.asset(
@@ -101,7 +111,7 @@ class LocationView extends StackedView<LocationViewModel> with $LocationView {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
         child: AppButton(
           labelText: 'Finish',
-          onTap: () => viewModel.goToLoginView(),
+          onTap: () => viewModel.goToRegisterView(registrationModel),
         ),
       ),
     );

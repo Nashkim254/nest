@@ -25,9 +25,12 @@ class WebsocketService {
   static const Duration heartbeatInterval = Duration(seconds: 30);
 
   // Connection status stream
-  final _connectionStatusController = StreamController<WebSocketConnectionStatus>.broadcast();
-  Stream<WebSocketConnectionStatus> get connectionStatus => _connectionStatusController.stream;
-  WebSocketConnectionStatus _currentStatus = WebSocketConnectionStatus.disconnected;
+  final _connectionStatusController =
+      StreamController<WebSocketConnectionStatus>.broadcast();
+  Stream<WebSocketConnectionStatus> get connectionStatus =>
+      _connectionStatusController.stream;
+  WebSocketConnectionStatus _currentStatus =
+      WebSocketConnectionStatus.disconnected;
 
   // Message streams
   final _messageController = StreamController<MessagePayload>.broadcast();
@@ -36,8 +39,10 @@ class WebsocketService {
   final _typingController = StreamController<TypingPayload>.broadcast();
   Stream<TypingPayload> get typingStream => _typingController.stream;
 
-  final _onlineStatusController = StreamController<OnlineStatusPayload>.broadcast();
-  Stream<OnlineStatusPayload> get onlineStatusStream => _onlineStatusController.stream;
+  final _onlineStatusController =
+      StreamController<OnlineStatusPayload>.broadcast();
+  Stream<OnlineStatusPayload> get onlineStatusStream =>
+      _onlineStatusController.stream;
 
   // Connection methods
   Future<void> connect(String serverUrl, String authToken) async {
@@ -73,7 +78,6 @@ class WebsocketService {
       _reconnectAttempts = 0;
       _startHeartbeat();
       _logger.i('WebSocket connected successfully');
-
     } catch (e) {
       _logger.e('WebSocket connection error: $e');
       _updateConnectionStatus(WebSocketConnectionStatus.error);
@@ -164,7 +168,8 @@ class WebsocketService {
     _reconnectTimer?.cancel();
     _reconnectTimer = Timer(reconnectInterval, () {
       _reconnectAttempts++;
-      _logger.i('Attempting to reconnect... ($_reconnectAttempts/$maxReconnectAttempts)');
+      _logger.i(
+          'Attempting to reconnect... ($_reconnectAttempts/$maxReconnectAttempts)');
       _connect();
     });
   }

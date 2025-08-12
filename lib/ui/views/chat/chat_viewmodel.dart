@@ -59,10 +59,13 @@ class ChatViewModel extends BaseViewModel {
   List<ListenableServiceMixin> get reactiveServices => [_messagingService];
 
   // Getters
-  List<Message> get chats => _messagingService.getConversationMessages(conversationId);
+  List<Message> get chats =>
+      _messagingService.getConversationMessages(conversationId);
   Set<int> get typingUsers => _messagingService.getTypingUsers(conversationId);
-  WebSocketConnectionStatus get connectionStatus => _messagingService.connectionStatus;
-  bool get isConnected => connectionStatus == WebSocketConnectionStatus.connected;
+  WebSocketConnectionStatus get connectionStatus =>
+      _messagingService.connectionStatus;
+  bool get isConnected =>
+      connectionStatus == WebSocketConnectionStatus.connected;
 
   String get connectionStatusText {
     switch (connectionStatus) {

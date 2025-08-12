@@ -8,12 +8,16 @@ environment:
 
 dependencies:
   chewie: ^1.12.1
+  dio: ^5.9.0
   flutter:
     sdk: flutter
   flutter_svg: ^2.2.0
+  geocoding: ^4.0.0
+  geolocator: ^14.0.2
   image_picker: ^1.1.2
   logger: ^1.4.0
   permission_handler: ^12.0.1
+  shared_preferences: ^2.5.3
   stacked: ^3.4.0
   stacked_services: ^1.1.0
   video_player: ^2.10.0

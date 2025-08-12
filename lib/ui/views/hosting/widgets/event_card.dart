@@ -35,30 +35,35 @@ class EventCardWidget extends StatelessWidget {
         child: Container(
           padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: data.backgroundColor ?? kcDarkGreyColor,
-            borderRadius: borderRadius ?? BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+              color: data.backgroundColor ?? kcDarkGreyColor,
+              borderRadius: borderRadius ?? BorderRadius.circular(12),
+              border: Border.all(color: kcContainerBorderColor)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Title and Menu Row
-              EventCardHeaderWidget(
-                title: data.title,
-                titleStyle: data.titleStyle,
-                onMenuTap: data.onMenuTap,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title and Menu Row
+                  EventCardHeaderWidget(
+                    title: data.title,
+                    titleStyle: data.titleStyle,
+                    onMenuTap: data.onMenuTap,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Date and Time
+                  EventCardDateTimeWidget(
+                    dateTime: data.dateTime,
+                    style: data.dateTimeStyle,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Status and Info
+                ],
               ),
-
-              const SizedBox(height: 12),
-
-              // Date and Time
-              EventCardDateTimeWidget(
-                dateTime: data.dateTime,
-                style: data.dateTimeStyle,
-              ),
-
-              const SizedBox(height: 12),
-
-              // Status and Info
               EventCardStatusWidget(
                 status: data.status,
                 statusText: data.statusText,
@@ -91,26 +96,24 @@ class EventCardHeaderWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            title,
-            style: titleStyle ??
-                const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
+        Text(
+          title,
+          style: titleStyle ??
+              const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
         ),
-        // if (onMenuTap != null)
-        GestureDetector(
-          onTap: onMenuTap,
-          child: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
+        // // if (onMenuTap != null)
+        // GestureDetector(
+        //   onTap: onMenuTap,
+        //   child: const Icon(
+        //     Icons.more_vert,
+        //     color: Colors.white,
+        //     size: 20,
+        //   ),
+        // ),
       ],
     );
   }
@@ -156,39 +159,20 @@ class EventCardStatusWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Status Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: status.color,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            status.label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: status.color,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        status.label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
         ),
-        const SizedBox(width: 12),
-
-        // Status Text
-        Expanded(
-          child: Text(
-            statusText,
-            style: statusTextStyle ??
-                const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
