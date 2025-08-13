@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_urls.dart';
 
 import '../abstractClasses/abstract_class.dart';
+import '../app/app.locator.dart';
 import '../models/api_exceptions.dart';
 import '../models/api_response.dart';
 
@@ -10,7 +12,7 @@ class ApiService implements IApiService {
   late final Dio _dio;
   final Logger _logger = Logger();
   final String baseUrl = AppUrls.baseUrl;
-
+  final prefsService = locator<SharedPreferencesService>();
   ApiService({
     int connectTimeout = 30000,
     int receiveTimeout = 30000,
@@ -54,6 +56,7 @@ class ApiService implements IApiService {
           _logger.e('Message: ${error.message}');
           if (error.response?.data != null) {
             _logger.e('Error Data: ${error.response?.data}');
+
           }
           handler.next(error);
         },
@@ -74,16 +77,31 @@ class ApiService implements IApiService {
       ),
     );
 
-    // Retry Interceptor for network failures
+    // Retry Interceptor with proper limits
     _dio.interceptors.add(
       InterceptorsWrapper(
         onError: (error, handler) async {
-          if (_shouldRetry(error)) {
+          // Check if this request has already been retried
+          final retryCount = error.requestOptions.extra['retry_count'] ?? 0;
+          const maxRetries = 2; // Maximum number of retries
+
+          if (retryCount < maxRetries && _shouldRetry(error)) {
             try {
+              _logger.d(
+                  'Retrying request (attempt ${retryCount + 1}/$maxRetries)');
+
+              // Mark this as a retry
+              error.requestOptions.extra['retry_count'] = retryCount + 1;
+
+              // Add delay between retries
+              await Future.delayed(
+                  Duration(milliseconds: (1000 * (retryCount + 1)).toInt()));
+
               final response = await _dio.fetch(error.requestOptions);
               handler.resolve(response);
               return;
             } catch (e) {
+              _logger.e('Retry failed: $e');
               // If retry fails, continue with original error
             }
           }
@@ -94,7 +112,7 @@ class ApiService implements IApiService {
   }
 
   Future<String?> _getAuthToken() async {
-    return null;
+    return prefsService.getAuthToken();
   }
 
   bool _shouldRetry(DioException error) {
@@ -116,7 +134,6 @@ class ApiService implements IApiService {
         queryParameters: queryParameters,
         options: Options(headers: headers),
       ),
-      parser,
     );
   }
 
@@ -135,7 +152,6 @@ class ApiService implements IApiService {
         queryParameters: queryParameters,
         options: Options(headers: headers),
       ),
-      parser,
     );
   }
 
@@ -154,7 +170,6 @@ class ApiService implements IApiService {
         queryParameters: queryParameters,
         options: Options(headers: headers),
       ),
-      parser,
     );
   }
 
@@ -171,17 +186,15 @@ class ApiService implements IApiService {
         queryParameters: queryParameters,
         options: Options(headers: headers),
       ),
-      parser,
     );
   }
 
   Future<ApiResponse<T>> _performRequest<T>(
     Future<Response> Function() request,
-    T Function(dynamic)? parser,
   ) async {
     try {
       final response = await request();
-      return _handleResponse<T>(response, parser);
+      return _handleResponse<T>(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
     } catch (e) {
@@ -190,32 +203,14 @@ class ApiService implements IApiService {
     }
   }
 
-  ApiResponse<T> _handleResponse<T>(
-    Response response,
-    T Function(dynamic)? parser,
-  ) {
+  ApiResponse<T> _handleResponse<T>(Response response) {
     if (response.statusCode! >= 200 && response.statusCode! < 300) {
-      try {
-        final data = response.data;
-        T? parsedData;
-
-        if (data is Map<String, dynamic> && parser != null) {
-          parsedData = parser(data);
-        } else if (data is List && parser != null) {
-          parsedData = data.map((item) => parser(item)).toList() as T;
-        } else {
-          parsedData = data as T?;
-        }
-
-        return ApiResponse.success(
-          parsedData!,
-          message: response.data['message'] ?? 'Request successful',
-          statusCode: response.statusCode,
-        );
-      } catch (e) {
-        _logger.e('Error parsing response: $e');
-        throw ApiException('Failed to parse response data');
-      }
+      // Return response data as-is, no parsing
+      return ApiResponse.success(
+        response.data as T,
+        message: 'Request successful',
+        statusCode: response.statusCode,
+      );
     } else {
       throw ServerException(
         'Server returned error: ${response.statusCode}',

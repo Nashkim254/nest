@@ -1,5 +1,6 @@
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -14,6 +15,8 @@ class ProfileViewModel extends ReactiveViewModel {
     locator<NavigationService>().navigateTo(Routes.editProfileView);
   }
 
+  Map<String, dynamic>? get userInfo =>
+      locator<SharedPreferencesService>().getUserInfo();
   final eventActivities = [
     EventActivity(
       userName: 'John Doe',
@@ -111,6 +114,10 @@ class ProfileViewModel extends ReactiveViewModel {
 
   cretePost() {
     locator<NavigationService>().navigateTo(Routes.createPostView);
+  }
+
+  getUser() {
+    var user = locator<SharedPreferencesService>().getUserInfo();
   }
 
   @override

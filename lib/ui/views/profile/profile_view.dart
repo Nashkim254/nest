@@ -63,7 +63,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 verticalSpaceMedium,
                 Center(
                   child: Text(
-                    "John Doe",
+                    '${viewModel.userInfo!['first_name']} ${viewModel.userInfo!['last_name']}',
                     style: titleTextMedium.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 verticalSpaceSmall,
                 Center(
                   child: Text(
-                    "@johndoe",
+                    "@${viewModel.userInfo!['first_name']}",
                     style: titleTextMedium.copyWith(color: kcSubtitleColor),
                   ),
                 ),

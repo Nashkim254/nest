@@ -205,6 +205,10 @@ class SharedPreferencesService with InitializableDependency {
     return await setString(PreferenceKeys.authToken, token);
   }
 
+  Future<bool> setExpiry(String token) async {
+    return await setString(PreferenceKeys.authToken, token);
+  }
+
   String? getAuthToken() {
     return getString(PreferenceKeys.authToken);
   }

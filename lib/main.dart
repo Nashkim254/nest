@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nest/app/app.bottomsheets.dart';
 import 'package:nest/app/app.dialogs.dart';
 import 'package:nest/app/app.locator.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
   setupDialogUi();
   setupBottomSheetUi();
   setupServiceLocator();
+  await dotenv.load(fileName: '.env');
   runApp(const MainApp());
 }
 
@@ -24,6 +26,7 @@ void setupServiceLocator() {
       receiveTimeout: 30000,
     ),
   );
+  locator.registerLazySingleton<SnackbarService>(() => SnackbarService());
 }
 
 class MainApp extends StatelessWidget {

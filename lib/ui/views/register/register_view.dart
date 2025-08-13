@@ -6,6 +6,8 @@ import 'package:nest/ui/views/register/register_view.form.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
 
+import '../../../app/app.locator.dart';
+import '../../../services/auth_service.dart';
 import '../../common/app_custom_button.dart';
 import '../../common/app_inputdecoration.dart';
 import '../../common/app_strings.dart';
@@ -141,7 +143,12 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
                 ),
                 AppButton(
                   labelText: 'Continue with Google',
-                  onTap: () {},
+                  isBusy: viewModel.isBusy,
+                  onTap: () async =>
+                  await locator<AuthService>().signInWithGoogle().then(
+                        (value) async =>
+                    await viewModel.sendAuthGoogleParams(value),
+                  ),
                   buttonColor: kcOffWhite8Grey,
                   borderColor: kcBorderColor,
                   leadingIcon: chrome,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nest/app/app.locator.dart';
+import 'package:nest/services/auth_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
@@ -55,18 +57,21 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
                 verticalSpaceMedium,
                 TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: emailController,
                   decoration:
                       AppInputDecoration.standard(hintText: 'Email or Phone'),
                 ),
                 verticalSpaceMedium,
                 TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: passwordController,
                   decoration: AppInputDecoration.standard(hintText: 'Password'),
                 ),
                 verticalSpaceMedium,
                 AppButton(
                   labelText: 'Login',
+                  isBusy: viewModel.isBusy,
                   onTap: () => viewModel.login(),
                 ),
                 verticalSpaceMedium,
@@ -100,28 +105,38 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
                 verticalSpaceMedium,
                 AppButton(
+                  isBusy: viewModel.isBusy,
                   labelText: 'Continue with Google',
-                  onTap: () {},
+                  onTap: () async =>
+                      await locator<AuthService>().signInWithGoogle().then(
+                            (value) async =>
+                                await viewModel.sendAuthGoogleParams(value),
+                          ),
                   buttonColor: kcOffWhite8Grey,
                   borderColor: kcContainerBorderColor,
                   leadingIcon: chrome,
                 ),
                 verticalSpaceSmall,
                 AppButton(
+                  isBusy: viewModel.isBusy,
                   labelText: 'Continue with Apple',
-                  onTap: () {},
+                  onTap: () async =>
+                      await locator<AuthService>().appleSignIn().then(
+                            (value) async =>
+                                await viewModel.sendAuthAppleParams(value),
+                          ),
                   buttonColor: kcOffWhite8Grey,
                   borderColor: kcContainerBorderColor,
                   leadingIcon: apple,
                 ),
                 verticalSpaceSmall,
-                AppButton(
-                  labelText: 'Login with WhatsApp',
-                  onTap: () {},
-                  buttonColor: kcOffWhite8Grey,
-                  borderColor: kcContainerBorderColor,
-                  leadingIcon: whatsapp,
-                ),
+                // AppButton(
+                //   labelText: 'Login with WhatsApp',
+                //   onTap: () {},
+                //   buttonColor: kcOffWhite8Grey,
+                //   borderColor: kcContainerBorderColor,
+                //   leadingIcon: whatsapp,
+                // ),
                 verticalSpaceMedium,
                 Align(
                   child: Text(

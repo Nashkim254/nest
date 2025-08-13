@@ -4,6 +4,7 @@ class PreferenceKeys {
   static const String refreshToken = 'refresh_token';
   static const String isLoggedIn = 'is_logged_in';
   static const String userInfo = 'user_info';
+  static const String expiryTime = 'expiry';
 
   // App Settings
   static const String appSettings = 'app_settings';
