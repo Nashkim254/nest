@@ -1,5 +1,7 @@
+import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
+import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
@@ -11,6 +13,8 @@ import '../../../services/global_service.dart';
 class ProfileViewModel extends ReactiveViewModel {
   bool get isUser => true;
   final globalService = locator<GlobalService>();
+  final authService = locator<AuthService>();
+  Logger logger = Logger();
   onEditProfile() {
     locator<NavigationService>().navigateTo(Routes.editProfileView);
   }
@@ -118,6 +122,30 @@ class ProfileViewModel extends ReactiveViewModel {
 
   getUser() {
     var user = locator<SharedPreferencesService>().getUserInfo();
+  }
+
+  Future getUserProfile() async {
+    setBusy(true);
+    try {
+      final response =
+          await authService.getUserProfile(userInfo!['ID'] ?? userInfo!['id']);
+      if (response.statusCode == 200 && response.data != null) {
+        // locator<SharedPreferencesService>().setUserInfo(response.data);
+        logger.i('User profile loaded successfully: ${response.data}');
+      } else {
+        throw Exception(response.message ?? 'Failed to load user profile');
+      }
+    } catch (e, s) {
+      logger.i('error: ${e}');
+      logger.e('error: ${s}');
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to load user profile: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   @override

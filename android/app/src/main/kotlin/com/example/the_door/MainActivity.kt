@@ -1,4 +1,4 @@
-package com.example.nest
+package app.thedoor.studio
 
 import io.flutter.embedding.android.FlutterActivity
 

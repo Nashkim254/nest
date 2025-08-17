@@ -7,7 +7,9 @@ class AppUrls {
   static const String baseAuthUrl = '$baseUrl/auth';
   static const String login = '$baseAuthUrl/login';
   static const String register = '$baseAuthUrl/register';
-  static const String userProfile = '$baseUrl/user/profile';
+  static const String reQuestPasswordReset = '$baseAuthUrl/reset-password';
+  static const String resetPassword = '$baseAuthUrl/reset-password/confirm';
+  static const String userProfile = '$baseUrl/user';
   static const String updateProfile = '$baseUrl/user/update';
   static const String fetchPosts = '$baseUrl/posts';
   static const String createPost = '$baseUrl/posts/create';
@@ -35,7 +37,7 @@ class AppUrls {
   final callbackUrlScheme = NEXT_PUBLIC_GOOGLE_REDIRECT;
   static const String googleUrl = 'oauth/google';
   static const String appleApiUrl = 'oauth/apple';
-  static  String authorizationEndpoint =
+  static String authorizationEndpoint =
       '''https://accounts.google.com/o/oauth2/v2/auth?
 scope=email%20profile&
 response_type=code&

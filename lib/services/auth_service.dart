@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:nest/models/api_response.dart';
 import 'package:nest/models/login_model.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_urls.dart';
 import 'package:stacked/stacked.dart';
 
@@ -15,12 +16,67 @@ import '../models/registration_model.dart';
 
 class AuthService with ListenableServiceMixin {
   final IApiService _apiService = locator<IApiService>();
+  final prefsService = locator<SharedPreferencesService>();
+  _getAuthToken() {
+    return prefsService.getAuthToken();
+  }
 
+  Future<void> _setAuthToken(String token) async {
+    await prefsService.setAuthToken(token);
+  }
+
+  String? get token => _getAuthToken() ?? '';
   Future register(RegistrationModel model) async {
     try {
       final response = await _apiService.post(
         AppUrls.register,
         data: model.toJson(),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future requestChangePassword(Map<String, dynamic> body) async {
+    try {
+      final response =
+          await _apiService.post(AppUrls.reQuestPasswordReset, data: body);
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future resetPassword(Map<String, dynamic> body) async {
+    try {
+      final response =
+          await _apiService.post(AppUrls.resetPassword, data: body);
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getUserProfile(int id) async {
+    try {
+      final response = await _apiService.get(
+        '${AppUrls.userProfile}/$id',
       );
 
       if (response.statusCode == 200 && response.data != null) {
@@ -104,7 +160,7 @@ class AuthService with ListenableServiceMixin {
       {required Map<String, dynamic> queryParams}) async {
     try {
       final response = await _apiService.post(
-        AppUrls.googleUrl,
+        '${AppUrls.baseAuthUrl}/${AppUrls.googleUrl}',
         data: json.encode(queryParams),
       );
       if (response.statusCode == 200 && response.data != null) {
@@ -122,7 +178,7 @@ class AuthService with ListenableServiceMixin {
       {required Map<String, dynamic> queryParams}) async {
     try {
       final response = await _apiService.post(
-        AppUrls.appleApiUrl,
+        '${AppUrls.baseAuthUrl}/${AppUrls.appleApiUrl}',
         data: json.encode(queryParams),
         parser: (data) => ApiResponse.fromJson(data, (data) => data),
       );

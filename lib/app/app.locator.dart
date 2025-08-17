@@ -13,10 +13,13 @@ import 'package:stacked_shared/stacked_shared.dart';
 
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/deep_link_generator_service.dart';
+import '../services/deep_link_service.dart';
 import '../services/global_service.dart';
 import '../services/image_service.dart';
 import '../services/location_service.dart';
 import '../services/message_service.dart';
+import '../services/share_service.dart';
 import '../services/shared_preferences_service.dart';
 import '../services/websocket_service.dart';
 
@@ -44,4 +47,8 @@ Future<void> setupLocator({
   final sharedPreferencesService = SharedPreferencesService();
   await sharedPreferencesService.init();
   locator.registerSingleton(sharedPreferencesService);
+
+  locator.registerLazySingleton(() => DeepLinkService());
+  locator.registerLazySingleton(() => DeepLinkGeneratorService());
+  locator.registerLazySingleton(() => ShareService());
 }

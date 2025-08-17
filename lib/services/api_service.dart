@@ -56,7 +56,6 @@ class ApiService implements IApiService {
           _logger.e('Message: ${error.message}');
           if (error.response?.data != null) {
             _logger.e('Error Data: ${error.response?.data}');
-
           }
           handler.next(error);
         },

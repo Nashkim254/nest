@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nest/app/app.locator.dart';
+import 'package:nest/app/app.router.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../../../common/app_strings.dart';
 import '../../../common/app_styles.dart';
@@ -25,15 +28,18 @@ class FeedTopBarWidget extends StatelessWidget {
           Row(
             children: [
               InkWell(
-                onTap: () {
-                  // Handle search action
-                },
+                onTap: () {},
                 child: SvgPicture.asset(notification),
               ),
               horizontalSpaceSmall,
-              const CircleAvatar(
-                radius: 16,
-                backgroundImage: AssetImage(avatar),
+              InkWell(
+                onTap: () {
+                  locator<NavigationService>().navigateTo(Routes.settingsView);
+                },
+                child: const CircleAvatar(
+                  radius: 16,
+                  backgroundImage: AssetImage(avatar),
+                ),
               ),
             ],
           ),

@@ -7,12 +7,14 @@
 import 'package:stacked_services/stacked_services.dart';
 
 import 'app.locator.dart';
+import '../ui/dialogs/change_password/change_password_dialog.dart';
 import '../ui/dialogs/comments/comments_dialog.dart';
 import '../ui/dialogs/info_alert/info_alert_dialog.dart';
 
 enum DialogType {
   infoAlert,
   comments,
+  changePassword,
 }
 
 void setupDialogUi() {
@@ -23,6 +25,8 @@ void setupDialogUi() {
         InfoAlertDialog(request: request, completer: completer),
     DialogType.comments: (context, request, completer) =>
         CommentsDialog(request: request, completer: completer),
+    DialogType.changePassword: (context, request, completer) =>
+        ChangePasswordDialog(request: request, completer: completer),
   };
 
   dialogService.registerCustomDialogBuilders(builders);

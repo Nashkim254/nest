@@ -145,10 +145,10 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
                   labelText: 'Continue with Google',
                   isBusy: viewModel.isBusy,
                   onTap: () async =>
-                  await locator<AuthService>().signInWithGoogle().then(
-                        (value) async =>
-                    await viewModel.sendAuthGoogleParams(value),
-                  ),
+                      await locator<AuthService>().signInWithGoogle().then(
+                            (value) async =>
+                                await viewModel.sendAuthGoogleParams(value),
+                          ),
                   buttonColor: kcOffWhite8Grey,
                   borderColor: kcBorderColor,
                   leadingIcon: chrome,

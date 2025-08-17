@@ -10,6 +10,9 @@ import 'package:nest/services/api_service.dart';
 import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/location_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/services/deep_link_service.dart';
+import 'package:nest/services/deep_link_generator_service.dart';
+import 'package:nest/services/share_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -29,6 +32,10 @@ import 'test_helpers.mocks.dart';
     MockSpec<LocationService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<SharedPreferencesService>(
         onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<DeepLinkService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<DeepLinkGeneratorService>(
+        onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<ShareService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -44,6 +51,9 @@ void registerServices() {
   getAndRegisterAuthService();
   getAndRegisterLocationService();
   getAndRegisterSharedPreferencesService();
+  getAndRegisterDeepLinkService();
+  getAndRegisterDeepLinkGeneratorService();
+  getAndRegisterShareService();
 // @stacked-mock-register
 }
 
@@ -154,6 +164,27 @@ MockSharedPreferencesService getAndRegisterSharedPreferencesService() {
   _removeRegistrationIfExists<SharedPreferencesService>();
   final service = MockSharedPreferencesService();
   locator.registerSingleton<SharedPreferencesService>(service);
+  return service;
+}
+
+MockDeepLinkService getAndRegisterDeepLinkService() {
+  _removeRegistrationIfExists<DeepLinkService>();
+  final service = MockDeepLinkService();
+  locator.registerSingleton<DeepLinkService>(service);
+  return service;
+}
+
+MockDeepLinkGeneratorService getAndRegisterDeepLinkGeneratorService() {
+  _removeRegistrationIfExists<DeepLinkGeneratorService>();
+  final service = MockDeepLinkGeneratorService();
+  locator.registerSingleton<DeepLinkGeneratorService>(service);
+  return service;
+}
+
+MockShareService getAndRegisterShareService() {
+  _removeRegistrationIfExists<ShareService>();
+  final service = MockShareService();
+  locator.registerSingleton<ShareService>(service);
   return service;
 }
 // @stacked-mock-create

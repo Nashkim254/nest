@@ -13,6 +13,11 @@ import 'profile_viewmodel.dart';
 
 class ProfileView extends StackedView<ProfileViewModel> {
   const ProfileView({Key? key}) : super(key: key);
+  @override
+  void onViewModelReady(ProfileViewModel viewModel) {
+    viewModel.getUserProfile();
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(

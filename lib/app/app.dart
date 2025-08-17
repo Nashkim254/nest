@@ -41,6 +41,11 @@ import 'package:nest/services/api_service.dart';
 import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/location_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/ui/views/settings/settings_view.dart';
+import 'package:nest/ui/dialogs/change_password/change_password_dialog.dart';
+import 'package:nest/services/deep_link_service.dart';
+import 'package:nest/services/deep_link_generator_service.dart';
+import 'package:nest/services/share_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -69,6 +74,7 @@ import 'package:nest/services/shared_preferences_service.dart';
     MaterialRoute(page: ExploreEventsView),
     MaterialRoute(page: FindPeopleAndOrgsView),
     MaterialRoute(page: ViewEventView),
+    MaterialRoute(page: SettingsView),
 // @stacked-route
   ],
   dependencies: [
@@ -85,6 +91,9 @@ import 'package:nest/services/shared_preferences_service.dart';
     InitializableSingleton(
       classType: SharedPreferencesService,
     ),
+    LazySingleton(classType: DeepLinkService),
+    LazySingleton(classType: DeepLinkGeneratorService),
+    LazySingleton(classType: ShareService),
 // @stacked-service
   ],
   bottomsheets: [
@@ -100,6 +109,7 @@ import 'package:nest/services/shared_preferences_service.dart';
   dialogs: [
     StackedDialog(classType: InfoAlertDialog),
     StackedDialog(classType: CommentsDialog),
+    StackedDialog(classType: ChangePasswordDialog),
 // @stacked-dialog
   ],
 )

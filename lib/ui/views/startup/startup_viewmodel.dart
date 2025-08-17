@@ -16,11 +16,8 @@ class StartupViewModel extends BaseViewModel {
       _navigationService.replaceWithInterestSelectionView();
     } else {
       bool isLoggedIn = prefsService.getIsLoggedIn();
-      if (isLoggedIn) {
-        _navigationService.replaceWithHomeView();
-      } else {
-        _navigationService.replaceWithLoginView();
-      }
+
+      _navigationService.replaceWithLoginView();
     }
   }
 }

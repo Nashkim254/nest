@@ -46,6 +46,12 @@ const add = '$svgsPath/add.svg';
 const qrcode = '$svgsPath/qrcode.svg';
 const addOutlined = '$svgsPath/add-outlined.svg';
 const analytics = '$svgsPath/analytics.svg';
+const info = '$svgsPath/info.svg';
+const terms = '$svgsPath/terms.svg';
+const feedback = '$svgsPath/feedback.svg';
+const email = '$svgsPath/email.svg';
+const lock = '$svgsPath/lock.svg';
+const privacy = '$svgsPath/privacy.svg';
 
 //images
 const splash = '$imagesPath/splash.png';
