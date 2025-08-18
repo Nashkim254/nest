@@ -59,7 +59,7 @@ class StartupView extends StackedView<StartupViewModel> {
                     child: AppButton(
                       labelText: 'Skip',
                       buttonColor: Colors.transparent,
-                      onTap: () => viewModel.getStarted(),
+                      onTap: () => viewModel.navigateToLogin(),
                     ),
                   ),
                 ],

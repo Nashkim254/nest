@@ -13,7 +13,8 @@ import 'login_view.form.dart';
 
 class LoginViewModel extends FormViewModel with $LoginView {
   final authService = locator<AuthService>();
-
+  bool isGoogleSignIn = false;
+  bool isAppleSignIn = false;
   login() async {
     LoginModel loginModel = LoginModel(
       email: emailController.text,
@@ -55,13 +56,13 @@ class LoginViewModel extends FormViewModel with $LoginView {
   }
 
   Future sendAuthAppleParams(Map<String, dynamic> params) async {
-    setBusy(true);
+    isAppleSignIn = (true);
     rebuildUi();
     ApiResponse response =
         await locator<AuthService>().oAuthApple(queryParams: params);
     switch (response.statusCode) {
       case 200:
-        setBusy(false);
+        isAppleSignIn = (false);
         rebuildUi();
         DateTime tokenExpirationTime = DateTime.parse(response.data['expires']);
         locator<SharedPreferencesService>()
@@ -76,7 +77,7 @@ class LoginViewModel extends FormViewModel with $LoginView {
         locator<NavigationService>()
             .clearStackAndShowView(const NavigationView());
       default:
-        setBusy(false);
+        isAppleSignIn = (false);
         rebuildUi();
         locator<SnackbarService>().showSnackbar(
           message: response.data['error'],
@@ -88,12 +89,12 @@ class LoginViewModel extends FormViewModel with $LoginView {
   }
 
   Future sendAuthGoogleParams(Map<String, dynamic> params) async {
-    setBusy(true);
+    isGoogleSignIn = (true);
     ApiResponse response =
         await locator<AuthService>().oAuthGoogle(queryParams: params);
     switch (response.statusCode) {
       case 200:
-        setBusy(false);
+        isGoogleSignIn = (false);
         rebuildUi();
         DateTime tokenExpirationTime = DateTime.parse(response.data['expires']);
         locator<SharedPreferencesService>()
@@ -108,7 +109,7 @@ class LoginViewModel extends FormViewModel with $LoginView {
         locator<NavigationService>()
             .clearStackAndShowView(const NavigationView());
       default:
-        setBusy(false);
+        isGoogleSignIn = (false);
         locator<SnackbarService>().showSnackbar(
           message: response.data['error'],
           duration: const Duration(

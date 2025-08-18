@@ -105,7 +105,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
                 verticalSpaceMedium,
                 AppButton(
-                  isBusy: viewModel.isBusy,
+                  isBusy: viewModel.isGoogleSignIn,
                   labelText: 'Continue with Google',
                   onTap: () async =>
                       await locator<AuthService>().signInWithGoogle().then(
@@ -118,7 +118,7 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 ),
                 verticalSpaceSmall,
                 AppButton(
-                  isBusy: viewModel.isBusy,
+                  isBusy: viewModel.isAppleSignIn,
                   labelText: 'Continue with Apple',
                   onTap: () async =>
                       await locator<AuthService>().appleSignIn().then(

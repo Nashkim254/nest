@@ -20,4 +20,7 @@ class StartupViewModel extends BaseViewModel {
       _navigationService.replaceWithLoginView();
     }
   }
+  Future<void> navigateToLogin() async {
+    await _navigationService.replaceWithLoginView();
+  }
 }
