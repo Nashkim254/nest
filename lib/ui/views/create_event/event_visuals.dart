@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
@@ -95,6 +97,10 @@ class EventVisuals extends StatelessWidget {
               decoration: BoxDecoration(
                 color: kcDarkGreyColor,
                 borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: kcContainerBorderColor,
+                  width: 1.0,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,6 +130,10 @@ class EventVisuals extends StatelessWidget {
               decoration: BoxDecoration(
                 color: kcDarkGreyColor,
                 borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: kcContainerBorderColor,
+                  width: 1.0,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,6 +173,10 @@ class EventVisuals extends StatelessWidget {
               decoration: BoxDecoration(
                 color: kcDarkGreyColor,
                 borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: kcContainerBorderColor,
+                  width: 1.0,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,6 +310,7 @@ class EventVisuals extends StatelessWidget {
                   verticalSpaceMedium,
                   ListView.separated(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (_, int index) {
                       return ListTile(
                         leading: CircleAvatar(
@@ -373,11 +388,382 @@ class EventVisuals extends StatelessWidget {
                 ],
               ),
             ),
+            verticalSpaceMedium,
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: kcDarkGreyColor,
+                borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: kcContainerBorderColor,
+                  width: 1.0,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Photo Gallery',
+                    style: titleTextMedium.copyWith(
+                      color: kcWhiteColor,
+                      fontSize: 17,
+                    ),
+                  ),
+                  spacedDivider,
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemCount: viewModel.selectedImages.length +
+                        1, // +1 for the add button
+                    itemBuilder: (context, index) {
+                      if (index < viewModel.selectedImages.length) {
+                        // Photo item
+                        return _buildPhotoItem(
+                            viewModel.selectedImages[index].path);
+                      } else {
+                        // Add photos button
+                        return _buildAddPhotosButton(viewModel);
+                      }
+                    },
+                  ),
+                  verticalSpaceMedium,
+                  Align(
+                    child: AppButton(
+                      width: 187,
+                      buttonColor: Colors.transparent,
+                      borderColor: kcPrimaryColor,
+                      labelText: 'Upload More Photos',
+                      labelColor: kcPrimaryColor,
+                      onTap: viewModel.showImageSourceSheet,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            verticalSpaceMedium,
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: kcDarkGreyColor,
+                borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: kcContainerBorderColor,
+                  width: 1.0,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Sponsor Tagging',
+                    style: titleTextMedium.copyWith(
+                      color: kcWhiteColor,
+                      fontSize: 17,
+                    ),
+                  ),
+                  spacedDivider,
+                  Text(
+                    'Sponsor Name / Logo URL',
+                    style: titleTextMedium.copyWith(
+                      color: kcWhiteColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                  verticalSpaceSmall,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: TextFormField(
+                          style: titleTextMedium.copyWith(color: kcWhiteColor),
+                          controller: viewModel.sponsorController,
+                          decoration: AppInputDecoration.standard(
+                            hintText: 'e.g., Red Bull, or image URL',
+                            fillColor: kcDarkGreyColor,
+                            filled: true,
+                          ),
+                          onChanged: (value) {},
+                        ),
+                      ),
+                      horizontalSpaceSmall,
+                      Expanded(
+                        child: AppButton(
+                          labelText: 'Add',
+                          onTap: () {
+                            viewModel
+                                .addSponsor(viewModel.sponsorController.text);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  verticalSpaceMedium,
+                  //display current sponsors  in dynamic list of chips
+                  Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: viewModel.sponsors.map((sponsor) {
+                      return Chip(
+                        label: Text(
+                          sponsor,
+                          style: titleTextMedium.copyWith(
+                            color: kcWhiteColor,
+                          ),
+                        ),
+                        backgroundColor: kcGreyButtonColor,
+                        deleteIconColor: kcDisableIconColor,
+                        deleteIcon: const Icon(
+                          Icons.close,
+                          color: kcDisableIconColor,
+                        ),
+                        onDeleted: () {
+                          viewModel.removeSponsor(sponsor);
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+            verticalSpaceMedium,
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: kcGreyButtonColor,
+                borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: kcContainerBorderColor,
+                  width: 1.0,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Event Options',
+                    style: titleTextMedium.copyWith(
+                      color: kcWhiteColor,
+                      fontSize: 14,
+                    ),
+                  ),
+                  spacedDivider,
+                  // Scheduled Ticket Drop Countdown
+                  _buildSwitchTile(
+                    title: 'Scheduled Ticket Drop\nCountdown',
+                    value: viewModel.scheduledTicketDrop,
+                    onChanged: (value) {
+                      viewModel.scheduledTicketDrop = value;
+                      viewModel.rebuildUi();
+                    },
+                  ),
+
+                  verticalSpaceSmall,
+
+                  // Show Guest List
+                  _buildSwitchTile(
+                    title: 'Show Guest List',
+                    value: viewModel.showGuestList,
+                    hasInfoIcon: true,
+                    onChanged: (value) {
+                      viewModel.showGuestList = value;
+                      viewModel.rebuildUi();
+                    },
+                  ),
+
+                  verticalSpaceSmall,
+
+                  // Show on Explore Page
+                  _buildSwitchTile(
+                    title: 'Show on Explore Page',
+                    value: viewModel.showOnExplorePage,
+                    hasInfoIcon: true,
+                    onChanged: (value) {
+                      viewModel.showOnExplorePage = value;
+                      viewModel.rebuildUi();
+                    },
+                  ),
+
+                  verticalSpaceSmall,
+
+                  // Password Protected Event
+                  _buildSwitchTile(
+                    title: 'Password Protected Event',
+                    value: viewModel.passwordProtected,
+                    hasInfoIcon: true,
+                    onChanged: (value) {
+                      viewModel.passwordProtected = value;
+                      viewModel.rebuildUi();
+                    },
+                  ),
+
+                  verticalSpaceSmall,
+
+                  _buildNavigationTile(
+                    title: 'Terms of Service',
+                    onTap: () {},
+                  ),
+                  verticalSpaceSmall,
+                  Text(
+                    'Displays the list of attendees who have opted'
+                    'in to be visible.',
+                    style: titleTextMedium.copyWith(
+                      color: kcSubtitleColor,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            verticalSpaceSmall,
+            AppButton(
+              labelText: 'Finish & Publish',
+              onTap: () {},
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildNavigationTile({
+  required String title,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: Colors.grey[400],
+            size: 24,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildSwitchTile({
+  required String title,
+  required bool value,
+  required ValueChanged<bool> onChanged,
+  bool hasInfoIcon = false,
+}) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Text(title,
+                  style: titleTextMedium.copyWith(
+                    color: kcWhiteColor,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  )),
+              if (hasInfoIcon) ...[
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.info_outline,
+                  color: kcDisableIconColor,
+                  size: 18,
+                ),
+              ],
+            ],
+          ),
+        ),
+        Switch(
+          value: value,
+          onChanged: onChanged,
+          activeColor: Colors.white,
+          activeTrackColor: kcPrimaryColor,
+          inactiveThumbColor: kcWhiteColor,
+          inactiveTrackColor: kcStepperColor,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildPhotoItem(String imagePath) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      color: const Color(0xFF3A3A3A),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.file(
+            File(imagePath),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: kcGreyButtonColor,
+                child: const Icon(
+                  Icons.broken_image,
+                  color: kcDisableIconColor,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildAddPhotosButton(CreateEventViewModel viewModel) {
+  return GestureDetector(
+    onTap: viewModel.showImageSourceSheet,
+    child: DottedBorderContainer(
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.add,
+            color: kcDisableIconColor,
+          ),
+          verticalSpaceSmall,
+          Text(
+            'Add Photo',
+            style: titleTextMedium.copyWith(
+              fontSize: 14,
+              color: kcDisableIconColor,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget buildThemeSelection(CreateEventViewModel viewModel) {

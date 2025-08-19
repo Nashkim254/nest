@@ -127,13 +127,15 @@ class ProfileViewModel extends ReactiveViewModel {
     notifyListeners();
   }
 
-  Future getUserProfile() async {
-    getUser().then((value) {
+  Future getUserProfile(bool isRefresh) async {
+    if (!isRefresh) {
+      getUser();
       if (profile != null) {
         logger.i('User profile already loaded: ${profile!.toJson()}');
         return;
       }
-    });
+    }
+
     setBusy(true);
     try {
       final response = await userService.getUserProfile();

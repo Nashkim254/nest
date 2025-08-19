@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:logger/logger.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -10,6 +11,7 @@ class FileService with ListenableServiceMixin {
   FileService() {
     listenToReactiveValues([selectedImages]);
   }
+  Logger logger = Logger();
   final _bottomSheetService = locator<BottomSheetService>();
   final ImageService _imageService = locator<ImageService>();
   final List<File> _selectedImages = [];
@@ -27,6 +29,7 @@ class FileService with ListenableServiceMixin {
         notifyListeners();
       }
     } catch (e) {
+      logger.e(e.toString());
     } finally {}
   }
 
@@ -43,6 +46,7 @@ class FileService with ListenableServiceMixin {
         notifyListeners();
       }
     } catch (e) {
+      logger.e(e.toString());
     } finally {}
   }
 
@@ -57,6 +61,7 @@ class FileService with ListenableServiceMixin {
       _selectedImages.addAll(images);
       notifyListeners();
     } catch (e) {
+      logger.e(e.toString());
     } finally {}
   }
 }

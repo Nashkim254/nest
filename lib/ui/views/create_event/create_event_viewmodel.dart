@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:logger/logger.dart';
+import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:nest/models/dj_model.dart';
 import 'package:nest/ui/common/app_colors.dart';
@@ -11,20 +12,44 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.locator.dart';
 import '../../../models/page_item.dart';
-import '../../../services/image_service.dart';
+import '../../../services/file_service.dart';
+import '../../../services/global_service.dart';
 
-class CreateEventViewModel extends BaseViewModel {
+class CreateEventViewModel extends ReactiveViewModel {
   final PageController _pageController = PageController();
   PageController get pageController => _pageController;
   TextEditingController descriptionController = TextEditingController();
   TextEditingController performerController = TextEditingController();
   TextEditingController performanceTimeController = TextEditingController();
   TextEditingController igController = TextEditingController();
+  TextEditingController sponsorController = TextEditingController();
+  final globalService = locator<GlobalService>();
   bool _max1PerUser = false;
   bool isRequireApproval = false;
   bool isPasswordProtected = false;
   bool isPerformerImageLoading = false;
   bool isTransferable = false;
+  String uploadProfilePictureUrl = '';
+  bool scheduledTicketDrop = true;
+  bool showGuestList = true;
+  bool showOnExplorePage = true;
+  bool passwordProtected = true;
+  Logger logger = Logger();
+  List<String> sponsors = [];
+  //remove sponsor
+  removeSponsor(String sponsor) {
+    sponsors.remove(sponsor);
+    notifyListeners();
+  }
+  //add sponsor
+  addSponsor(String sponsor) {
+    if (sponsor.isNotEmpty && !sponsors.contains(sponsor)) {
+      sponsors.add(sponsor);
+      sponsorController.clear();
+      notifyListeners();
+    }
+  }
+
   toggleRequireApproval() {
     isRequireApproval = !isRequireApproval;
     notifyListeners();
@@ -44,6 +69,66 @@ class CreateEventViewModel extends BaseViewModel {
   set isMax1PerUser(bool value) {
     _max1PerUser = value;
     notifyListeners();
+  }
+
+  final fileService = locator<FileService>();
+
+  List<File> get selectedImages => fileService.selectedImages;
+
+  bool get hasImages => selectedImages.isNotEmpty;
+
+  final _bottomSheetService = locator<BottomSheetService>();
+
+  Future<void> showImageSourceSheet() async {
+    SheetResponse? response = await _bottomSheetService.showCustomSheet(
+      variant: BottomSheetType.imageSource,
+      isScrollControlled: true,
+    );
+
+    if (response?.confirmed == true && response?.data != null) {
+      ImageSourceType sourceType = response!.data as ImageSourceType;
+
+      switch (sourceType) {
+        case ImageSourceType.camera:
+          await fileService.pickImageFromCamera();
+          break;
+        case ImageSourceType.gallery:
+          await fileService.pickImageFromGallery();
+          break;
+        case ImageSourceType.multiple:
+          await fileService.pickMultipleImages();
+          break;
+      }
+      if (selectedImages.isNotEmpty) {
+        await getProfileUploadUrl();
+      }
+    }
+  }
+
+  String getFileExtension(File file) {
+    return p.extension(file.path); // includes the dot, e.g. ".jpg"
+  }
+
+  Future getProfileUploadUrl() async {
+    setBusy(true);
+    try {
+      final response = await globalService
+          .uploadFileGetURL(getFileExtension(selectedImages.first));
+      if (response.statusCode == 200 && response.data != null) {
+        uploadProfilePictureUrl = response.data['upload_url'];
+        logger.i('upload url: ${response.data}');
+      } else {
+        throw Exception(response.message ?? 'Failed to load upload url:');
+      }
+    } catch (e, s) {
+      logger.e('Failed to load upload url:', e, s);
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to upload url:: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   int _currentPage = 0;
@@ -117,99 +202,6 @@ class CreateEventViewModel extends BaseViewModel {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
-  }
-
-  final ImageService _imageService = locator<ImageService>();
-
-  List<File> _selectedImages = [];
-  List<File> get selectedImages => _selectedImages;
-
-  bool get hasImages => _selectedImages.isNotEmpty;
-
-  final _bottomSheetService = locator<BottomSheetService>();
-
-  Future<void> showImageSourceSheet() async {
-    SheetResponse? response = await _bottomSheetService.showCustomSheet(
-      variant: BottomSheetType.imageSource,
-      isScrollControlled: true,
-    );
-
-    if (response?.confirmed == true && response?.data != null) {
-      ImageSourceType sourceType = response!.data as ImageSourceType;
-
-      switch (sourceType) {
-        case ImageSourceType.camera:
-          await pickImageFromCamera();
-          break;
-        case ImageSourceType.gallery:
-          await pickImageFromGallery();
-          break;
-        case ImageSourceType.multiple:
-          await pickMultipleImages();
-          break;
-      }
-    }
-  }
-
-  Future<void> pickImageFromCamera() async {
-    setBusy(true);
-    try {
-      bool hasPermission = await _imageService.requestPermissions();
-      if (!hasPermission) {
-        setError('Permission denied');
-        return;
-      }
-
-      File? image = await _imageService.pickImageFromCamera();
-      if (image != null) {
-        _selectedImages.add(image);
-        notifyListeners();
-      }
-    } catch (e) {
-      setError(e.toString());
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  Future<void> pickImageFromGallery() async {
-    setBusy(true);
-    try {
-      bool hasPermission = await _imageService.requestPermissions();
-      if (!hasPermission) {
-        setError('Permission denied');
-        return;
-      }
-
-      File? image = await _imageService.pickImageFromGallery();
-      if (image != null) {
-        _selectedImages.add(image);
-        notifyListeners();
-      }
-    } catch (e) {
-      setError(e.toString());
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  Future<void> pickMultipleImages() async {
-    setBusy(true);
-    try {
-      bool hasPermission = await _imageService.requestPermissions();
-      if (!hasPermission) {
-        setError('Permission denied');
-        return;
-      }
-
-      List<File> images = await _imageService.pickMultipleImages();
-      _selectedImages.addAll(images);
-      notifyListeners();
-    } catch (e) {
-      setError(e.toString());
-    } finally {
-      setBusy(false);
-    }
   }
 
   void onFinishPressed() {

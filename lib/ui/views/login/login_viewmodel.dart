@@ -15,7 +15,7 @@ class LoginViewModel extends FormViewModel with $LoginView {
   final authService = locator<AuthService>();
   bool isGoogleSignIn = false;
   bool isAppleSignIn = false;
-  bool isPasswordVisible = false;
+  bool isPasswordVisible = true;
   togglePasswordVisibility() {
     isPasswordVisible = !isPasswordVisible;
     rebuildUi();

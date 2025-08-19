@@ -30,6 +30,12 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
         backgroundColor: kcDarkColor,
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: kcWhiteColor),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           backgroundColor: kcDarkColor,
           title: Text(
             "Edit Profile",
@@ -48,14 +54,23 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Saved',
-                  style: titleTextMedium.copyWith(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: kcDisableIconColor,
-                  ),
-                ),
+                child: viewModel.isLoading
+                    ? const CircularProgressIndicator(
+                        color: kcPrimaryColor,
+                      )
+                    : TextButton(
+                        onPressed: () {
+                          viewModel.editProfile();
+                        },
+                        child: Text(
+                          'Save',
+                          style: titleTextMedium.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: kcPrimaryColor,
+                          ),
+                        ),
+                      ),
               ),
             ),
           ],
@@ -67,29 +82,37 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 verticalSpaceMedium,
-                const Align(
+                Align(
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage(avatar),
+                    backgroundImage: viewModel.selectedImages.isNotEmpty
+                        ? FileImage(viewModel.selectedImages.first)
+                        : viewModel.profilePicture.isNotEmpty
+                            ? NetworkImage(viewModel.profilePicture)
+                            : const AssetImage(avatar) as ImageProvider,
                     backgroundColor: kcPrimaryColor,
                   ),
                 ),
                 verticalSpaceSmall,
                 Align(
-                  child: TextButton(
-                    onPressed: () {
-                      viewModel.showImageSourceSheet();
-                    },
-                    child: Text(
-                      "Edit Photo",
-                      style: titleTextMedium.copyWith(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: kcPrimaryColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  child: viewModel.isBusy
+                      ? const CircularProgressIndicator(
+                          color: kcPrimaryColor,
+                        )
+                      : TextButton(
+                          onPressed: () {
+                            viewModel.showImageSourceSheet();
+                          },
+                          child: Text(
+                            "Edit Photo",
+                            style: titleTextMedium.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: kcPrimaryColor,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                 ),
                 verticalSpaceMedium,
                 Text(

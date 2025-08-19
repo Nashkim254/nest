@@ -8,6 +8,15 @@ class UpdateProfileInput {
   final List<String> interests;
   final PrivacySettings? privacySettings;
 
+  // Social links (all optional)
+  final String? twitter;
+  final String? instagram;
+  final String? facebook;
+  final String? linkedIn;
+  final String? youTube;
+  final String? soundCloud;
+  final String? spotify;
+
   UpdateProfileInput({
     required this.firstName,
     required this.lastName,
@@ -17,6 +26,13 @@ class UpdateProfileInput {
     required this.location,
     required this.interests,
     this.privacySettings,
+    this.twitter,
+    this.instagram,
+    this.facebook,
+    this.linkedIn,
+    this.youTube,
+    this.soundCloud,
+    this.spotify,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,8 +44,14 @@ class UpdateProfileInput {
       "bio": bio,
       "location": location,
       "interests": interests,
-      if (privacySettings != null)
-        "privacy_settings": privacySettings!.toJson(),
+      if (privacySettings != null) "privacy_settings": privacySettings!.toJson(),
+      if (twitter != null) "twitter": twitter,
+      if (instagram != null) "instagram": instagram,
+      if (facebook != null) "facebook": facebook,
+      if (linkedIn != null) "linkedin": linkedIn,
+      if (youTube != null) "youtube": youTube,
+      if (soundCloud != null) "soundcloud": soundCloud,
+      if (spotify != null) "spotify": spotify,
     };
   }
 }

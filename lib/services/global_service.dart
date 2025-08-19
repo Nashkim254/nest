@@ -26,6 +26,7 @@ class GlobalService with ListenableServiceMixin {
       'vnd.openxmlformats-officedocument.wordprocessingml.document' =>
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'jpeg' => 'image/jpeg',
+      'jpg' => 'image/jpg',
       'png' => 'image/png',
       'gif' => 'image/gif',
       _ => 'image/jpeg',

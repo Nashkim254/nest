@@ -16,7 +16,11 @@ import 'hosting_viewmodel.dart';
 
 class HostingView extends StackedView<HostingViewModel> {
   const HostingView({Key? key}) : super(key: key);
-
+@override
+  void onViewModelReady(HostingViewModel viewModel) {
+    viewModel.getMyOrganizations();
+    super.onViewModelReady(viewModel);
+  }
   @override
   Widget builder(
     BuildContext context,
@@ -88,7 +92,7 @@ class HostingView extends StackedView<HostingViewModel> {
                     verticalSpaceMedium,
                     AppButton(
                       labelText: 'Create New Event',
-                      onTap: () {},
+                      onTap: () => viewModel.navigateToCreateEvent(),
                       leadingIcon: addOutlined,
                     ),
                     verticalSpaceSmall,

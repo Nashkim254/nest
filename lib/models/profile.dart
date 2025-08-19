@@ -16,6 +16,13 @@ class Profile {
   final int followingCount;
   final DateTime createdAt;
   final DateTime lastActive;
+  final String? twitter;
+  final String? instagram;
+  final String? facebook;
+  final String? linkedIn;
+  final String? youTube;
+  final String? soundCloud;
+  final String? spotify;
 
   Profile({
     required this.id,
@@ -35,6 +42,13 @@ class Profile {
     required this.followingCount,
     required this.createdAt,
     required this.lastActive,
+    this.twitter,
+    this.instagram,
+    this.facebook,
+    this.linkedIn,
+    this.youTube,
+    this.soundCloud,
+    this.spotify,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -60,6 +74,13 @@ class Profile {
           DateTime.fromMillisecondsSinceEpoch(0),
       lastActive: DateTime.tryParse(json['last_active'] ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
+      twitter: json["twitter"],
+      instagram: json["instagram"],
+      facebook: json["facebook"],
+      linkedIn: json["linkedin"],
+      youTube: json["youtube"],
+      soundCloud: json["soundcloud"],
+      spotify: json["spotify"],
     );
   }
 
@@ -82,6 +103,13 @@ class Profile {
       'following_count': followingCount,
       'created_at': createdAt.toUtc().toIso8601String(),
       'last_active': lastActive.toUtc().toIso8601String(),
+      if (twitter != null) "twitter": twitter,
+      if (instagram != null) "instagram": instagram,
+      if (facebook != null) "facebook": facebook,
+      if (linkedIn != null) "linkedin": linkedIn,
+      if (youTube != null) "youtube": youTube,
+      if (soundCloud != null) "soundcloud": soundCloud,
+      if (spotify != null) "spotify": spotify,
     };
   }
 }

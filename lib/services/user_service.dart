@@ -43,6 +43,20 @@ class UserService with ListenableServiceMixin {
     }
   }
 
+  Future getMyOrganization() async {
+    try {
+      final response = await _apiService.get(AppUrls.myOrganization);
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future followUnfollowUser({required int id, required bool isFollow}) async {
     try {
       final response = isFollow

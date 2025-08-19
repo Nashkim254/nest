@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:nest/app/app.router.dart';
 import 'package:nest/ui/views/hosting/widgets/event_card.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.locator.dart';
+import '../../../services/user_service.dart';
 import '../../common/app_colors.dart';
 import '../../common/app_enums.dart';
 
 class HostingViewModel extends BaseViewModel {
   HostingSelector? get selectedSelector => _selectedSelector;
   HostingSelector? _selectedSelector = HostingSelector.events;
-
+  final userService = locator<UserService>();
+  Logger logger = Logger();
+  bool hasOrganizations = false;
   void selectType(HostingSelector type) {
     _selectedSelector = type;
     notifyListeners();
@@ -66,4 +73,31 @@ class HostingViewModel extends BaseViewModel {
       ),
     ),
   ];
+  Future getMyOrganizations() async {
+    setBusy(true);
+    try {
+      final response = await userService.getMyOrganization();
+      if (response.statusCode == 200 && response.data != null) {
+        logger.i('My Organizations: ${response.data}');
+      } else if (response.statusCode == 404) {
+        hasOrganizations = false;
+        logger.w('No organizations found');
+        notifyListeners();
+      } else {
+        // Handle error response
+        logger.e('Failed to load organizations: ${response.message}');
+        locator<SnackbarService>().showSnackbar(
+          message: response.message ?? 'Failed to load organizations',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      // Handle exception
+    } finally {
+      setBusy(false);
+    }
+  }
+  navigateToCreateEvent() {
+    locator<NavigationService>().navigateToCreateEventView();
+  }
 }

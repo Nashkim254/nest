@@ -18,6 +18,10 @@ class AppUrls {
   static const String getUploadFileUrl = '$baseUrl/uploads/url';
 
   // Add more URLs as needed
+  //organizations
+  static const String organizations = '$baseUrl/organizations';
+  static const String myOrganization = '$baseUrl/organizations/me';
+  static const String updateOrganization = '$baseUrl/organizations/update';
 
   static final String NEXT_PUBLIC_GOOGLE_ACCESS_ID =
       dotenv.env['NEXT_PUBLIC_GOOGLE_ACCESS_ID']!;
