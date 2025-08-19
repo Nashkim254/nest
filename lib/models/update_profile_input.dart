@@ -44,7 +44,8 @@ class UpdateProfileInput {
       "bio": bio,
       "location": location,
       "interests": interests,
-      if (privacySettings != null) "privacy_settings": privacySettings!.toJson(),
+      if (privacySettings != null)
+        "privacy_settings": privacySettings!.toJson(),
       if (twitter != null) "twitter": twitter,
       if (instagram != null) "instagram": instagram,
       if (facebook != null) "facebook": facebook,

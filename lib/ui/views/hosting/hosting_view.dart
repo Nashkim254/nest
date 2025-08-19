@@ -16,11 +16,12 @@ import 'hosting_viewmodel.dart';
 
 class HostingView extends StackedView<HostingViewModel> {
   const HostingView({Key? key}) : super(key: key);
-@override
+  @override
   void onViewModelReady(HostingViewModel viewModel) {
     viewModel.getMyOrganizations();
     super.onViewModelReady(viewModel);
   }
+
   @override
   Widget builder(
     BuildContext context,
@@ -51,132 +52,140 @@ class HostingView extends StackedView<HostingViewModel> {
           ],
           elevation: 0,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              spacedDivider,
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        body: !viewModel.hasOrganizations
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: AppButton(
+                    buttonColor: kcTertiaryWithOpacityColor,
+                    labelText: 'Create Organization',
+                    onTap: () => viewModel.navigateToCreateOrganization(),
+                    leadingIcon: add,
+                  ),
+                ),
+              )
+            : SingleChildScrollView(
                 child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Quick Stats',
-                      style: titleTextMedium.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: kcWhiteColor,
-                      ),
-                    ),
-                    verticalSpaceSmall,
-                    Wrap(
-                      spacing: 32,
-                      runSpacing: 16.0,
-                      children: [
-                        _buildQuickStatsContainer(
-                          title: 'Total Events',
-                          value: '12',
-                        ),
-                        _buildQuickStatsContainer(
-                          title: 'Tickets Sold',
-                          value: '850',
-                        ),
-                        _buildQuickStatsContainer(
-                          title: 'Views',
-                          value: '15.2K',
-                        ),
-                      ],
-                    ),
-                    verticalSpaceMedium,
-                    AppButton(
-                      labelText: 'Create New Event',
-                      onTap: () => viewModel.navigateToCreateEvent(),
-                      leadingIcon: addOutlined,
-                    ),
-                    verticalSpaceSmall,
-                    AppButton(
-                      buttonColor: kcSecondaryWithOpacityColor,
-                      labelText: 'View Analytics',
-                      onTap: () {},
-                      leadingIcon: analytics,
-                    ),
-                    verticalSpaceSmall,
-                    AppButton(
-                      buttonColor: kcTertiaryWithOpacityColor,
-                      labelText: 'Create Organization',
-                      onTap: () {},
-                      leadingIcon: add,
-                    ),
-                    verticalSpaceMedium,
-                    Text(
-                      'Upcoming Events',
-                      style: titleTextMedium.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: kcWhiteColor,
-                      ),
-                    ),
-                    verticalSpaceSmall,
-                    ListView.builder(
-                      itemBuilder: (context, index) {
-                        return viewModel.sampleData[index];
-                      },
-                      itemCount: viewModel.sampleData.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                    ),
-                    verticalSpaceMedium,
-                    Text(
-                      'Upcoming Events',
-                      style: titleTextMedium.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: kcWhiteColor,
-                      ),
-                    ),
-                    verticalSpaceSmall,
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: kcDarkGreyColor,
-                        borderRadius: BorderRadius.circular(16.0),
-                        border: Border.all(color: kcContainerBorderColor),
-                      ),
+                    spacedDivider,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          verticalSpaceMedium,
                           Text(
-                            'Boost Your Event Visibility!',
+                            'Quick Stats',
                             style: titleTextMedium.copyWith(
                               fontSize: 20,
                               fontWeight: FontWeight.w600,
                               color: kcWhiteColor,
                             ),
                           ),
-                          verticalSpaceMedium,
-                          Text(
-                            'Share your event link on social media to'
-                            'reach more attendees. Events with'
-                            'engaging flyers get 2x more views!',
-                            style: titleTextMedium.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: kcGrey4Color,
-                            ),
+                          verticalSpaceSmall,
+                          Wrap(
+                            spacing: 32,
+                            runSpacing: 16.0,
+                            children: [
+                              _buildQuickStatsContainer(
+                                title: 'Total Events',
+                                value: '12',
+                              ),
+                              _buildQuickStatsContainer(
+                                title: 'Tickets Sold',
+                                value: '850',
+                              ),
+                              _buildQuickStatsContainer(
+                                title: 'Views',
+                                value: '15.2K',
+                              ),
+                            ],
                           ),
                           verticalSpaceMedium,
                           AppButton(
-                            width: 110,
-                            labelText: 'Learn More',
-                            labelColor: kcPrimaryColor,
+                            labelText: 'Create New Event',
+                            onTap: () => viewModel.navigateToCreateEvent(),
+                            leadingIcon: addOutlined,
+                          ),
+                          verticalSpaceSmall,
+                          AppButton(
+                            buttonColor: kcSecondaryWithOpacityColor,
+                            labelText: 'View Analytics',
                             onTap: () {},
-                            buttonColor: Colors.transparent,
-                            borderColor: kcPrimaryColor,
+                            leadingIcon: analytics,
+                          ),
+                          verticalSpaceMedium,
+                          Text(
+                            'Upcoming Events',
+                            style: titleTextMedium.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: kcWhiteColor,
+                            ),
+                          ),
+                          verticalSpaceSmall,
+                          ListView.builder(
+                            itemBuilder: (context, index) {
+                              return viewModel.sampleData[index];
+                            },
+                            itemCount: viewModel.sampleData.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                          ),
+                          verticalSpaceMedium,
+                          Text(
+                            'Upcoming Events',
+                            style: titleTextMedium.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: kcWhiteColor,
+                            ),
+                          ),
+                          verticalSpaceSmall,
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: kcDarkGreyColor,
+                              borderRadius: BorderRadius.circular(16.0),
+                              border: Border.all(color: kcContainerBorderColor),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                verticalSpaceMedium,
+                                Text(
+                                  'Boost Your Event Visibility!',
+                                  style: titleTextMedium.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: kcWhiteColor,
+                                  ),
+                                ),
+                                verticalSpaceMedium,
+                                Text(
+                                  'Share your event link on social media to'
+                                  'reach more attendees. Events with'
+                                  'engaging flyers get 2x more views!',
+                                  style: titleTextMedium.copyWith(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: kcGrey4Color,
+                                  ),
+                                ),
+                                verticalSpaceMedium,
+                                AppButton(
+                                  width: 110,
+                                  labelText: 'Learn More',
+                                  labelColor: kcPrimaryColor,
+                                  onTap: () {},
+                                  buttonColor: Colors.transparent,
+                                  borderColor: kcPrimaryColor,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -184,9 +193,6 @@ class HostingView extends StackedView<HostingViewModel> {
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

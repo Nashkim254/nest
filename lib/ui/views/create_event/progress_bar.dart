@@ -3,7 +3,6 @@ import 'package:nest/ui/common/app_colors.dart';
 
 import '../../../models/progress_segment.dart';
 
-
 class StackedProgressBar extends StatelessWidget {
   final int totalSteps;
   final int currentStep;
@@ -32,7 +31,8 @@ class StackedProgressBar extends StatelessWidget {
                 right: index < totalSteps - 1 ? 2 : 0,
               ),
               decoration: BoxDecoration(
-                color: index < currentStep ? kcPrimaryColor : Colors.transparent,
+                color:
+                    index < currentStep ? kcPrimaryColor : Colors.transparent,
                 borderRadius: BorderRadius.circular(height / 2),
               ),
             ),

@@ -48,6 +48,7 @@ import 'package:nest/services/deep_link_generator_service.dart';
 import 'package:nest/services/share_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:nest/services/file_service.dart';
+import 'package:nest/ui/views/create_organization/create_organization_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -77,6 +78,7 @@ import 'package:nest/services/file_service.dart';
     MaterialRoute(page: FindPeopleAndOrgsView),
     MaterialRoute(page: ViewEventView),
     MaterialRoute(page: SettingsView),
+    MaterialRoute(page: CreateOrganizationView),
 // @stacked-route
   ],
   dependencies: [

@@ -177,7 +177,10 @@ class EventDetails extends StatelessWidget {
                   )
                 : const SizedBox.shrink(),
             verticalSpaceMedium,
-            AppButton(labelText: 'Next', onTap: () {})
+            AppButton(
+              labelText: 'Next',
+              onTap: () => viewModel.nextPage(),
+            ),
           ],
         ),
       ),

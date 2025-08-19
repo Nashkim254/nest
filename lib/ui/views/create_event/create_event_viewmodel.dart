@@ -36,7 +36,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   bool showOnExplorePage = true;
   bool passwordProtected = true;
   Logger logger = Logger();
-  final int _totalPages = 5;
+  final int _totalPages = 3;
   int get totalPages => _totalPages;
   List<String> sponsors = [];
 
@@ -45,6 +45,7 @@ class CreateEventViewModel extends ReactiveViewModel {
     sponsors.remove(sponsor);
     notifyListeners();
   }
+
   //add sponsor
   addSponsor(String sponsor) {
     if (sponsor.isNotEmpty && !sponsors.contains(sponsor)) {

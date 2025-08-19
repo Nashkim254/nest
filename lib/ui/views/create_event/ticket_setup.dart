@@ -365,7 +365,7 @@ class TicketSetup extends StatelessWidget {
             verticalSpaceMedium,
             AppButton(
               labelText: 'Net',
-              onTap: () {},
+              onTap: () => viewModel.nextPage(),
             ),
           ],
         ),

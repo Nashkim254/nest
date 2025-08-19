@@ -14,11 +14,16 @@ class HostingViewModel extends BaseViewModel {
   HostingSelector? get selectedSelector => _selectedSelector;
   HostingSelector? _selectedSelector = HostingSelector.events;
   final userService = locator<UserService>();
+  final navigationService = locator<NavigationService>();
   Logger logger = Logger();
   bool hasOrganizations = false;
   void selectType(HostingSelector type) {
     _selectedSelector = type;
     notifyListeners();
+  }
+
+  navigateToCreateOrganization() {
+    navigationService.navigateTo(Routes.createOrganizationView);
   }
 
   String getSelectorLabel(HostingSelector type) {
@@ -78,6 +83,8 @@ class HostingViewModel extends BaseViewModel {
     try {
       final response = await userService.getMyOrganization();
       if (response.statusCode == 200 && response.data != null) {
+        hasOrganizations = true;
+        notifyListeners();
         logger.i('My Organizations: ${response.data}');
       } else if (response.statusCode == 404) {
         hasOrganizations = false;
@@ -97,6 +104,7 @@ class HostingViewModel extends BaseViewModel {
       setBusy(false);
     }
   }
+
   navigateToCreateEvent() {
     locator<NavigationService>().navigateToCreateEventView();
   }

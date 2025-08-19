@@ -4,6 +4,7 @@ import 'package:stacked/stacked.dart';
 import '../abstractClasses/abstract_class.dart';
 import '../app/app.locator.dart';
 import '../models/api_exceptions.dart';
+import '../models/organization_model.dart';
 import '../models/update_profile_input.dart';
 import '../ui/common/app_urls.dart';
 
@@ -46,6 +47,23 @@ class UserService with ListenableServiceMixin {
   Future getMyOrganization() async {
     try {
       final response = await _apiService.get(AppUrls.myOrganization);
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future createOrganization({required Organization organization}) async {
+    try {
+      final response = await _apiService.post(
+        AppUrls.organizations,
+        data: organization.toJson(),
+      );
 
       if (response.statusCode == 200 && response.data != null) {
         return response;

@@ -56,7 +56,8 @@ class ProfileView extends StackedView<ProfileViewModel> {
             ],
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
