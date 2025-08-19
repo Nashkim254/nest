@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_inputdecoration.dart';
-import 'package:nest/ui/views/create_event/progress_bar.dart';
 
 import '../../common/app_colors.dart';
 import '../../common/app_dotted_container.dart';

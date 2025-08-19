@@ -30,7 +30,7 @@ class CreateEventView extends StackedView<CreateEventViewModel> {
           backgroundColor: kcDarkColor,
           automaticallyImplyLeading: false,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () => viewModel.navigationService.back(),
             icon: Icon(
               Icons.adaptive.arrow_back_outlined,
               color: kcWhiteColor,
@@ -50,9 +50,12 @@ class CreateEventView extends StackedView<CreateEventViewModel> {
         body: Column(
           children: [
             // Progress Bar
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: StackedProgressBar(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: StackedProgressBar(
+                totalSteps: viewModel.totalPages,
+                currentStep: viewModel.currentPage + 1,
+              ),
             ),
 
             // Page View

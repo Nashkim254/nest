@@ -24,6 +24,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   TextEditingController igController = TextEditingController();
   TextEditingController sponsorController = TextEditingController();
   final globalService = locator<GlobalService>();
+  final navigationService = locator<NavigationService>();
   bool _max1PerUser = false;
   bool isRequireApproval = false;
   bool isPasswordProtected = false;
@@ -35,7 +36,10 @@ class CreateEventViewModel extends ReactiveViewModel {
   bool showOnExplorePage = true;
   bool passwordProtected = true;
   Logger logger = Logger();
+  final int _totalPages = 5;
+  int get totalPages => _totalPages;
   List<String> sponsors = [];
+
   //remove sponsor
   removeSponsor(String sponsor) {
     sponsors.remove(sponsor);
@@ -166,6 +170,7 @@ class CreateEventViewModel extends ReactiveViewModel {
       title: "Event Visuals",
     ),
   ];
+
   List<PageItem> get items => _items;
   int get itemCount => _items.length;
   PageItem get currentItem => _items[_currentPage];
