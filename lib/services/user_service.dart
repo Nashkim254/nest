@@ -1,0 +1,62 @@
+import 'package:nest/services/shared_preferences_service.dart';
+import 'package:stacked/stacked.dart';
+
+import '../abstractClasses/abstract_class.dart';
+import '../app/app.locator.dart';
+import '../models/api_exceptions.dart';
+import '../models/update_profile_input.dart';
+import '../ui/common/app_urls.dart';
+
+class UserService with ListenableServiceMixin {
+  final IApiService _apiService = locator<IApiService>();
+  final prefsService = locator<SharedPreferencesService>();
+
+  Future getUserProfile() async {
+    try {
+      final response = await _apiService.get(
+        AppUrls.userProfile,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future editUserProfile(
+      {required UpdateProfileInput profileUpdateInput}) async {
+    try {
+      final response = await _apiService.put(AppUrls.userProfile,
+          data: profileUpdateInput.toJson());
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future followUnfollowUser({required int id, required bool isFollow}) async {
+    try {
+      final response = isFollow
+          ? await _apiService.post('${AppUrls.followUser}/$id/follow')
+          : await _apiService.delete('${AppUrls.followUser}/$id/follow');
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ??
+            'Failed to ${isFollow ? "follow" : "unfollow"} user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+}

@@ -114,8 +114,22 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
                 TextFormField(
                   style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: passwordController,
+                  obscureText: viewModel.isPasswordVisible,
                   decoration: AppInputDecoration.standard(
-                      hintText: 'Password', borderColor: kcBorderColor),
+                    hintText: 'Password',
+                    borderColor: kcBorderColor,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        viewModel.isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: kcWhiteColor,
+                      ),
+                      onPressed: () {
+                        viewModel.togglePasswordVisibility();
+                      },
+                    ),
+                  ),
                 ),
                 verticalSpaceMedium,
                 AppButton(

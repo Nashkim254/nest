@@ -9,11 +9,13 @@ class AppUrls {
   static const String register = '$baseAuthUrl/register';
   static const String reQuestPasswordReset = '$baseAuthUrl/reset-password';
   static const String resetPassword = '$baseAuthUrl/reset-password/confirm';
-  static const String userProfile = '$baseUrl/user';
-  static const String updateProfile = '$baseUrl/user/update';
+  static const String userProfile = '$baseUrl/users/me';
+  static const String followUser = '$baseUrl/users';
+  static const String updateProfile = '$baseUrl/users/update';
   static const String fetchPosts = '$baseUrl/posts';
   static const String createPost = '$baseUrl/posts/create';
   static const String deletePost = '$baseUrl/posts/delete';
+  static const String getUploadFileUrl = '$baseUrl/uploads/url';
 
   // Add more URLs as needed
 

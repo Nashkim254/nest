@@ -11,7 +11,7 @@ class DeepLinkService {
     // Handle incoming links when app is already running
     _appLinks.uriLinkStream.listen(
       (uri) => _handleIncomingLink(uri),
-      onError: (err) =>  Logger().e('Deep link error: $err'),
+      onError: (err) => Logger().e('Deep link error: $err'),
     );
 
     // Handle link when app is launched

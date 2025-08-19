@@ -6,17 +6,17 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.bottomsheets.dart';
+import '../../../services/file_service.dart';
 import '../../../services/image_service.dart';
 import '../../common/app_enums.dart';
 
-class CreatePostViewModel extends BaseViewModel {
+class CreatePostViewModel extends ReactiveViewModel {
   TextEditingController postController = TextEditingController();
-  final ImageService _imageService = locator<ImageService>();
+  final fileService = locator<FileService>();
 
-  List<File> _selectedImages = [];
-  List<File> get selectedImages => _selectedImages;
+  List<File> get selectedImages => fileService.selectedImages;
 
-  bool get hasImages => _selectedImages.isNotEmpty;
+  bool get hasImages => selectedImages.isNotEmpty;
 
   final _bottomSheetService = locator<BottomSheetService>();
 
@@ -31,13 +31,13 @@ class CreatePostViewModel extends BaseViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await pickImageFromCamera();
+          await fileService.pickImageFromCamera();
           break;
         case ImageSourceType.gallery:
-          await pickImageFromGallery();
+          await fileService.pickImageFromGallery();
           break;
         case ImageSourceType.multiple:
-          await pickMultipleImages();
+          await fileService.pickMultipleImages();
           break;
       }
     }
@@ -62,76 +62,19 @@ class CreatePostViewModel extends BaseViewModel {
   }
 
   // Rest of your existing methods...
-  Future<void> pickImageFromCamera() async {
-    setBusy(true);
-    try {
-      bool hasPermission = await _imageService.requestPermissions();
-      if (!hasPermission) {
-        setError('Permission denied');
-        return;
-      }
-
-      File? image = await _imageService.pickImageFromCamera();
-      if (image != null) {
-        _selectedImages.add(image);
-        notifyListeners();
-      }
-    } catch (e) {
-      setError(e.toString());
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  Future<void> pickImageFromGallery() async {
-    setBusy(true);
-    try {
-      bool hasPermission = await _imageService.requestPermissions();
-      if (!hasPermission) {
-        setError('Permission denied');
-        return;
-      }
-
-      File? image = await _imageService.pickImageFromGallery();
-      if (image != null) {
-        _selectedImages.add(image);
-        notifyListeners();
-      }
-    } catch (e) {
-      setError(e.toString());
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  Future<void> pickMultipleImages() async {
-    setBusy(true);
-    try {
-      bool hasPermission = await _imageService.requestPermissions();
-      if (!hasPermission) {
-        setError('Permission denied');
-        return;
-      }
-
-      List<File> images = await _imageService.pickMultipleImages();
-      _selectedImages.addAll(images);
-      notifyListeners();
-    } catch (e) {
-      setError(e.toString());
-    } finally {
-      setBusy(false);
-    }
-  }
 
   void removeImage(int index) {
-    if (index >= 0 && index < _selectedImages.length) {
-      _selectedImages.removeAt(index);
+    if (index >= 0 && index < selectedImages.length) {
+      selectedImages.removeAt(index);
       notifyListeners();
     }
   }
 
   void clearAllImages() {
-    _selectedImages.clear();
+    selectedImages.clear();
     notifyListeners();
   }
+
+  @override
+  List<ListenableServiceMixin> get listenableServices => [];
 }

@@ -13,6 +13,8 @@ import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/services/deep_link_service.dart';
 import 'package:nest/services/deep_link_generator_service.dart';
 import 'package:nest/services/share_service.dart';
+import 'package:nest/services/user_service.dart';
+import 'package:nest/services/file_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -36,6 +38,8 @@ import 'test_helpers.mocks.dart';
     MockSpec<DeepLinkGeneratorService>(
         onMissingStub: OnMissingStub.returnDefault),
     MockSpec<ShareService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<UserService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<FileService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -54,6 +58,8 @@ void registerServices() {
   getAndRegisterDeepLinkService();
   getAndRegisterDeepLinkGeneratorService();
   getAndRegisterShareService();
+  getAndRegisterUserService();
+  getAndRegisterFileService();
 // @stacked-mock-register
 }
 
@@ -185,6 +191,20 @@ MockShareService getAndRegisterShareService() {
   _removeRegistrationIfExists<ShareService>();
   final service = MockShareService();
   locator.registerSingleton<ShareService>(service);
+  return service;
+}
+
+MockUserService getAndRegisterUserService() {
+  _removeRegistrationIfExists<UserService>();
+  final service = MockUserService();
+  locator.registerSingleton<UserService>(service);
+  return service;
+}
+
+MockFileService getAndRegisterFileService() {
+  _removeRegistrationIfExists<FileService>();
+  final service = MockFileService();
+  locator.registerSingleton<FileService>(service);
   return service;
 }
 // @stacked-mock-create

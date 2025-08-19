@@ -13,6 +13,11 @@ import 'edit_profile_viewmodel.dart';
 
 class EditProfileView extends StackedView<EditProfileViewModel> {
   const EditProfileView({Key? key}) : super(key: key);
+  @override
+  void onViewModelReady(EditProfileViewModel viewModel) {
+    viewModel.getUserProfile();
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -71,14 +76,19 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                 ),
                 verticalSpaceSmall,
                 Align(
-                  child: Text(
-                    "Edit Photo",
-                    style: titleTextMedium.copyWith(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: kcPrimaryColor,
+                  child: TextButton(
+                    onPressed: () {
+                      viewModel.showImageSourceSheet();
+                    },
+                    child: Text(
+                      "Edit Photo",
+                      style: titleTextMedium.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: kcPrimaryColor,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
                 ),
                 verticalSpaceMedium,
@@ -113,7 +123,7 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                             ),
                           ),
                           Text(
-                            "John Doe",
+                            "${viewModel.profile!.firstName} ${viewModel.profile!.lastName}",
                             style: titleTextMedium.copyWith(
                               fontSize: 15,
                               fontWeight: FontWeight.w400,

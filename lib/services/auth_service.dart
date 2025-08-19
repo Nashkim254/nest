@@ -73,22 +73,6 @@ class AuthService with ListenableServiceMixin {
     }
   }
 
-  Future getUserProfile(int id) async {
-    try {
-      final response = await _apiService.get(
-        '${AppUrls.userProfile}/$id',
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        return response;
-      } else {
-        throw ApiException(response.message ?? 'Failed to create user');
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<ApiResponse> sign(LoginModel model) async {
     try {
       final response = await _apiService.post(

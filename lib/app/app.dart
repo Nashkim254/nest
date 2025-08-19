@@ -46,6 +46,8 @@ import 'package:nest/ui/dialogs/change_password/change_password_dialog.dart';
 import 'package:nest/services/deep_link_service.dart';
 import 'package:nest/services/deep_link_generator_service.dart';
 import 'package:nest/services/share_service.dart';
+import 'package:nest/services/user_service.dart';
+import 'package:nest/services/file_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -94,6 +96,8 @@ import 'package:nest/services/share_service.dart';
     LazySingleton(classType: DeepLinkService),
     LazySingleton(classType: DeepLinkGeneratorService),
     LazySingleton(classType: ShareService),
+    LazySingleton(classType: UserService),
+    LazySingleton(classType: FileService),
 // @stacked-service
   ],
   bottomsheets: [

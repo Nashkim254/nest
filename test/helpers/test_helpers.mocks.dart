@@ -15,16 +15,19 @@ import 'package:nest/models/api_response.dart' as _i3;
 import 'package:nest/models/login_model.dart' as _i20;
 import 'package:nest/models/message_models.dart' as _i15;
 import 'package:nest/models/registration_model.dart' as _i19;
+import 'package:nest/models/update_profile_input.dart' as _i27;
 import 'package:nest/services/api_service.dart' as _i17;
 import 'package:nest/services/auth_service.dart' as _i18;
 import 'package:nest/services/deep_link_generator_service.dart' as _i24;
 import 'package:nest/services/deep_link_service.dart' as _i22;
+import 'package:nest/services/file_service.dart' as _i28;
 import 'package:nest/services/global_service.dart' as _i10;
 import 'package:nest/services/image_service.dart' as _i11;
 import 'package:nest/services/location_service.dart' as _i21;
 import 'package:nest/services/message_service.dart' as _i16;
 import 'package:nest/services/share_service.dart' as _i25;
 import 'package:nest/services/shared_preferences_service.dart' as _i2;
+import 'package:nest/services/user_service.dart' as _i26;
 import 'package:nest/services/websocket_service.dart' as _i13;
 import 'package:nest/ui/common/app_enums.dart' as _i14;
 import 'package:shared_preferences/shared_preferences.dart' as _i4;
@@ -764,6 +767,39 @@ class MockGlobalService extends _i1.Mock implements _i10.GlobalService {
       ) as int);
 
   @override
+  String getQueryParam(String? ext) => (super.noSuchMethod(
+        Invocation.method(
+          #getQueryParam,
+          [ext],
+        ),
+        returnValue: _i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getQueryParam,
+            [ext],
+          ),
+        ),
+        returnValueForMissingStub: _i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getQueryParam,
+            [ext],
+          ),
+        ),
+      ) as String);
+
+  @override
+  _i8.Future<dynamic> uploadFileGetURL(String? extension) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #uploadFileGetURL,
+          [extension],
+        ),
+        returnValue: _i8.Future<dynamic>.value(),
+        returnValueForMissingStub: _i8.Future<dynamic>.value(),
+      ) as _i8.Future<dynamic>);
+
+  @override
   void listenToReactiveValues(List<dynamic>? reactiveValues) =>
       super.noSuchMethod(
         Invocation.method(
@@ -1489,16 +1525,6 @@ class MockAuthService extends _i1.Mock implements _i18.AuthService {
       ) as _i8.Future<dynamic>);
 
   @override
-  _i8.Future<dynamic> getUserProfile(int? id) => (super.noSuchMethod(
-        Invocation.method(
-          #getUserProfile,
-          [id],
-        ),
-        returnValue: _i8.Future<dynamic>.value(),
-        returnValueForMissingStub: _i8.Future<dynamic>.value(),
-      ) as _i8.Future<dynamic>);
-
-  @override
   _i8.Future<_i3.ApiResponse<dynamic>> sign(_i20.LoginModel? model) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2133,3 +2159,111 @@ class MockDeepLinkGeneratorService extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockShareService extends _i1.Mock implements _i25.ShareService {}
+
+/// A class which mocks [UserService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockUserService extends _i1.Mock implements _i26.UserService {
+  @override
+  _i2.SharedPreferencesService get prefsService => (super.noSuchMethod(
+        Invocation.getter(#prefsService),
+        returnValue: _FakeSharedPreferencesService_0(
+          this,
+          Invocation.getter(#prefsService),
+        ),
+        returnValueForMissingStub: _FakeSharedPreferencesService_0(
+          this,
+          Invocation.getter(#prefsService),
+        ),
+      ) as _i2.SharedPreferencesService);
+
+  @override
+  int get listenersCount => (super.noSuchMethod(
+        Invocation.getter(#listenersCount),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+
+  @override
+  _i8.Future<dynamic> getUserProfile() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserProfile,
+          [],
+        ),
+        returnValue: _i8.Future<dynamic>.value(),
+        returnValueForMissingStub: _i8.Future<dynamic>.value(),
+      ) as _i8.Future<dynamic>);
+
+  @override
+  _i8.Future<dynamic> editUserProfile(
+          {required _i27.UpdateProfileInput? profileUpdateInput}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #editUserProfile,
+          [],
+          {#profileUpdateInput: profileUpdateInput},
+        ),
+        returnValue: _i8.Future<dynamic>.value(),
+        returnValueForMissingStub: _i8.Future<dynamic>.value(),
+      ) as _i8.Future<dynamic>);
+
+  @override
+  _i8.Future<dynamic> followUnfollowUser({
+    required int? id,
+    required bool? isFollow,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #followUnfollowUser,
+          [],
+          {
+            #id: id,
+            #isFollow: isFollow,
+          },
+        ),
+        returnValue: _i8.Future<dynamic>.value(),
+        returnValueForMissingStub: _i8.Future<dynamic>.value(),
+      ) as _i8.Future<dynamic>);
+
+  @override
+  void listenToReactiveValues(List<dynamic>? reactiveValues) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #listenToReactiveValues,
+          [reactiveValues],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void addListener(void Function()? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeListener(void Function()? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [FileService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFileService extends _i1.Mock implements _i28.FileService {}

@@ -66,7 +66,21 @@ class LoginView extends StackedView<LoginViewModel> with $LoginView {
                 TextFormField(
                   style: titleTextMedium.copyWith(color: kcWhiteColor),
                   controller: passwordController,
-                  decoration: AppInputDecoration.standard(hintText: 'Password'),
+                  obscureText: viewModel.isPasswordVisible,
+                  decoration: AppInputDecoration.standard(
+                    hintText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        viewModel.isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: kcWhiteColor,
+                      ),
+                      onPressed: () {
+                        viewModel.togglePasswordVisibility();
+                      },
+                    ),
+                  ),
                 ),
                 verticalSpaceMedium,
                 AppButton(

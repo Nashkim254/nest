@@ -19,6 +19,12 @@ class RegisterViewModel extends BaseViewModel with $RegisterView {
     navigationService.replaceWithLoginView();
   }
 
+  bool isPasswordVisible = false;
+  togglePasswordVisibility() {
+    isPasswordVisible = !isPasswordVisible;
+    notifyListeners();
+  }
+
   register(RegistrationModel registrationModel) async {
     registrationModel = registrationModel.copyWith(
       email: emailController.text,

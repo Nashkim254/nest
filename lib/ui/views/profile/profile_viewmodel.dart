@@ -1,8 +1,10 @@
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
+import 'package:nest/models/profile.dart';
 import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/services/user_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -13,14 +15,13 @@ import '../../../services/global_service.dart';
 class ProfileViewModel extends ReactiveViewModel {
   bool get isUser => true;
   final globalService = locator<GlobalService>();
-  final authService = locator<AuthService>();
+  final userService = locator<UserService>();
   Logger logger = Logger();
+  Profile? profile;
   onEditProfile() {
     locator<NavigationService>().navigateTo(Routes.editProfileView);
   }
 
-  Map<String, dynamic>? get userInfo =>
-      locator<SharedPreferencesService>().getUserInfo();
   final eventActivities = [
     EventActivity(
       userName: 'John Doe',
@@ -122,22 +123,53 @@ class ProfileViewModel extends ReactiveViewModel {
 
   getUser() {
     var user = locator<SharedPreferencesService>().getUserInfo();
+    profile = Profile.fromJson(user!);
+    notifyListeners();
   }
 
   Future getUserProfile() async {
+    getUser().then((value) {
+      if (profile != null) {
+        logger.i('User profile already loaded: ${profile!.toJson()}');
+        return;
+      }
+    });
     setBusy(true);
     try {
-      final response =
-          await authService.getUserProfile(userInfo!['ID'] ?? userInfo!['id']);
+      final response = await userService.getUserProfile();
       if (response.statusCode == 200 && response.data != null) {
-        // locator<SharedPreferencesService>().setUserInfo(response.data);
+        profile = Profile.fromJson(response.data);
+        locator<SharedPreferencesService>().setUserInfo(response.data);
         logger.i('User profile loaded successfully: ${response.data}');
       } else {
         throw Exception(response.message ?? 'Failed to load user profile');
       }
     } catch (e, s) {
-      logger.i('error: ${e}');
-      logger.e('error: ${s}');
+      logger.i('error: $e');
+      logger.e('error: $s');
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to load user profile: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  Future followUnfollowUser(int id, bool isFollow) async {
+    setBusy(true);
+    try {
+      final response =
+          await userService.followUnfollowUser(id: id, isFollow: isFollow);
+      if (response.statusCode == 200 && response.data != null) {
+        logger.i('User followed/unfollowed successfully: ${response.data}');
+      } else {
+        throw Exception(response.message ?? 'Failed to followed/unfollowed');
+      }
+    } catch (e, s) {
+      logger.i('error: $e');
+      logger.e('error: $s');
 
       locator<SnackbarService>().showSnackbar(
         message: 'Failed to load user profile: $e',

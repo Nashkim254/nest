@@ -15,6 +15,12 @@ class LoginViewModel extends FormViewModel with $LoginView {
   final authService = locator<AuthService>();
   bool isGoogleSignIn = false;
   bool isAppleSignIn = false;
+  bool isPasswordVisible = false;
+  togglePasswordVisibility() {
+    isPasswordVisible = !isPasswordVisible;
+    rebuildUi();
+  }
+
   login() async {
     LoginModel loginModel = LoginModel(
       email: emailController.text,

@@ -68,7 +68,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 verticalSpaceMedium,
                 Center(
                   child: Text(
-                    '${viewModel.userInfo!['first_name']} ${viewModel.userInfo!['last_name']}',
+                    "${viewModel.profile!.firstName} ${viewModel.profile!.lastName}",
                     style: titleTextMedium.copyWith(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -79,15 +79,14 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 verticalSpaceSmall,
                 Center(
                   child: Text(
-                    "@${viewModel.userInfo!['first_name']}",
+                    "@${viewModel.profile!.displayName}",
                     style: titleTextMedium.copyWith(color: kcSubtitleColor),
                   ),
                 ),
                 verticalSpaceMedium,
                 Align(
                   child: Text(
-                    "Nightlife enthusiast, music lover, and\n"
-                    "event explorer! 🎶✨",
+                    viewModel.profile!.interests.join(', '),
                     style: bodyText.copyWith(color: kcGreyColor),
                     textAlign: TextAlign.center,
                   ),
@@ -101,7 +100,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       Column(
                         children: [
                           Text(
-                            "1.2K",
+                            viewModel.profile!.followersCount.toString(),
                             style: titleTextMedium.copyWith(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
@@ -122,7 +121,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       Column(
                         children: [
                           Text(
-                            "500",
+                            viewModel.profile!.followingCount.toString(),
                             style: titleTextMedium.copyWith(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
@@ -160,7 +159,10 @@ class ProfileView extends StackedView<ProfileViewModel> {
                             width: 160,
                             child: AppButton(
                               labelText: 'Follow',
-                              onTap: () {},
+                              onTap: () => viewModel.followUnfollowUser(
+                                viewModel.profile!.id,
+                                true,
+                              ),
                             ),
                           ),
                           horizontalSpaceMedium,
@@ -217,7 +219,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 ),
                 verticalSpaceMedium,
                 Text(
-                  "Events Activity",
+                  viewModel.isUser ? "My Feed" : "User's Feed",
                   style: titleTextMedium.copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
