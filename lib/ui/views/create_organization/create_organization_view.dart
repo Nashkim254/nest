@@ -292,7 +292,7 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       title: Text(
-                        viewModel.teamMembers[index],
+                        viewModel.teamMembers[index].name!,
                         style: titleTextMedium.copyWith(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
@@ -300,7 +300,7 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                         ),
                       ),
                       subtitle: Text(
-                        viewModel.teamMembers[index],
+                        viewModel.teamMembers[index].role!,
                         style: titleTextMedium.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
