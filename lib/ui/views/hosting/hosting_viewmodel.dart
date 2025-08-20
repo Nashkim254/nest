@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.router.dart';
+import 'package:nest/models/organization_model.dart';
+import 'package:nest/services/event_service.dart';
 import 'package:nest/ui/views/hosting/widgets/event_card.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
+import '../../../models/events.dart';
+import '../../../models/organization_analytics.dart';
 import '../../../services/user_service.dart';
 import '../../common/app_colors.dart';
 import '../../common/app_enums.dart';
@@ -14,16 +18,25 @@ class HostingViewModel extends BaseViewModel {
   HostingSelector? get selectedSelector => _selectedSelector;
   HostingSelector? _selectedSelector = HostingSelector.events;
   final userService = locator<UserService>();
+  final eventService = locator<EventService>();
   final navigationService = locator<NavigationService>();
   Logger logger = Logger();
+  Organization? organization;
+  OrganizationAnalytics? organizationAnalytics;
+  List<Event> upcomingEvents = [];
   bool hasOrganizations = false;
   void selectType(HostingSelector type) {
     _selectedSelector = type;
     notifyListeners();
   }
 
-  navigateToCreateOrganization() {
-    navigationService.navigateTo(Routes.createOrganizationView);
+  navigateToCreateOrganization() async {
+    final result =
+        await navigationService.navigateTo(Routes.createOrganizationView);
+    if (result == true) {
+      // If the user successfully created an organization, refresh the list
+      await getMyOrganizations();
+    }
   }
 
   String getSelectorLabel(HostingSelector type) {
@@ -37,55 +50,14 @@ class HostingViewModel extends BaseViewModel {
     }
   }
 
-  List sampleData = [
-    EventCardFactory.live(
-      title: 'Summer Fest 2024',
-      dateTime: 'Sat, Aug 10, 2024 - 7:00 PM',
-      soldTickets: 150,
-      totalTickets: 200,
-      onTap: () => print('Summer Fest tapped'),
-      onMenuTap: () => print('Menu tapped'),
-    ),
-
-    // Upcoming event
-    EventCardFactory.upcoming(
-      title: 'Winter Concert 2024',
-      dateTime: 'Fri, Dec 15, 2024 - 8:00 PM',
-      availableTickets: 50,
-      totalTickets: 300,
-      onTap: () => print('Winter Concert tapped'),
-    ),
-
-    // Sold out event
-    EventCardFactory.soldOut(
-      title: 'Rock Festival',
-      dateTime: 'Sun, Sep 22, 2024 - 6:00 PM',
-      totalTickets: 500,
-      onTap: () => print('Rock Festival tapped'),
-    ),
-
-    // Custom event
-    EventCardFactory.custom(
-      title: 'Custom Event',
-      dateTime: 'Mon, Jan 1, 2025 - 12:00 AM',
-      status: EventStatus.cancelled,
-      statusText: 'Event cancelled due to weather',
-      backgroundColor: kcDarkGreyColor,
-      titleStyle: const TextStyle(
-        color: Colors.red,
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  ];
-  Future getMyOrganizations() async {
+  Future<Organization> getMyOrganizations() async {
     setBusy(true);
     try {
       final response = await userService.getMyOrganization();
       if (response.statusCode == 200 && response.data != null) {
         hasOrganizations = true;
+        organization = Organization.fromJson(response.data['organization']);
         notifyListeners();
-        logger.i('My Organizations: ${response.data}');
       } else if (response.statusCode == 404) {
         hasOrganizations = false;
         logger.w('No organizations found');
@@ -100,6 +72,77 @@ class HostingViewModel extends BaseViewModel {
       }
     } catch (e) {
       // Handle exception
+    } finally {
+      setBusy(false);
+    }
+    return organization!;
+  }
+
+  init() async {
+    getMyOrganizations().then((Organization organization) async {
+      if (hasOrganizations) {
+        logger.w('My Organization: ${organization.toJson()}');
+
+        logger.wtf(organization.id);
+        await getOrganizationAnalytics();
+        await getUpcomingEvents();
+      }
+    });
+  }
+
+  Future getOrganizationAnalytics() async {
+    setBusy(true);
+    try {
+      final response =
+          await userService.getMyOrganizationAnalytics(organization?.id!);
+      if (response.statusCode == 200 && response.data != null) {
+        organizationAnalytics = OrganizationAnalytics.fromJson(response.data);
+        notifyListeners();
+        logger.i('My Organizations Analytics: ${response.data}');
+      } else if (response.statusCode == 404) {
+        hasOrganizations = false;
+        logger.w('No organizations Analytics found');
+        notifyListeners();
+      } else {
+        logger.e('Failed to load organization Analytics: ${response.message}');
+        locator<SnackbarService>().showSnackbar(
+          message: response.message ?? 'Failed to load organizations Analytics',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      // Handle exception
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  int page = 1;
+  int size = 10;
+  Future getUpcomingEvents() async {
+    setBusy(true);
+    try {
+      final response = await eventService.getMyEvents(page: page, size: size);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.i('Upcoming Events: ${response.data.runtimeType}');
+
+        upcomingEvents = (response.data['events'] as List)
+            .map((event) => Event.fromJson(event))
+            .toList();
+        return response.data;
+      } else {
+        logger.e('Failed to load upcoming events: ${response.message}');
+        locator<SnackbarService>().showSnackbar(
+          message: response.message ?? 'Failed to load upcoming events',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e) {
+      logger.e('Error fetching upcoming events: $e');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Error fetching upcoming events: $e',
+        duration: const Duration(seconds: 3),
+      );
     } finally {
       setBusy(false);
     }

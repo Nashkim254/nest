@@ -1,4 +1,3 @@
-
 class Organization {
   int? id;
   String? name;
@@ -54,14 +53,13 @@ class Organization {
 
   factory Organization.fromJson(Map<String, dynamic> json) {
     return Organization(
-      id: json['id'],
+      id: json['ID'],
       name: json['name'],
       description: json['description'],
       profilePic: json['profile_pic'],
       banner: json['banner'],
-      genres: (json['genres'] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList(),
+      genres:
+          (json['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       bio: json['bio'],
       countries: (json['countries'] as List<dynamic>?)
           ?.map((e) => e.toString())
@@ -85,7 +83,7 @@ class Organization {
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
+      "ID": id,
       "name": name,
       "description": description,
       "profile_pic": profilePic,

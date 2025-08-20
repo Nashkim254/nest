@@ -66,3 +66,4 @@ flutter:
     - assets/images/
     - assets/svgs/
     - .env
+    - assets/countries.json

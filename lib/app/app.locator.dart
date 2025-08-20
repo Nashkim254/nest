@@ -15,6 +15,7 @@ import '../services/api_service.dart';
 import '../services/auth_service.dart';
 import '../services/deep_link_generator_service.dart';
 import '../services/deep_link_service.dart';
+import '../services/event_service.dart';
 import '../services/file_service.dart';
 import '../services/global_service.dart';
 import '../services/image_service.dart';
@@ -55,4 +56,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => ShareService());
   locator.registerLazySingleton(() => UserService());
   locator.registerLazySingleton(() => FileService());
+  locator.registerLazySingleton(() => EventService());
 }

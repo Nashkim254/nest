@@ -49,6 +49,8 @@ import 'package:nest/services/share_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:nest/services/file_service.dart';
 import 'package:nest/ui/views/create_organization/create_organization_view.dart';
+import 'package:nest/ui/dialogs/add_social/add_social_dialog.dart';
+import 'package:nest/services/event_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -100,6 +102,7 @@ import 'package:nest/ui/views/create_organization/create_organization_view.dart'
     LazySingleton(classType: ShareService),
     LazySingleton(classType: UserService),
     LazySingleton(classType: FileService),
+    LazySingleton(classType: EventService),
 // @stacked-service
   ],
   bottomsheets: [
@@ -116,6 +119,7 @@ import 'package:nest/ui/views/create_organization/create_organization_view.dart'
     StackedDialog(classType: InfoAlertDialog),
     StackedDialog(classType: CommentsDialog),
     StackedDialog(classType: ChangePasswordDialog),
+    StackedDialog(classType: AddSocialDialog),
 // @stacked-dialog
   ],
 )

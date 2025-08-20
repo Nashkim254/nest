@@ -48,7 +48,7 @@ class TagPeopleSheet extends StackedView<TagPeopleSheetModel> {
           Row(
             children: [
               Text(
-                'Add Location',
+                'Add People',
                 style: titleTextMedium.copyWith(fontSize: 20),
               ),
               const Spacer(),

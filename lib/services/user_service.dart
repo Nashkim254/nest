@@ -58,6 +58,21 @@ class UserService with ListenableServiceMixin {
     }
   }
 
+  Future getMyOrganizationAnalytics(int? id) async {
+    try {
+      final response =
+          await _apiService.get('${AppUrls.organizations}/$id/analytics');
+
+      if (response.statusCode == 200 && response.data != null) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future createOrganization({required Organization organization}) async {
     try {
       final response = await _apiService.post(

@@ -20,6 +20,7 @@ class Socials extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: EdgeInsets.zero,
       onTap: onTap,
       leading: SvgPicture.asset(avatar, width: 24, height: 24),
       title: Text(
@@ -41,7 +42,7 @@ class Socials extends StatelessWidget {
               color: kcFollowColor,
             ),
           ),
-          horizontalSpaceMedium,
+          horizontalSpaceSmall,
           Icon(
             Icons.adaptive.arrow_forward,
             color: kcFollowColor,

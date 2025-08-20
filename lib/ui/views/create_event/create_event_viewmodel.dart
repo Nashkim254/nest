@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:logger/logger.dart';
+import 'package:nest/services/event_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
 import 'package:nest/models/dj_model.dart';
@@ -11,6 +12,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.locator.dart';
+import '../../../models/create_event.dart';
 import '../../../models/page_item.dart';
 import '../../../services/file_service.dart';
 import '../../../services/global_service.dart';
@@ -24,6 +26,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   TextEditingController igController = TextEditingController();
   TextEditingController sponsorController = TextEditingController();
   final globalService = locator<GlobalService>();
+  final eventService = locator<EventService>();
   final navigationService = locator<NavigationService>();
   bool _max1PerUser = false;
   bool isRequireApproval = false;
@@ -265,5 +268,43 @@ class CreateEventViewModel extends ReactiveViewModel {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future createEvent() async {
+    setBusy(true);
+    try {
+      CreateEventRequest request = CreateEventRequest(
+        description: descriptionController.text,
+        title: '',
+        endTime: DateTime.now(),
+        location: '',
+        flyerUrl: '',
+        theme: '',
+        genres: [],
+        isPrivate: isPrivate,
+        ticketPricing: [],
+        guestListEnabled: false,
+        guestListLimit: 0,
+        startTime: DateTime.now(),
+        longitude: 56.0,
+        latitude: 57.0,
+        password: '',
+        address: '',
+      );
+      final response = await eventService.createEvent(requestBody: request);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.i('Event created successfully');
+      } else {
+        throw Exception(response.message ?? 'Failed to create event');
+      }
+    } catch (e, s) {
+      logger.e('Failed to create event:', e, s);
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to create event: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 }

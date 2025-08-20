@@ -1,15 +1,28 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/models/organization_model.dart';
+import 'package:nest/services/global_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.bottomsheets.dart';
+import '../../../app/app.dialogs.dart';
 import '../../../app/app.locator.dart';
+import 'package:path/path.dart' as p;
 
-class CreateOrganizationViewModel extends BaseViewModel {
+import '../../../models/people_model.dart';
+import '../../../services/file_service.dart';
+import '../../common/app_enums.dart';
+
+class CreateOrganizationViewModel extends ReactiveViewModel {
   final navigationService = locator<NavigationService>();
   final userService = locator<UserService>();
+  final globalService = locator<GlobalService>();
   final TextEditingController organizationNameController =
       TextEditingController();
   final TextEditingController organizationSocialController =
@@ -21,14 +34,14 @@ class CreateOrganizationViewModel extends BaseViewModel {
   final TextEditingController genreController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
   Logger logger = Logger();
-  addSocialMediaLink() {
-    if (organizationSocialController.text.isNotEmpty) {
-      organizationSocialController.text;
-    }
-  }
-
+  final formKey = GlobalKey<FormState>();
+  final dialogService = locator<DialogService>();
+  final bottomSheet = locator<BottomSheetService>();
+  String socialLink = '';
   String profilePic = '';
+  String profilePicUploadUrl = '';
   String banner = '';
+  String bannerUploadUrl = '';
 
   List<TeamMember> teamMembers = [];
   addTeamMember(TeamMember member) {
@@ -59,24 +72,125 @@ class CreateOrganizationViewModel extends BaseViewModel {
     return countries.split(',').map((e) => e.trim()).toList();
   }
 
+  addPeople() {
+    final response = bottomSheet.showCustomSheet(
+      variant: BottomSheetType.tagPeople,
+      title: 'Add Team Member',
+      isScrollControlled: true,
+      barrierDismissible: true,
+    );
+    response.then((sheetResponse) {
+      if (sheetResponse?.confirmed == true && sheetResponse?.data != null) {
+        var data = sheetResponse!.data as List<People>;
+        logger.i('Data from sheet: ${data.first.toJson()}');
+        TeamMember newMember = TeamMember(
+          name: data.first.name,
+          role: data.first.role,
+        );
+        teamMembers.add(newMember);
+        notifyListeners();
+      }
+    });
+  }
+
+  addSocialMediaLink() {
+    final response = dialogService.showCustomDialog(
+      variant: DialogType.addSocial,
+      title: 'Add Social Media Link',
+      barrierDismissible: true,
+    );
+    response.then((dialogResponse) {
+      if (dialogResponse?.confirmed == true && dialogResponse?.data != null) {
+        var data = dialogResponse!.data as Map;
+        socialLink = data['socialLink'] as String;
+        var socialName = data['socialName'] as String;
+        getSocialMediaFromResponse(dialogResponse);
+        organizationSocialController.text += '$socialName, ';
+        notifyListeners();
+      }
+    });
+  }
+
+  // Function to get name of social and link from dialog response
+  Map<String, String> getSocialMediaFromResponse(DialogResponse response) {
+    if (response.confirmed && response.data != null) {
+      var data = response.data as Map<String, String>;
+      return {
+        'name': data['socialName'] ?? '',
+        'link': data['socialLink'] ?? '',
+      };
+    }
+    return {};
+  }
+
+  //function that return social link as the value and name as the key
+  Map<String, String> getSocialMediaLinks() {
+    Map<String, String> socialMediaLinks = {};
+    List<String> links = organizationSocialController.text.split(', ');
+    for (String link in links) {
+      if (link.isNotEmpty) {
+        // Assuming the format is "name:link"
+        List<String> parts = link.split(':');
+        if (parts.length == 2) {
+          socialMediaLinks[parts[0].trim()] = parts[1].trim();
+        } else {
+          socialMediaLinks[link.trim()] = '';
+        }
+      }
+    }
+    return socialMediaLinks;
+  }
+
+  List<String> countries = [];
+  String? selectedCountry;
+
+  Future<void> loadCountries() async {
+    final String response =
+        await rootBundle.loadString('assets/countries.json');
+    final List data = json.decode(response);
+    countries = data.map((c) => c['name'] as String).toList();
+    notifyListeners();
+  }
+
   Future createOrganizations() async {
     setBusy(true);
+    if (!formKey.currentState!.validate()) {
+      setBusy(false);
+      return;
+    }
     try {
       Organization organization = Organization(
-          name: organizationNameController.text,
-          profilePic: profilePic,
-          bio: bioController.text,
-          genres: getGenresFromString(genreController.text),
-          countries: getCountriesFromString(countryController.text),
-          teamMembers: teamMembers,
-          banner: banner);
+        name: organizationNameController.text,
+        profilePic: profilePic,
+        bio: bioController.text,
+        genres: getGenresFromString(genreController.text),
+        countries: getCountriesFromString(countryController.text),
+        teamMembers: teamMembers,
+        banner: banner,
+        instagram: getSocialMediaLinks()['Instagram'],
+        twitter: getSocialMediaLinks()['Twitter'],
+        linkedIn: getSocialMediaLinks()['LinkedIn'],
+        facebook: getSocialMediaLinks()['Facebook'],
+        website: organizationContactController.text.contains('http')
+            ? organizationContactController.text
+            : '',
+        whatsApp: organizationContactController.text,
+        phoneNumber: getSocialMediaLinks()['Phone'],
+        email: organizationContactController.text.contains('@')
+            ? organizationContactController.text
+            : '',
+        description: businessController.text,
+      );
+      logger.i('Creating organization: ${organization.toJson()}');
       final response =
           await userService.createOrganization(organization: organization);
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('My Organizations: ${response.data}');
-      } else if (response.statusCode == 404) {
-        logger.w('No organizations found');
-        notifyListeners();
+        locator<SnackbarService>().showSnackbar(
+          message: 'Organization created successfully',
+          duration: const Duration(seconds: 3),
+        );
+        navigationService.back(result: true);
       } else {
         // Handle error response
         logger.e('Failed to load organizations: ${response.message}');
@@ -91,4 +205,75 @@ class CreateOrganizationViewModel extends BaseViewModel {
       setBusy(false);
     }
   }
+
+  final fileService = locator<FileService>();
+
+  List<File> get selectedImages => fileService.selectedImages;
+
+  bool get hasImages => selectedImages.isNotEmpty;
+
+  final _bottomSheetService = locator<BottomSheetService>();
+
+  Future<void> showImageSourceSheet(String type) async {
+    SheetResponse? response = await _bottomSheetService.showCustomSheet(
+      variant: BottomSheetType.imageSource,
+      isScrollControlled: true,
+    );
+
+    if (response?.confirmed == true && response?.data != null) {
+      ImageSourceType sourceType = response!.data as ImageSourceType;
+
+      switch (sourceType) {
+        case ImageSourceType.camera:
+          await fileService.pickImageFromCamera();
+          break;
+        case ImageSourceType.gallery:
+          await fileService.pickImageFromGallery();
+          break;
+        case ImageSourceType.multiple:
+          await fileService.pickMultipleImages();
+          break;
+      }
+      if (selectedImages.isNotEmpty) {
+        await getProfileUploadUrl(type);
+      }
+    }
+  }
+
+  String getFileExtension(File file) {
+    return p.extension(file.path);
+  }
+
+  Future getProfileUploadUrl(String type) async {
+    setBusy(true);
+    try {
+      final response = await globalService
+          .uploadFileGetURL(getFileExtension(selectedImages.first));
+      if (response.statusCode == 200 && response.data != null) {
+        if (type == 'profile') {
+          profilePic = response.data['url'];
+          profilePicUploadUrl = response.data['upload_url'];
+        } else if (type == 'banner') {
+          banner = response.data['url'];
+          bannerUploadUrl = response.data['upload_url'];
+        }
+
+        logger.i('upload url: ${response.data}');
+      } else {
+        throw Exception(response.message ?? 'Failed to load upload url:');
+      }
+    } catch (e, s) {
+      logger.e('Failed to load upload url:', e, s);
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to upload url:: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  @override
+  List<ListenableServiceMixin> get listenableServices =>
+      [globalService, fileService];
 }

@@ -15,13 +15,15 @@ import 'package:nest/abstractClasses/deep_link_handler_interface.dart' as _i24;
 import 'package:nest/models/api_response.dart' as _i3;
 import 'package:nest/models/login_model.dart' as _i21;
 import 'package:nest/models/message_models.dart' as _i16;
+import 'package:nest/models/organization_model.dart' as _i29;
 import 'package:nest/models/registration_model.dart' as _i20;
 import 'package:nest/models/update_profile_input.dart' as _i28;
 import 'package:nest/services/api_service.dart' as _i18;
 import 'package:nest/services/auth_service.dart' as _i19;
 import 'package:nest/services/deep_link_generator_service.dart' as _i25;
 import 'package:nest/services/deep_link_service.dart' as _i23;
-import 'package:nest/services/file_service.dart' as _i29;
+import 'package:nest/services/event_service.dart' as _i31;
+import 'package:nest/services/file_service.dart' as _i30;
 import 'package:nest/services/global_service.dart' as _i11;
 import 'package:nest/services/image_service.dart' as _i12;
 import 'package:nest/services/location_service.dart' as _i22;
@@ -2229,6 +2231,30 @@ class MockUserService extends _i1.Mock implements _i27.UserService {
       ) as _i9.Future<dynamic>);
 
   @override
+  _i9.Future<dynamic> getMyOrganizationAnalytics(int? id) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMyOrganizationAnalytics,
+          [id],
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> createOrganization(
+          {required _i29.Organization? organization}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createOrganization,
+          [],
+          {#organization: organization},
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
   _i9.Future<dynamic> followUnfollowUser({
     required int? id,
     required bool? isFollow,
@@ -2287,7 +2313,7 @@ class MockUserService extends _i1.Mock implements _i27.UserService {
 /// A class which mocks [FileService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFileService extends _i1.Mock implements _i29.FileService {
+class MockFileService extends _i1.Mock implements _i30.FileService {
   @override
   _i5.Logger get logger => (super.noSuchMethod(
         Invocation.getter(#logger),
@@ -2391,3 +2417,8 @@ class MockFileService extends _i1.Mock implements _i29.FileService {
         returnValueForMissingStub: null,
       );
 }
+
+/// A class which mocks [EventService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockEventService extends _i1.Mock implements _i31.EventService {}

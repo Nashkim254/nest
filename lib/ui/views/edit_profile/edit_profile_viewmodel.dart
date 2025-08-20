@@ -139,7 +139,7 @@ class EditProfileViewModel extends ReactiveViewModel {
   void _updateControllersFromProfile() {
     if (profile == null) return;
     usernameController.text = profile!.displayName;
-    bioController.text = profile!.interests.join(', ');
+    bioController.text = profile!.bio;
     igController.text = profile!.instagram ?? '';
     xController.text = profile!.twitter ?? '';
     linkedInController.text = profile!.linkedIn ?? '';
@@ -182,7 +182,7 @@ class EditProfileViewModel extends ReactiveViewModel {
           profileUpdateInput: profileUpdateInput);
       if (response.statusCode == 200 && response.data != null) {
         logger.i('User profile updated successfully: ${response.data}');
-        locator<NavigationService>().back();
+        locator<NavigationService>().back(result: true);
       } else {
         throw Exception(response.message ?? 'Failed to profile update');
       }

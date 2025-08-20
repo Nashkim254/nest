@@ -2,7 +2,6 @@ import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/models/profile.dart';
-import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
@@ -18,8 +17,12 @@ class ProfileViewModel extends ReactiveViewModel {
   final userService = locator<UserService>();
   Logger logger = Logger();
   Profile? profile;
-  onEditProfile() {
-    locator<NavigationService>().navigateTo(Routes.editProfileView);
+  onEditProfile() async {
+    final result =
+        await locator<NavigationService>().navigateToEditProfileView();
+    if (result != null && result is bool && result) {
+      await getUserProfile(true);
+    }
   }
 
   final eventActivities = [
