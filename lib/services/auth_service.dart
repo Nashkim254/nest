@@ -33,7 +33,7 @@ class AuthService with ListenableServiceMixin {
         data: model.toJson(),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -48,7 +48,7 @@ class AuthService with ListenableServiceMixin {
       final response =
           await _apiService.post(AppUrls.reQuestPasswordReset, data: body);
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -63,7 +63,7 @@ class AuthService with ListenableServiceMixin {
       final response =
           await _apiService.post(AppUrls.resetPassword, data: body);
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -80,7 +80,7 @@ class AuthService with ListenableServiceMixin {
         data: model.toJson(),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -147,7 +147,7 @@ class AuthService with ListenableServiceMixin {
         '${AppUrls.baseAuthUrl}/${AppUrls.googleUrl}',
         data: json.encode(queryParams),
       );
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -166,7 +166,7 @@ class AuthService with ListenableServiceMixin {
         data: json.encode(queryParams),
         parser: (data) => ApiResponse.fromJson(data, (data) => data),
       );
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data!;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');

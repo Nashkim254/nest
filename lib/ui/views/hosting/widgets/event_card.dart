@@ -1,7 +1,9 @@
 // Main Event Card Widget
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:nest/models/events.dart';
+import 'package:nest/utils/utilities.dart';
 
 import '../../../../models/event_data.dart';
 import '../../../common/app_colors.dart';
@@ -32,7 +34,7 @@ class EventCardWidget extends StatelessWidget {
       height: height,
       margin: margin ?? const EdgeInsets.all(8),
       child: GestureDetector(
-        onTap: (){},
+        onTap: () {},
         child: Container(
           padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -40,35 +42,41 @@ class EventCardWidget extends StatelessWidget {
               borderRadius: borderRadius ?? BorderRadius.circular(12),
               border: Border.all(color: kcContainerBorderColor)),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title and Menu Row
-                  EventCardHeaderWidget(
-                    title: data.title,
-                    titleStyle: null,
-                    onMenuTap: () {},
-                  ),
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title and Menu Row
+                    EventCardHeaderWidget(
+                      title: data.title,
+                      titleStyle: null,
+                      onMenuTap: () {},
+                    ),
 
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  // Date and Time
-                  EventCardDateTimeWidget(
-                    dateTime: '${data.startTime} - ${data.endTime}',
-                    style: null,
-                  ),
+                    // Date and Time
+                    EventCardDateTimeWidget(
+                      dateTime:
+                          '${formatter.format(data.startTime)} - ${formatter.format(data.endTime)}',
+                      style: null,
+                    ),
 
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                  // Status and Info
-                ],
+                    // Status and Info
+                  ],
+                ),
               ),
-              EventCardStatusWidget(
-                status: EventStatus.live,
-                statusText: data.status,
-                statusTextStyle: null,
+              Expanded(
+                flex: 1,
+                child: EventCardStatusWidget(
+                  status: EventStatus.live,
+                  statusText: data.status,
+                  statusTextStyle: null,
+                ),
               ),
             ],
           ),

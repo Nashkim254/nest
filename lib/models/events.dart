@@ -18,7 +18,7 @@ class Event {
 
   final String flyerUrl;
   final String theme;
-  final List<String> genres;
+  final List<String>? genres;
   final bool isPrivate;
 
   final List<TicketPricingPreview> ticketPricing;
@@ -84,27 +84,32 @@ class Event {
     isPasswordProtected: json["is_password_protected"],
     protectedPreview: json["protected_preview"],
     organizationId: json["organization_id"],
-    organizer: json["organizer"],
+    organizer: json["organizer"] ?? '', // Handle null organizer
     flyerUrl: json["flyer_url"],
     theme: json["theme"],
-    genres: List<String>.from(json["genres"].map((x) => x)),
+    genres: json["genres"] != null
+        ? List<String>.from(json["genres"].map((x) => x))
+        : null, // Handle null genres
     isPrivate: json["is_private"],
-    ticketPricing: (json["ticket_pricing"] as List)
+    ticketPricing: json["ticket_pricing"] != null
+        ? (json["ticket_pricing"] as List)
         .map((x) => TicketPricingPreview.fromJson(x))
-        .toList(),
+        .toList()
+        : [], // Handle null ticket_pricing - return empty list
     guestListEnabled: json["guest_list_enabled"],
     guestListLimit: json["guest_list_limit"],
     viewCount: json["view_count"],
     interestCount: json["interest_count"],
-    goingUsers: (json["going_users"] as List)
+    goingUsers: json["going_users"] != null
+        ? (json["going_users"] as List)
         .map((x) => GoingUserPreview.fromJson(x))
-        .toList(),
+        .toList()
+        : [], // Handle null going_users - return empty list
     isFavorited: json["is_favorited"],
     paymentSetupComplete: json["payment_setup_complete"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );
-
   Map<String, dynamic> toJson() => {
     "passes": passes,
     "total_tickets": totalTickets,

@@ -18,7 +18,7 @@ class UserService with ListenableServiceMixin {
         AppUrls.userProfile,
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -34,7 +34,7 @@ class UserService with ListenableServiceMixin {
       final response = await _apiService.put(AppUrls.userProfile,
           data: profileUpdateInput.toJson());
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -48,7 +48,7 @@ class UserService with ListenableServiceMixin {
     try {
       final response = await _apiService.get(AppUrls.myOrganization);
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -63,7 +63,7 @@ class UserService with ListenableServiceMixin {
       final response =
           await _apiService.get('${AppUrls.organizations}/$id/analytics');
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -80,7 +80,7 @@ class UserService with ListenableServiceMixin {
         data: organization.toJson(),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -96,7 +96,7 @@ class UserService with ListenableServiceMixin {
           ? await _apiService.post('${AppUrls.followUser}/$id/follow')
           : await _apiService.delete('${AppUrls.followUser}/$id/follow');
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ??

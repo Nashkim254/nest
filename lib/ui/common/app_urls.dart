@@ -24,7 +24,7 @@ class AppUrls {
   static const String updateOrganization = '$baseUrl/organizations/update';
 //events
   static const String events = '$baseUrl/events';
-  static const String createEvent = '$baseUrl/events';
+  static const String createEvent = '$baseUrl/events/';
   static const String updateEvent = '$baseUrl/events';
   static const String deleteEvent = '$baseUrl/events';
   static const String myEventsUrl = '$baseUrl/events/my';

@@ -74,11 +74,18 @@ class EditProfileViewModel extends ReactiveViewModel {
   Future getProfileUploadUrl() async {
     setBusy(true);
     try {
-      final response = await globalService
-          .uploadFileGetURL(getFileExtension(selectedImages.first));
+      final response = await globalService.uploadFileGetURL(
+          getFileExtension(
+            selectedImages.first,
+          ),
+          folder: 'profile');
       if (response.statusCode == 200 && response.data != null) {
-        uploadProfilePictureUrl = response.data['upload_url'];
+        uploadProfilePictureUrl = response.data['url'];
         profilePicture = response.data['url'];
+        await globalService.uploadFile(
+          response.data['upload_url'],
+          selectedImages.first,
+        );
         logger.i('upload url: ${response.data}');
       } else {
         throw Exception(response.message ?? 'Failed to load upload url:');

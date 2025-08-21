@@ -63,10 +63,11 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   verticalSpaceMedium,
-                  const Center(
+                  Center(
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundImage: AssetImage(avatar),
+                      backgroundImage:
+                          NetworkImage(viewModel.profile!.profilePicture),
                       backgroundColor: kcPrimaryColor,
                     ),
                   ),

@@ -25,6 +25,7 @@ class FileService with ListenableServiceMixin {
 
       File? image = await _imageService.pickImageFromCamera();
       if (image != null) {
+        _selectedImages.clear();
         _selectedImages.add(image);
         notifyListeners();
       }
@@ -42,6 +43,7 @@ class FileService with ListenableServiceMixin {
 
       File? image = await _imageService.pickImageFromGallery();
       if (image != null) {
+        _selectedImages.clear();
         _selectedImages.add(image);
         notifyListeners();
       }

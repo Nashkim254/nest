@@ -20,7 +20,7 @@ class EventService {
         },
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
@@ -37,7 +37,7 @@ class EventService {
         data: requestBody.toJson(),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200  || response.statusCode == 201) {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');

@@ -16,7 +16,11 @@ import 'event_details.dart';
 
 class CreateEventView extends StackedView<CreateEventViewModel> {
   const CreateEventView({Key? key}) : super(key: key);
-
+@override
+  void onViewModelReady(CreateEventViewModel viewModel) {
+    viewModel.getCurrentLocation();
+    super.onViewModelReady(viewModel);
+  }
   @override
   Widget builder(
     BuildContext context,
@@ -30,7 +34,7 @@ class CreateEventView extends StackedView<CreateEventViewModel> {
           backgroundColor: kcDarkColor,
           automaticallyImplyLeading: false,
           leading: IconButton(
-            onPressed: () => viewModel.navigationService.back(),
+            onPressed: () => viewModel.previousPage(),
             icon: Icon(
               Icons.adaptive.arrow_back_outlined,
               color: kcWhiteColor,
@@ -82,6 +86,7 @@ Widget _buildPageView(CreateEventViewModel viewModel) {
     controller: viewModel.pageController,
     onPageChanged: viewModel.onPageChanged,
     itemCount: viewModel.itemCount,
+    physics: const NeverScrollableScrollPhysics(),
     itemBuilder: (context, index) {
       return _buildPageItem(
           viewModel.items[index], index, viewModel.itemCount, viewModel);

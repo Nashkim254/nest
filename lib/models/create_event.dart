@@ -1,8 +1,8 @@
 class CreateEventRequest {
   final String title;
   final String description;
-  final DateTime startTime;
-  final DateTime endTime;
+  final String startTime;
+  final String endTime;
   final String location;
   final String? address;
   final double? latitude;
@@ -44,8 +44,8 @@ class CreateEventRequest {
   Map<String, dynamic> toJson() => {
         "title": title,
         "description": description,
-        "start_time": startTime.toIso8601String(),
-        "end_time": endTime.toIso8601String(),
+        "start_time": startTime,
+        "end_time": endTime,
         "location": location,
         "address": address,
         "latitude": latitude,
@@ -62,25 +62,41 @@ class CreateEventRequest {
 }
 
 class TicketPricing {
+  final String type;
   final String name;
   final double price;
-  final int quantity;
+  final int limit;
+  final bool available;
+  final String? password;
+  final String? description;
 
   TicketPricing({
+    required this.type,
     required this.name,
     required this.price,
-    required this.quantity,
+    required this.limit,
+    required this.available,
+    this.password,
+    this.description,
   });
 
   Map<String, dynamic> toJson() => {
+        "type": type,
         "name": name,
         "price": price,
-        "quantity": quantity,
+        "limit": limit,
+        "available": available,
+        "password": password,
+        "description": description,
       };
 
   factory TicketPricing.fromJson(Map<String, dynamic> json) => TicketPricing(
+        type: json["type"],
         name: json["name"],
         price: (json["price"] as num).toDouble(),
-        quantity: json["quantity"],
+        limit: json["limit"],
+        available: json["available"],
+        password: json["password"],
+        description: json["description"],
       );
 }

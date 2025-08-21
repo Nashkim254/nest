@@ -100,4 +100,19 @@ class LocationService {
       return {};
     }
   }
+  /// Get coordinates from current location
+   Future<Map<String, double>?> getCoordinatesFromCurrentLocation() async {
+    try {
+      Position? position = await getCurrentPosition();
+      if (position == null) return null;
+
+      return {
+        'latitude': position.latitude,
+        'longitude': position.longitude,
+      };
+    } catch (e) {
+      print('Error getting coordinates: $e');
+      return null;
+    }
+  }
 }

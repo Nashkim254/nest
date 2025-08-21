@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_inputdecoration.dart';
+import 'package:nest/utils/validators.dart';
 
 import '../../common/app_colors.dart';
 import '../../common/app_dotted_container.dart';
@@ -20,613 +21,637 @@ class EventVisuals extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcDarkGreyColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Flyer Upload',
-                    style: titleTextMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: kcWhiteColor,
-                    ),
+        child: Form(
+          key: viewModel.eventVisualsFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: kcDarkGreyColor,
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(
+                    color: kcContainerBorderColor,
+                    width: 1.0,
                   ),
-                  spacedDivider,
-                  InkWell(
-                    onTap: () => viewModel.showImageSourceSheet(),
-                    child: DottedBorderContainer(
-                      borderColor: kcContainerBorderColor,
-                      height: 200,
-                      width: double.infinity,
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Flyer Upload',
+                      style: titleTextMedium.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: kcWhiteColor,
                       ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            verticalSpaceSmall,
-                            if (viewModel.isBusy)
-                              const CircularProgressIndicator(
-                                color: kcPrimaryColor,
+                    ),
+                    spacedDivider,
+                    InkWell(
+                      onTap: () => viewModel.showImageSourceSheet('flyer'),
+                      child: DottedBorderContainer(
+                        borderColor: kcContainerBorderColor,
+                        height: 200,
+                        width: double.infinity,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(16),
+                        ),
+                        child: viewModel.flyerImage != null
+                            ? Image.file(
+                                File(viewModel.flyerImage!.path),
+                                fit: BoxFit.cover,
                               )
-                            else ...[
-                              SvgPicture.asset(addImg),
-                              verticalSpaceSmall,
-                              Text(
-                                "Drag & drop your flyer here or",
-                                style: titleTextMedium.copyWith(
-                                  fontSize: 15,
-                                  color: kcFollowColor,
+                            : Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    verticalSpaceSmall,
+                                    if (viewModel.isBusy)
+                                      const CircularProgressIndicator(
+                                        color: kcPrimaryColor,
+                                      )
+                                    else ...[
+                                      SvgPicture.asset(addImg),
+                                      verticalSpaceSmall,
+                                      Text(
+                                        "Drag & drop your flyer here or",
+                                        style: titleTextMedium.copyWith(
+                                          fontSize: 15,
+                                          color: kcFollowColor,
+                                        ),
+                                      ),
+                                      verticalSpaceSmall,
+                                      AppButton(
+                                        width: 150,
+                                        buttonColor: Colors.transparent,
+                                        borderColor: kcPrimaryColor,
+                                        labelText: 'Browse Files',
+                                        onTap: () => viewModel
+                                            .showImageSourceSheet('flyer'),
+                                      )
+                                    ],
+                                  ],
                                 ),
                               ),
-                              verticalSpaceSmall,
-                              AppButton(
-                                width: 150,
-                                buttonColor: Colors.transparent,
-                                borderColor: kcPrimaryColor,
-                                labelText: 'Browse Files',
-                                onTap: () {},
-                              )
-                            ],
-                          ],
-                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcDarkGreyColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Live Theme Preview',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                    ),
+              verticalSpaceMedium,
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: kcDarkGreyColor,
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(
+                    color: kcContainerBorderColor,
+                    width: 1.0,
                   ),
-                  spacedDivider,
-                  Text(
-                    'Based on your flyer, we suggest this'
-                    'theme:',
-                    style: titleTextMedium.copyWith(
-                      color: kcSubtitleColor,
-                    ),
-                  ),
-                  verticalSpaceMedium,
-                  buildThemeSelection(viewModel),
-                ],
-              ),
-            ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcDarkGreyColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Event Description',
-                    style: titleTextMedium.copyWith(
-                        color: kcWhiteColor, fontSize: 17),
-                  ),
-                  spacedDivider,
-                  Text(
-                    'Description',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  TextFormField(
-                    style: titleTextMedium.copyWith(color: kcWhiteColor),
-                    controller: viewModel.descriptionController,
-                    maxLines: 5,
-                    decoration: AppInputDecoration.standard(
-                      hintText: 'Tell attendees about your event: '
-                          'vibe, dress code, special notes...',
-                      fillColor: kcDarkGreyColor,
-                      filled: true,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                ],
-              ),
-            ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcDarkGreyColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Lineup',
-                    style: titleTextMedium.copyWith(
-                        color: kcWhiteColor, fontSize: 17),
-                  ),
-                  spacedDivider,
-                  Text(
-                    'Performer Name',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  TextFormField(
-                    style: titleTextMedium.copyWith(color: kcWhiteColor),
-                    controller: viewModel.performerController,
-                    decoration: AppInputDecoration.standard(
-                      hintText: 'e.g., DJ Sparkle',
-                      fillColor: kcDarkGreyColor,
-                      filled: true,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                  verticalSpaceSmall,
-                  Text(
-                    'Performer Image',
-                    style: titleTextMedium.copyWith(
-                        color: kcWhiteColor, fontSize: 17),
-                  ),
-                  verticalSpaceSmall,
-                  DottedBorderContainer(
-                    height: 64,
-                    width: double.infinity,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (viewModel.isPerformerImageLoading)
-                          const CircularProgressIndicator(
-                            color: kcPrimaryColor,
-                          )
-                        else ...[
-                          SvgPicture.asset(addImg),
-                          horizontalSpaceSmall,
-                          Text(
-                            "Add Performer Image",
-                            style: titleTextMedium.copyWith(
-                              fontSize: 15,
-                              color: kcFollowColor,
-                            ),
-                          ),
-                          verticalSpaceSmall,
-                        ],
-                      ],
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  Text(
-                    'Performance Time',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  TextFormField(
-                    style: titleTextMedium.copyWith(color: kcWhiteColor),
-                    controller: viewModel.performanceTimeController,
-                    decoration: AppInputDecoration.standard(
-                      hintText: 'e.g., 10:00 PM – 11:30 PM',
-                      fillColor: kcDarkGreyColor,
-                      filled: true,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                  verticalSpaceSmall,
-                  Text(
-                    'Website URL (Optional)',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  TextFormField(
-                    style: titleTextMedium.copyWith(color: kcWhiteColor),
-                    controller: viewModel.performanceTimeController,
-                    decoration: AppInputDecoration.standard(
-                      hintText: 'e.g., https://djsparkle.com',
-                      fillColor: kcDarkGreyColor,
-                      filled: true,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                  verticalSpaceSmall,
-                  Text(
-                    'Instagram Profile (Optional)',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  TextFormField(
-                    style: titleTextMedium.copyWith(color: kcWhiteColor),
-                    controller: viewModel.igController,
-                    decoration: AppInputDecoration.standard(
-                      hintText: 'e.g., @djsparkle',
-                      fillColor: kcDarkGreyColor,
-                      filled: true,
-                    ),
-                    onChanged: (value) {},
-                  ),
-                  verticalSpaceMedium,
-                  AppButton(
-                    labelText: 'Add Performer',
-                    onTap: () {},
-                  ),
-                  verticalSpaceMedium,
-                  Text(
-                    'Current Lineup',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceMedium,
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (_, int index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: kcPrimaryColor,
-                          child: Image.asset(
-                            viewModel.performers[index].imageUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        title: Text(
-                          viewModel.performers[index].name,
-                          style: titleTextMedium.copyWith(
-                            color: kcWhiteColor,
-                          ),
-                        ),
-                        subtitle: Column(
-                          children: [
-                            Text(
-                              viewModel.performers[index].time,
-                              style: titleTextMedium.copyWith(
-                                color: kcSubtitleColor,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  height: 34,
-                                  width: 34,
-                                  padding: const EdgeInsets.all(4.0),
-                                  decoration: BoxDecoration(
-                                    color: kcGreyButtonColor,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    web,
-                                    color: kcDisableIconColor,
-                                  ),
-                                ),
-                                horizontalSpaceSmall,
-                                Container(
-                                  height: 34,
-                                  width: 34,
-                                  padding: const EdgeInsets.all(4.0),
-                                  decoration: BoxDecoration(
-                                    color: kcGreyButtonColor,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: SvgPicture.asset(
-                                    instagram,
-                                    color: kcDisableIconColor,
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.close,
-                            color: kcDisableIconColor,
-                          ),
-                          onPressed: () {
-                            viewModel.removePerformer(index);
-                          },
-                        ),
-                      );
-                    },
-                    separatorBuilder: (_, int index) {
-                      return const SizedBox(
-                        height: 8.0,
-                      );
-                    },
-                    itemCount: viewModel.performers.length,
-                  )
-                ],
-              ),
-            ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcDarkGreyColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Photo Gallery',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 17,
-                    ),
-                  ),
-                  spacedDivider,
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 1.0,
-                    ),
-                    itemCount: viewModel.selectedImages.length +
-                        1, // +1 for the add button
-                    itemBuilder: (context, index) {
-                      if (index < viewModel.selectedImages.length) {
-                        // Photo item
-                        return _buildPhotoItem(
-                            viewModel.selectedImages[index].path);
-                      } else {
-                        // Add photos button
-                        return _buildAddPhotosButton(viewModel);
-                      }
-                    },
-                  ),
-                  verticalSpaceMedium,
-                  Align(
-                    child: AppButton(
-                      width: 187,
-                      buttonColor: Colors.transparent,
-                      borderColor: kcPrimaryColor,
-                      labelText: 'Upload More Photos',
-                      labelColor: kcPrimaryColor,
-                      onTap: viewModel.showImageSourceSheet,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcDarkGreyColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Sponsor Tagging',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 17,
-                    ),
-                  ),
-                  spacedDivider,
-                  Text(
-                    'Sponsor Name / Logo URL',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
-                    ),
-                  ),
-                  verticalSpaceSmall,
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 4,
-                        child: TextFormField(
-                          style: titleTextMedium.copyWith(color: kcWhiteColor),
-                          controller: viewModel.sponsorController,
-                          decoration: AppInputDecoration.standard(
-                            hintText: 'e.g., Red Bull, or image URL',
-                            fillColor: kcDarkGreyColor,
-                            filled: true,
-                          ),
-                          onChanged: (value) {},
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Live Theme Preview',
+                      style: titleTextMedium.copyWith(
+                        color: kcWhiteColor,
                       ),
-                      horizontalSpaceSmall,
-                      Expanded(
-                        child: AppButton(
-                          labelText: 'Add',
-                          onTap: () {
-                            viewModel
-                                .addSponsor(viewModel.sponsorController.text);
-                          },
-                        ),
+                    ),
+                    spacedDivider,
+                    Text(
+                      'Based on your flyer, we suggest this'
+                      'theme:',
+                      style: titleTextMedium.copyWith(
+                        color: kcSubtitleColor,
                       ),
-                    ],
-                  ),
-                  verticalSpaceMedium,
-                  //display current sponsors  in dynamic list of chips
-                  Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: viewModel.sponsors.map((sponsor) {
-                      return Chip(
-                        label: Text(
-                          sponsor,
-                          style: titleTextMedium.copyWith(
-                            color: kcWhiteColor,
-                          ),
-                        ),
-                        backgroundColor: kcGreyButtonColor,
-                        deleteIconColor: kcDisableIconColor,
-                        deleteIcon: const Icon(
-                          Icons.close,
-                          color: kcDisableIconColor,
-                        ),
-                        onDeleted: () {
-                          viewModel.removeSponsor(sponsor);
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            verticalSpaceMedium,
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: kcGreyButtonColor,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: kcContainerBorderColor,
-                  width: 1.0,
+                    ),
+                    verticalSpaceMedium,
+                    buildThemeSelection(viewModel),
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Event Options',
-                    style: titleTextMedium.copyWith(
-                      color: kcWhiteColor,
-                      fontSize: 14,
+              verticalSpaceMedium,
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: kcDarkGreyColor,
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(
+                    color: kcContainerBorderColor,
+                    width: 1.0,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Event Description',
+                      style: titleTextMedium.copyWith(
+                          color: kcWhiteColor, fontSize: 17),
                     ),
-                  ),
-                  spacedDivider,
-                  // Scheduled Ticket Drop Countdown
-                  _buildSwitchTile(
-                    title: 'Scheduled Ticket Drop\nCountdown',
-                    value: viewModel.scheduledTicketDrop,
-                    onChanged: (value) {
-                      viewModel.scheduledTicketDrop = value;
-                      viewModel.rebuildUi();
-                    },
-                  ),
-
-                  verticalSpaceSmall,
-
-                  // Show Guest List
-                  _buildSwitchTile(
-                    title: 'Show Guest List',
-                    value: viewModel.showGuestList,
-                    hasInfoIcon: true,
-                    onChanged: (value) {
-                      viewModel.showGuestList = value;
-                      viewModel.rebuildUi();
-                    },
-                  ),
-
-                  verticalSpaceSmall,
-
-                  // Show on Explore Page
-                  _buildSwitchTile(
-                    title: 'Show on Explore Page',
-                    value: viewModel.showOnExplorePage,
-                    hasInfoIcon: true,
-                    onChanged: (value) {
-                      viewModel.showOnExplorePage = value;
-                      viewModel.rebuildUi();
-                    },
-                  ),
-
-                  verticalSpaceSmall,
-
-                  // Password Protected Event
-                  _buildSwitchTile(
-                    title: 'Password Protected Event',
-                    value: viewModel.passwordProtected,
-                    hasInfoIcon: true,
-                    onChanged: (value) {
-                      viewModel.passwordProtected = value;
-                      viewModel.rebuildUi();
-                    },
-                  ),
-
-                  verticalSpaceSmall,
-
-                  _buildNavigationTile(
-                    title: 'Terms of Service',
-                    onTap: () {},
-                  ),
-                  verticalSpaceSmall,
-                  Text(
-                    'Displays the list of attendees who have opted'
-                    'in to be visible.',
-                    style: titleTextMedium.copyWith(
-                      color: kcSubtitleColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
+                    spacedDivider,
+                    Text(
+                      'Description',
+                      style: titleTextMedium.copyWith(
+                        color: kcWhiteColor,
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ],
+                    verticalSpaceSmall,
+
+                    TextFormField(
+                      validator: (value) => Validators.validateRequired(value),
+                      style: titleTextMedium.copyWith(color: kcWhiteColor),
+                      controller: viewModel.descriptionController,
+                      maxLines: 5,
+                      decoration: AppInputDecoration.standard(
+                        hintText: 'Tell attendees about your event: '
+                            'vibe, dress code, special notes...',
+                        fillColor: kcDarkGreyColor,
+                        filled: true,
+                      ),
+                      onChanged: (value) {},
+                    ),
+                  ],
+                ),
               ),
-            ),
-            verticalSpaceSmall,
-            AppButton(
-              labelText: 'Finish & Publish',
-              onTap: () {},
-            ),
-          ],
+              verticalSpaceMedium,
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: kcDarkGreyColor,
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(
+                    color: kcContainerBorderColor,
+                    width: 1.0,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Lineup',
+                      style: titleTextMedium.copyWith(
+                          color: kcWhiteColor, fontSize: 17),
+                    ),
+                    spacedDivider,
+                    // Text(
+                    //   'Performer Name',
+                    //   style: titleTextMedium.copyWith(
+                    //     color: kcWhiteColor,
+                    //     fontSize: 14,
+                    //   ),
+                    // ),
+                    // verticalSpaceSmall,
+                    // TextFormField(
+                    //   style: titleTextMedium.copyWith(color: kcWhiteColor),
+                    //   controller: viewModel.performerController,
+                    //   decoration: AppInputDecoration.standard(
+                    //     hintText: 'e.g., DJ Sparkle',
+                    //     fillColor: kcDarkGreyColor,
+                    //     filled: true,
+                    //   ),
+                    //   onChanged: (value) {},
+                    // ),
+                    // verticalSpaceSmall,
+                    // Text(
+                    //   'Performer Image',
+                    //   style: titleTextMedium.copyWith(
+                    //       color: kcWhiteColor, fontSize: 17),
+                    // ),
+                    // verticalSpaceSmall,
+                    // InkWell(
+                    //   onTap: () => viewModel.showImageSourceSheet('performer'),
+                    //   child: DottedBorderContainer(
+                    //     height: 64,
+                    //     width: double.infinity,
+                    //     child: viewModel.performerImage != null
+                    //         ? Image.file(
+                    //             File(viewModel.performerImage!.path),
+                    //             fit: BoxFit.cover,
+                    //           )
+                    //         : Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: [
+                    //               if (viewModel.isPerformerImageLoading)
+                    //                 const CircularProgressIndicator(
+                    //                   color: kcPrimaryColor,
+                    //                 )
+                    //               else ...[
+                    //                 SvgPicture.asset(addImg),
+                    //                 horizontalSpaceSmall,
+                    //                 Text(
+                    //                   "Add Performer Image",
+                    //                   style: titleTextMedium.copyWith(
+                    //                     fontSize: 15,
+                    //                     color: kcFollowColor,
+                    //                   ),
+                    //                 ),
+                    //                 verticalSpaceSmall,
+                    //               ],
+                    //             ],
+                    //           ),
+                    //   ),
+                    // ),
+                    verticalSpaceSmall,
+                    Text(
+                      'Performance Time',
+                      style: titleTextMedium.copyWith(
+                        color: kcWhiteColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                    verticalSpaceSmall,
+                    TextFormField(
+                      readOnly: true,
+                      validator: (value) =>
+                          Validators.validateRequired(value),
+                      onTap: ()=> viewModel.showTimeRangePicker(context),
+                      style: titleTextMedium.copyWith(color: kcWhiteColor),
+                      controller: viewModel.performanceTimeController,
+                      decoration: AppInputDecoration.standard(
+                        hintText: 'e.g., 10:00 PM – 11:30 PM',
+                        fillColor: kcDarkGreyColor,
+                        filled: true,
+                      ),
+                      onChanged: (value) {},
+                    ),
+                    verticalSpaceSmall,
+                    Text(
+                      'Website URL (Optional)',
+                      style: titleTextMedium.copyWith(
+                        color: kcWhiteColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                    verticalSpaceSmall,
+                    TextFormField(
+                      style: titleTextMedium.copyWith(color: kcWhiteColor),
+                      controller: viewModel.websiteController,
+                      decoration: AppInputDecoration.standard(
+                        hintText: 'e.g., https://djsparkle.com',
+                        fillColor: kcDarkGreyColor,
+                        filled: true,
+                      ),
+                      onChanged: (value) {},
+                    ),
+                    verticalSpaceSmall,
+                    Text(
+                      'Instagram Profile (Optional)',
+                      style: titleTextMedium.copyWith(
+                        color: kcWhiteColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                    verticalSpaceSmall,
+                    TextFormField(
+                      style: titleTextMedium.copyWith(color: kcWhiteColor),
+                      controller: viewModel.igController,
+                      decoration: AppInputDecoration.standard(
+                        hintText: 'e.g., @djsparkle',
+                        fillColor: kcDarkGreyColor,
+                        filled: true,
+                      ),
+                      onChanged: (value) {},
+                    ),
+                    verticalSpaceMedium,
+                    // AppButton(
+                    //   labelText: 'Add Performer',
+                    //   onTap: () {},
+                    // ),
+                    // verticalSpaceMedium,
+                    // Text(
+                    //   'Current Lineup',
+                    //   style: titleTextMedium.copyWith(
+                    //     color: kcWhiteColor,
+                    //     fontSize: 14,
+                    //   ),
+                    // ),
+                    // verticalSpaceMedium,
+                    // ListView.separated(
+                    //   shrinkWrap: true,
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   itemBuilder: (_, int index) {
+                    //     return ListTile(
+                    //       leading: CircleAvatar(
+                    //         backgroundColor: kcPrimaryColor,
+                    //         child: Image.asset(
+                    //           viewModel.performers[index].imageUrl,
+                    //           fit: BoxFit.cover,
+                    //         ),
+                    //       ),
+                    //       title: Text(
+                    //         viewModel.performers[index].name,
+                    //         style: titleTextMedium.copyWith(
+                    //           color: kcWhiteColor,
+                    //         ),
+                    //       ),
+                    //       subtitle: Column(
+                    //         children: [
+                    //           Text(
+                    //             viewModel.performers[index].time,
+                    //             style: titleTextMedium.copyWith(
+                    //               color: kcSubtitleColor,
+                    //             ),
+                    //           ),
+                    //           Row(
+                    //             children: [
+                    //               Container(
+                    //                 height: 34,
+                    //                 width: 34,
+                    //                 padding: const EdgeInsets.all(4.0),
+                    //                 decoration: BoxDecoration(
+                    //                   color: kcGreyButtonColor,
+                    //                   borderRadius: BorderRadius.circular(8.0),
+                    //                 ),
+                    //                 child: SvgPicture.asset(
+                    //                   web,
+                    //                   color: kcDisableIconColor,
+                    //                 ),
+                    //               ),
+                    //               horizontalSpaceSmall,
+                    //               Container(
+                    //                 height: 34,
+                    //                 width: 34,
+                    //                 padding: const EdgeInsets.all(4.0),
+                    //                 decoration: BoxDecoration(
+                    //                   color: kcGreyButtonColor,
+                    //                   borderRadius: BorderRadius.circular(8.0),
+                    //                 ),
+                    //                 child: SvgPicture.asset(
+                    //                   instagram,
+                    //                   color: kcDisableIconColor,
+                    //                 ),
+                    //               ),
+                    //             ],
+                    //           )
+                    //         ],
+                    //       ),
+                    //       trailing: IconButton(
+                    //         icon: const Icon(
+                    //           Icons.close,
+                    //           color: kcDisableIconColor,
+                    //         ),
+                    //         onPressed: () {
+                    //           viewModel.removePerformer(index);
+                    //         },
+                    //       ),
+                    //     );
+                    //   },
+                    //   separatorBuilder: (_, int index) {
+                    //     return const SizedBox(
+                    //       height: 8.0,
+                    //     );
+                    //   },
+                    //   itemCount: viewModel.performers.length,
+                    // )
+                  ],
+                ),
+              ),
+              // verticalSpaceMedium,
+              // Container(
+              //   padding: const EdgeInsets.all(16.0),
+              //   decoration: BoxDecoration(
+              //     color: kcDarkGreyColor,
+              //     borderRadius: BorderRadius.circular(16.0),
+              //     border: Border.all(
+              //       color: kcContainerBorderColor,
+              //       width: 1.0,
+              //     ),
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         'Photo Gallery',
+              //         style: titleTextMedium.copyWith(
+              //           color: kcWhiteColor,
+              //           fontSize: 17,
+              //         ),
+              //       ),
+              //       spacedDivider,
+              //       GridView.builder(
+              //         shrinkWrap: true,
+              //         physics: const NeverScrollableScrollPhysics(),
+              //         gridDelegate:
+              //             const SliverGridDelegateWithFixedCrossAxisCount(
+              //           crossAxisCount: 2,
+              //           crossAxisSpacing: 12,
+              //           mainAxisSpacing: 12,
+              //           childAspectRatio: 1.0,
+              //         ),
+              //         itemCount: viewModel.galleryImage.length +
+              //             1, // +1 for the add button
+              //         itemBuilder: (context, index) {
+              //           if (index < viewModel.galleryImage.length) {
+              //             // Photo item
+              //             return _buildPhotoItem(
+              //                 viewModel.galleryImage[index].path);
+              //           } else {
+              //             // Add photos button
+              //             return _buildAddPhotosButton(viewModel);
+              //           }
+              //         },
+              //       ),
+              //       verticalSpaceMedium,
+              //       Align(
+              //         child: AppButton(
+              //           width: 187,
+              //           buttonColor: Colors.transparent,
+              //           borderColor: kcPrimaryColor,
+              //           labelText: 'Upload More Photos',
+              //           labelColor: kcPrimaryColor,
+              //           onTap: () => viewModel.showImageSourceSheet('gallery'),
+              //         ),
+              //       )
+              //     ],
+              //   ),
+              // ),
+              // verticalSpaceMedium,
+              // Container(
+              //   padding: const EdgeInsets.all(16.0),
+              //   decoration: BoxDecoration(
+              //     color: kcDarkGreyColor,
+              //     borderRadius: BorderRadius.circular(16.0),
+              //     border: Border.all(
+              //       color: kcContainerBorderColor,
+              //       width: 1.0,
+              //     ),
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         'Sponsor Tagging',
+              //         style: titleTextMedium.copyWith(
+              //           color: kcWhiteColor,
+              //           fontSize: 17,
+              //         ),
+              //       ),
+              //       spacedDivider,
+              //       Text(
+              //         'Sponsor Name / Logo URL',
+              //         style: titleTextMedium.copyWith(
+              //           color: kcWhiteColor,
+              //           fontSize: 14,
+              //         ),
+              //       ),
+              //       verticalSpaceSmall,
+              //       Row(
+              //         children: [
+              //           Expanded(
+              //             flex: 4,
+              //             child: TextFormField(
+              //               style: titleTextMedium.copyWith(color: kcWhiteColor),
+              //               controller: viewModel.sponsorController,
+              //               decoration: AppInputDecoration.standard(
+              //                 hintText: 'e.g., Red Bull, or image URL',
+              //                 fillColor: kcDarkGreyColor,
+              //                 filled: true,
+              //               ),
+              //               onChanged: (value) {},
+              //             ),
+              //           ),
+              //           horizontalSpaceSmall,
+              //           Expanded(
+              //             child: AppButton(
+              //               labelText: 'Add',
+              //               onTap: () {
+              //                 viewModel
+              //                     .addSponsor(viewModel.sponsorController.text);
+              //               },
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //       verticalSpaceMedium,
+              //       //display current sponsors  in dynamic list of chips
+              //       Wrap(
+              //         spacing: 8.0,
+              //         runSpacing: 8.0,
+              //         children: viewModel.sponsors.map((sponsor) {
+              //           return Chip(
+              //             label: Text(
+              //               sponsor,
+              //               style: titleTextMedium.copyWith(
+              //                 color: kcWhiteColor,
+              //               ),
+              //             ),
+              //             backgroundColor: kcGreyButtonColor,
+              //             deleteIconColor: kcDisableIconColor,
+              //             deleteIcon: const Icon(
+              //               Icons.close,
+              //               color: kcDisableIconColor,
+              //             ),
+              //             onDeleted: () {
+              //               viewModel.removeSponsor(sponsor);
+              //             },
+              //           );
+              //         }).toList(),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              verticalSpaceMedium,
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: kcGreyButtonColor,
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(
+                    color: kcContainerBorderColor,
+                    width: 1.0,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Event Options',
+                      style: titleTextMedium.copyWith(
+                        color: kcWhiteColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                    spacedDivider,
+                    // Scheduled Ticket Drop Countdown
+                    _buildSwitchTile(
+                      title: 'Scheduled Ticket Drop\nCountdown',
+                      value: viewModel.scheduledTicketDrop,
+                      onChanged: (value) {
+                        viewModel.scheduledTicketDrop = value;
+                        viewModel.rebuildUi();
+                      },
+                    ),
+
+                    verticalSpaceSmall,
+
+                    // Show Guest List
+                    _buildSwitchTile(
+                      title: 'Show Guest List',
+                      value: viewModel.showGuestList,
+                      hasInfoIcon: true,
+                      onChanged: (value) {
+                        viewModel.showGuestList = value;
+                        viewModel.rebuildUi();
+                      },
+                    ),
+
+                    verticalSpaceSmall,
+
+                    // Show on Explore Page
+                    _buildSwitchTile(
+                      title: 'Show on Explore Page',
+                      value: viewModel.showOnExplorePage,
+                      hasInfoIcon: true,
+                      onChanged: (value) {
+                        viewModel.showOnExplorePage = value;
+                        viewModel.rebuildUi();
+                      },
+                    ),
+
+                    verticalSpaceSmall,
+
+                    // Password Protected Event
+                    _buildSwitchTile(
+                      title: 'Password Protected Event',
+                      value: viewModel.passwordProtected,
+                      hasInfoIcon: true,
+                      onChanged: (value) {
+                        viewModel.passwordProtected = value;
+                        viewModel.rebuildUi();
+                      },
+                    ),
+
+                    verticalSpaceSmall,
+
+                    _buildNavigationTile(
+                      title: 'Terms of Service',
+                      onTap: () {},
+                    ),
+                    verticalSpaceSmall,
+                    Text(
+                      'Displays the list of attendees who have opted'
+                      'in to be visible.',
+                      style: titleTextMedium.copyWith(
+                        color: kcSubtitleColor,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              verticalSpaceSmall,
+              AppButton(
+                labelText: 'Finish & Publish',
+                onTap: () => viewModel.createEvent(),
+                isBusy: viewModel.isBusy,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -740,10 +765,11 @@ Widget _buildPhotoItem(String imagePath) {
 
 Widget _buildAddPhotosButton(CreateEventViewModel viewModel) {
   return GestureDetector(
-    onTap: viewModel.showImageSourceSheet,
+    onTap: () => viewModel.showImageSourceSheet('gallery'),
     child: DottedBorderContainer(
       borderRadius: const BorderRadius.all(Radius.circular(12)),
-      child: Column(
+      child:
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(
@@ -781,7 +807,7 @@ Widget buildThemeSelection(CreateEventViewModel viewModel) {
             borderRadius: BorderRadius.circular(8.0),
             border: Border.all(
               color: viewModel.selectedThemeIndex == index
-                  ? kcPrimaryColor
+                  ? kcTertiaryColor
                   : Colors.transparent,
               width: 2.0,
             ),

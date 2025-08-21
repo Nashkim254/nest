@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/models/organization_model.dart';
@@ -124,11 +125,24 @@ class HostingViewModel extends BaseViewModel {
     try {
       final response = await eventService.getMyEvents(page: page, size: size);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        logger.i('Upcoming Events: ${response.data.runtimeType}');
+        logger.i('Upcoming Events: ${response.data['events']}');
 
-        upcomingEvents = (response.data['events'] as List)
-            .map((event) => Event.fromJson(event))
+        final eventsList = response.data['events'];
+        logger.i('Number of events: ${eventsList.length}');
+
+        upcomingEvents = eventsList.map((event) {
+          logger.i('Parsing event: $event');
+          try {
+            return Event.fromJson(event);
+          } catch (e) {
+            logger.e('Failed to parse event: $event');
+            logger.e('Error: $e');
+            return null;
+          }
+        }).whereType<Event>() // Only keep Event objects, filter out nulls
             .toList();
+        logger.w('Upcoming Events: ${upcomingEvents}');
+
         return response.data;
       } else {
         logger.e('Failed to load upcoming events: ${response.message}');
@@ -137,8 +151,8 @@ class HostingViewModel extends BaseViewModel {
           duration: const Duration(seconds: 3),
         );
       }
-    } catch (e) {
-      logger.e('Error fetching upcoming events: $e');
+    } catch (e, s) {
+      logger.e('Error fetching upcoming events: $s');
       locator<SnackbarService>().showSnackbar(
         message: 'Error fetching upcoming events: $e',
         duration: const Duration(seconds: 3),
