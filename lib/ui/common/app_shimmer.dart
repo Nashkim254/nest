@@ -222,21 +222,24 @@ class _EventShimmerLoaderState extends State<EventShimmerLoader>
 
                     // Description lines
                     Column(
-                      children: List.generate(4, (index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: _buildShimmerGradient(
-                          child: Container(
-                            height: 16,
-                            width: index == 3
-                                ? MediaQuery.of(context).size.width * 0.7
-                                : double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        ),
-                      )),
+                      children: List.generate(
+                          4,
+                          (index) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: _buildShimmerGradient(
+                                  child: Container(
+                                    height: 16,
+                                    width: index == 3
+                                        ? MediaQuery.of(context).size.width *
+                                            0.7
+                                        : double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
+                              )),
                     ),
 
                     const SizedBox(height: 20),
@@ -267,19 +270,21 @@ class _EventShimmerLoaderState extends State<EventShimmerLoader>
                     // User avatars
                     Row(
                       children: [
-                        ...List.generate(4, (index) => Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: _buildShimmerGradient(
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                        )),
+                        ...List.generate(
+                            4,
+                            (index) => Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: _buildShimmerGradient(
+                                    child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                                )),
                         const SizedBox(width: 12),
                         _buildShimmerGradient(
                           child: Container(

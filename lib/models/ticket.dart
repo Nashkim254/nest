@@ -1,95 +1,79 @@
 class Ticket {
-  final String id;
-  final String eventName;
-  final String eventDate;
-  final String eventTime;
-  final String ticketType; // General Admission, VIP Access, etc.
-  final String? imageUrl;
-  final String? qrCode;
-  final bool isSavedToWallet;
-  final String? specialOffer; // Like "20 x 20" badge
+  final int id;
+  final int eventId;
+  final int userId;
+  final String ticketType;
+  final double price;
+  final int quantity;
+  final bool isRSVP;
+  final String description;
+  final String qrCode;
+  final bool isValidated;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  // Event information (optional fields)
+  final String? eventTitle;
+  final DateTime? eventDate;
+  final String? eventLocation;
 
   Ticket({
     required this.id,
-    required this.eventName,
-    required this.eventDate,
-    required this.eventTime,
+    required this.eventId,
+    required this.userId,
     required this.ticketType,
-    this.imageUrl,
-    this.qrCode,
-    this.isSavedToWallet = false,
-    this.specialOffer,
+    required this.price,
+    required this.quantity,
+    required this.isRSVP,
+    required this.description,
+    required this.qrCode,
+    required this.isValidated,
+    required this.createdAt,
+    required this.updatedAt,
+    this.eventTitle,
+    this.eventDate,
+    this.eventLocation,
   });
 
-  // Check if ticket is upcoming based on date
-  bool get isUpcoming {
-    try {
-      final now = DateTime.now();
-      final eventDateTime = _parseEventDate();
-      return eventDateTime.isAfter(now);
-    } catch (e) {
-      return true; // Default to upcoming if parsing fails
-    }
-  }
-
-  DateTime _parseEventDate() {
-    // Parse date formats like "Fri, Oct 27", "Sat, Nov 11", "Sun, Dec 3"
-    final months = {
-      'Jan': 1,
-      'Feb': 2,
-      'Mar': 3,
-      'Apr': 4,
-      'May': 5,
-      'Jun': 6,
-      'Jul': 7,
-      'Aug': 8,
-      'Sep': 9,
-      'Oct': 10,
-      'Nov': 11,
-      'Dec': 12
-    };
-
-    final parts = eventDate.split(' ');
-    if (parts.length >= 3) {
-      final monthStr = parts[1].replaceAll(',', '');
-      final dayStr = parts[2];
-      final month = months[monthStr] ?? 1;
-      final day = int.tryParse(dayStr) ?? 1;
-      final year = DateTime.now().year; // Assume current year
-
-      return DateTime(year, month, day);
-    }
-
-    return DateTime.now().add(const Duration(days: 1)); // Default to tomorrow
-  }
-
-  // Convert to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'eventName': eventName,
-      'eventDate': eventDate,
-      'eventTime': eventTime,
-      'ticketType': ticketType,
-      'imageUrl': imageUrl,
-      'qrCode': qrCode,
-      'isSavedToWallet': isSavedToWallet,
-      'specialOffer': specialOffer,
-    };
-  }
-
-  // Create from JSON
   factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
       id: json['id'],
-      eventName: json['eventName'],
-      eventDate: json['eventDate'],
-      eventTime: json['eventTime'],
-      ticketType: json['ticketType'],
-      imageUrl: json['imageUrl'],
-      qrCode: json['qrCode'],
-      isSavedToWallet: json['isSavedToWallet'] ?? false,
-      specialOffer: json['specialOffer'],
+      eventId: json['event_id'],
+      userId: json['user_id'],
+      ticketType: json['ticket_type'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      quantity: json['quantity'] ?? 0,
+      isRSVP: json['is_rsvp'] ?? false,
+      description: json['description'] ?? '',
+      qrCode: json['qr_code'] ?? '',
+      isValidated: json['is_validated'] ?? false,
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      eventTitle: json['event_title'],
+      eventDate: json['event_date'] != null
+          ? DateTime.parse(json['event_date'])
+          : null,
+      eventLocation: json['event_location'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'event_id': eventId,
+      'user_id': userId,
+      'ticket_type': ticketType,
+      'price': price,
+      'quantity': quantity,
+      'is_rsvp': isRSVP,
+      'description': description,
+      'qr_code': qrCode,
+      'is_validated': isValidated,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      'event_title': eventTitle,
+      'event_date': eventDate?.toIso8601String(),
+      'event_location': eventLocation,
+    };
   }
 }

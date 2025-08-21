@@ -23,7 +23,7 @@ class TicketWidget extends StatelessWidget {
         children: [
           ListTile(
             title: Text(
-              ticket.eventName,
+              ticket.eventTitle!,
               style: titleTextMedium.copyWith(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -31,7 +31,7 @@ class TicketWidget extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              '${ticket.eventDate} ${ticket.eventTime}',
+              '${ticket.eventDate}',
               style: titleTextMedium.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -73,8 +73,8 @@ class TicketWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                image: DecorationImage(
-                  image: AssetImage(ticket.imageUrl!),
+                image: const DecorationImage(
+                  image: AssetImage(ev4),
                 ),
               ),
             ),

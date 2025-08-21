@@ -1,12 +1,15 @@
+import 'package:nest/abstractClasses/abstract_class.dart';
 import 'package:nest/services/websocket_service.dart';
+import 'package:nest/ui/common/app_urls.dart';
 import 'package:stacked/stacked.dart';
 import 'dart:async';
+import '../app/app.locator.dart';
 import '../models/message_models.dart';
 import '../ui/common/app_enums.dart';
 
 class MessageService with ListenableServiceMixin {
   final WebsocketService _webSocketService = WebsocketService();
-
+  final apiService = locator<IApiService>();
   // In-memory storage for conversations and messages
   final Map<String, List<Message>> _conversationMessages = {};
   final Map<String, Conversation> _conversations = {};
@@ -46,7 +49,7 @@ class MessageService with ListenableServiceMixin {
     return _onlineUsers[userId] ?? false;
   }
 
-  MessagingService() {
+  MessageService() {
     listenToReactiveValues([_connectionStatus, _messages, _typing]);
     _setupSubscriptions();
   }
@@ -175,5 +178,15 @@ class MessageService with ListenableServiceMixin {
     _typingSubscription?.cancel();
     _onlineStatusSubscription?.cancel();
     _webSocketService.dispose();
+  }
+
+  //endpoints
+  Future fetchConversations() async {
+    final response = await apiService.get(AppUrls.conversations);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response;
+    } else {
+      throw Exception('Failed to load conversations: ${response.message}');
+    }
   }
 }

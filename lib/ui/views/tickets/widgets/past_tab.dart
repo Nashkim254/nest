@@ -14,12 +14,12 @@ class PastTicketsTab extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
           child: TicketWidget(
-            ticket: viewModel.getSampleTickets()[index],
+            ticket: viewModel.tickets[index],
           ),
         );
       },
       separatorBuilder: (BuildContext context, int index) => verticalSpaceSmall,
-      itemCount: viewModel.getSampleTickets().length,
+      itemCount: viewModel.tickets.length,
     );
   }
 }

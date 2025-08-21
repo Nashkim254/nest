@@ -130,11 +130,13 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: InkWell(
-                                      onTap: ()=> viewModel.navigateToViewEvent(event),
+                                      onTap: () =>
+                                          viewModel.navigateToViewEvent(event),
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: kcDarkGreyColor,
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius:
+                                              BorderRadius.circular(16),
                                           border: Border.all(
                                               color: kcContainerBorderColor),
                                         ),
@@ -158,7 +160,8 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Text(
                                                 event.title,
                                                 style: titleTextMedium.copyWith(
@@ -168,19 +171,21 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Row(
                                                 children: [
                                                   SvgPicture.asset(calendar,
                                                       color: kcSubtitleColor),
                                                   horizontalSpaceSmall,
                                                   Text(
-                                                    formatter
-                                                        .format(event.startTime),
-                                                    style:
-                                                        titleTextMedium.copyWith(
+                                                    formatter.format(
+                                                        event.startTime),
+                                                    style: titleTextMedium
+                                                        .copyWith(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: kcSubtitleColor,
                                                     ),
                                                   ),
@@ -188,7 +193,8 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Row(
                                                 children: [
                                                   SvgPicture.asset(pin,
@@ -196,10 +202,11 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                                   horizontalSpaceSmall,
                                                   Text(
                                                     event.location,
-                                                    style:
-                                                        titleTextMedium.copyWith(
+                                                    style: titleTextMedium
+                                                        .copyWith(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       color: kcSubtitleColor,
                                                     ),
                                                   ),

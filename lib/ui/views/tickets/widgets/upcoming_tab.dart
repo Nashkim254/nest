@@ -13,12 +13,12 @@ class UpcomingTicketsTab extends StatelessWidget {
       child: ListView.separated(
         itemBuilder: (BuildContext context, int index) {
           return TicketWidget(
-            ticket: viewModel.getSampleTickets()[index],
+            ticket: viewModel.tickets[index],
           );
         },
         separatorBuilder: (BuildContext context, int index) =>
             verticalSpaceSmall,
-        itemCount: viewModel.getSampleTickets().length,
+        itemCount: viewModel.tickets.length,
       ),
     );
   }

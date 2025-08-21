@@ -35,9 +35,8 @@ class ExploreEventsViewModel extends BaseViewModel {
   }
 
   onSearchChanged(String value) {
-
     searchQuery = value;
-    if(searchQuery.isEmpty) {
+    if (searchQuery.isEmpty) {
       init(); // Notify listeners to update UI
       return;
     }
@@ -58,7 +57,8 @@ class ExploreEventsViewModel extends BaseViewModel {
   final navigationService = locator<NavigationService>();
   Logger logger = Logger();
   Future getUpcomingEvents({bool isLoadMore = false}) async {
-    logger.w('Fetching upcoming events, page: $page, size: $size, isLoadMore: $isLoadMore');
+    logger.w(
+        'Fetching upcoming events, page: $page, size: $size, isLoadMore: $isLoadMore');
     setBusy(true);
     try {
       final response = await eventService.getMyEvents(page: page, size: size);
@@ -156,6 +156,7 @@ class ExploreEventsViewModel extends BaseViewModel {
   navigateToCreateEvent() {
     locator<NavigationService>().navigateTo(Routes.createEventView);
   }
+
   navigateToViewEvent(Event event) {
     locator<NavigationService>().navigateToViewEventView(event: event);
   }

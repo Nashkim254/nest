@@ -11,7 +11,11 @@ import 'messages_viewmodel.dart';
 
 class MessagesView extends StackedView<MessagesViewModel> {
   const MessagesView({Key? key}) : super(key: key);
-
+@override
+  void onViewModelReady(MessagesViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
   @override
   Widget builder(
     BuildContext context,

@@ -1,16 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:logger/logger.dart';
+import 'package:nest/services/global_service.dart';
 import 'package:nest/services/message_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
 import '../../../models/chat_message.dart';
 import '../../../models/message_models.dart';
+import '../../../services/auth_service.dart';
 import '../../common/app_enums.dart';
 
-class ChatViewModel extends BaseViewModel {
+class ChatViewModel extends ReactiveViewModel {
   TextEditingController messageController = TextEditingController();
+  final authService = locator<AuthService>();
+  final global = locator<GlobalService>();
   final List<ChatMessage> _messages = [
     ChatMessage(
       message: "Hey! Are you going to the Neon Nights party this weekend?",
@@ -56,7 +62,7 @@ class ChatViewModel extends BaseViewModel {
   });
 
   @override
-  List<ListenableServiceMixin> get reactiveServices => [_messagingService];
+  List<ListenableServiceMixin> get listenableServices => [_messagingService];
 
   // Getters
   List<Message> get chats =>
@@ -157,7 +163,7 @@ class ChatViewModel extends BaseViewModel {
   Future<void> connect() async {
     await _messagingService.connect(
       'ws://localhost:8080/api/v1/ws',
-      'YOUR_AUTH_TOKEN', // Replace with actual token
+      authService.prefsService.getAuthToken()!, // Replace with actual token
     );
   }
 
@@ -179,4 +185,6 @@ class ChatViewModel extends BaseViewModel {
     }
     super.dispose();
   }
+
+
 }

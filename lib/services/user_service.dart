@@ -28,6 +28,22 @@ class UserService with ListenableServiceMixin {
     }
   }
 
+  Future getMyTickets() async {
+    try {
+      final response = await _apiService.get(
+        AppUrls.myTickets,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future editUserProfile(
       {required UpdateProfileInput profileUpdateInput}) async {
     try {

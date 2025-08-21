@@ -47,11 +47,11 @@ class MyTicketWidget extends StatelessWidget {
                   ),
                 ),
                 verticalSpaceTiny,
-                Text(ticket.eventName, style: titleTextMedium),
+                Text(ticket.eventTitle!, style: titleTextMedium),
                 verticalSpaceTiny,
                 // Date and time
                 Text(
-                  '${ticket.eventDate} ${ticket.eventTime}',
+                  '${ticket.eventDate}',
                   style: titleTextMedium.copyWith(
                     color: kcGreyColor,
                     fontSize: 13,

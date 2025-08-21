@@ -4,11 +4,17 @@ import 'package:nest/ui/views/tickets/widgets/past_tab.dart';
 import 'package:nest/ui/views/tickets/widgets/upcoming_tab.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../common/app_shimmer.dart';
 import '../../common/app_styles.dart';
 import 'tickets_viewmodel.dart';
 
 class TicketsView extends StackedView<TicketsViewModel> {
   const TicketsView({Key? key}) : super(key: key);
+  @override
+  void onViewModelReady(TicketsViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -46,16 +52,18 @@ class TicketsView extends StackedView<TicketsViewModel> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            UpcomingTicketsTab(
-              viewModel: viewModel,
-            ),
-            PastTicketsTab(
-              viewModel: viewModel,
-            ),
-          ],
-        ),
+        body: viewModel.isBusy
+            ? const EventShimmerLoader()
+            : TabBarView(
+                children: [
+                  UpcomingTicketsTab(
+                    viewModel: viewModel,
+                  ),
+                  PastTicketsTab(
+                    viewModel: viewModel,
+                  ),
+                ],
+              ),
       ),
     );
   }

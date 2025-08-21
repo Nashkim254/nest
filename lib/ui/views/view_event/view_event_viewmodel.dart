@@ -2,6 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.dialogs.dart';
 import '../../../app/app.locator.dart';
 import '../../../models/events.dart';
 import '../../../services/event_service.dart';
@@ -66,6 +67,8 @@ class ViewEventViewModel extends BaseViewModel {
     }
   }
 
+  bool isPasswordProtected = true;
+
   String getButtonTitle() {
     if (event!.ticketPricing.first.type == 'rsvp') {
       return 'RSVP';
@@ -73,6 +76,34 @@ class ViewEventViewModel extends BaseViewModel {
       return 'Buy Ticket';
     } else {
       return 'Get Ticket';
+    }
+  }
+
+  final dialogService = locator<DialogService>();
+  passwordProtected() async {
+    final response = await dialogService.showCustomDialog(
+      variant: DialogType.passwordProtected,
+      title: 'Type the event password to have purchase the ticket',
+      description:
+          'This event is password protected. Please enter the password to continue.',
+      barrierDismissible: false,
+    );
+    if (response!.confirmed) {
+      final password = response.responseData['password'];
+      if (password == event!.password) {
+
+        notifyListeners();
+      } else {
+        locator<SnackbarService>().showSnackbar(
+          message: 'Incorrect password. Please try again.',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } else {
+      locator<SnackbarService>().showSnackbar(
+        message: 'You cancelled the password entry.',
+        duration: const Duration(seconds: 3),
+      );
     }
   }
 }

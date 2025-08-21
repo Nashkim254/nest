@@ -46,9 +46,9 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: List.generate(
-                      viewModel.getSampleTickets().length,
+                      viewModel.tickets.length,
                       (int i) => MyTicketWidget(
-                        ticket: viewModel.getSampleTickets()[i],
+                        ticket: viewModel.tickets[i],
                       ),
                     ),
                   ),

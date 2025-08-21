@@ -51,6 +51,7 @@ import 'package:nest/services/file_service.dart';
 import 'package:nest/ui/views/create_organization/create_organization_view.dart';
 import 'package:nest/ui/dialogs/add_social/add_social_dialog.dart';
 import 'package:nest/services/event_service.dart';
+import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dart';
 // @stacked-import
 
 @StackedApp(
@@ -120,6 +121,7 @@ import 'package:nest/services/event_service.dart';
     StackedDialog(classType: CommentsDialog),
     StackedDialog(classType: ChangePasswordDialog),
     StackedDialog(classType: AddSocialDialog),
+    StackedDialog(classType: PasswordProtectedDialog),
 // @stacked-dialog
   ],
 )

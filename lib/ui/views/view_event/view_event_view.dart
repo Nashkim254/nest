@@ -472,7 +472,7 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                       height: 56,
                       child: AppButton(
                         labelText: viewModel.getButtonTitle(),
-                        onTap: () {},
+                        onTap: () => viewModel.passwordProtected(),
                       ),
                     ),
                   ),

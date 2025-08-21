@@ -1,34 +1,43 @@
+import 'dart:io';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppUrls {
-  static const String baseUrl = 'http://10.0.2.2:8080/api/v1';
+  static final String baseUrl =  Platform.isAndroid ? 'http://10.0.2.2:8080/api/v1' : 'http://localhost:8080/api/v1';
 
   // auth
-  static const String baseAuthUrl = '$baseUrl/auth';
-  static const String login = '$baseAuthUrl/login';
-  static const String register = '$baseAuthUrl/register';
-  static const String reQuestPasswordReset = '$baseAuthUrl/reset-password';
-  static const String resetPassword = '$baseAuthUrl/reset-password/confirm';
-  static const String userProfile = '$baseUrl/users/me';
-  static const String followUser = '$baseUrl/users';
-  static const String updateProfile = '$baseUrl/users/update';
-  static const String fetchPosts = '$baseUrl/posts';
-  static const String createPost = '$baseUrl/posts/create';
-  static const String deletePost = '$baseUrl/posts/delete';
-  static const String getUploadFileUrl = '$baseUrl/uploads/url';
+  static final String baseAuthUrl = '$baseUrl/auth';
+  static final String login = '$baseAuthUrl/login';
+  static final String register = '$baseAuthUrl/register';
+  static final String reQuestPasswordReset = '$baseAuthUrl/reset-password';
+  static final String resetPassword = '$baseAuthUrl/reset-password/confirm';
+  static final String userProfile = '$baseUrl/users/me';
+  static final String followUser = '$baseUrl/users';
+  static final String updateProfile = '$baseUrl/users/update';
+  static final String fetchPosts = '$baseUrl/posts';
+  static final String createPost = '$baseUrl/posts/create';
+  static final String deletePost = '$baseUrl/posts/delete';
+  static final String getUploadFileUrl = '$baseUrl/uploads/url';
 
   // Add more URLs as needed
   //organizations
-  static const String organizations = '$baseUrl/organizations';
-  static const String myOrganization = '$baseUrl/organizations/me';
-  static const String updateOrganization = '$baseUrl/organizations/update';
+  static final String organizations = '$baseUrl/organizations';
+  static final String myOrganization = '$baseUrl/organizations/me';
+  static final String updateOrganization = '$baseUrl/organizations/update';
 //events
-  static const String events = '$baseUrl/events';
-  static const String createEvent = '$baseUrl/events/';
-  static const String updateEvent = '$baseUrl/events';
-  static const String deleteEvent = '$baseUrl/events';
-  static const String myEventsUrl = '$baseUrl/events/my';
-  static const String searchEventsUrl = '$baseUrl/events/search';
+  static final String events = '$baseUrl/events';
+  static final String createEvent = '$baseUrl/events/';
+  static final String updateEvent = '$baseUrl/events';
+  static final String deleteEvent = '$baseUrl/events';
+  static final String myEventsUrl = '$baseUrl/events/my';
+  static final String searchEventsUrl = '$baseUrl/events/search';
+
+  //tickets
+  static final String tickets = '$baseUrl/tickets';
+  static final String myTickets = '$baseUrl/events/tickets/my';
+
+  //messaging
+  static final String conversations = '$baseUrl/messaging/conversations';
 
   static final String NEXT_PUBLIC_GOOGLE_ACCESS_ID =
       dotenv.env['NEXT_PUBLIC_GOOGLE_ACCESS_ID']!;

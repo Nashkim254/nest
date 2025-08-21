@@ -2263,6 +2263,16 @@ class MockUserService extends _i1.Mock implements _i27.UserService {
       ) as _i9.Future<dynamic>);
 
   @override
+  _i9.Future<dynamic> getMyTickets() => (super.noSuchMethod(
+        Invocation.method(
+          #getMyTickets,
+          [],
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
   _i9.Future<dynamic> editUserProfile(
           {required _i28.UpdateProfileInput? profileUpdateInput}) =>
       (super.noSuchMethod(
@@ -2500,6 +2510,37 @@ class MockEventService extends _i1.Mock implements _i31.EventService {
           #getMyEvents,
           [],
           {
+            #page: page,
+            #size: size,
+          },
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> getSingleEvent({required int? id}) => (super.noSuchMethod(
+        Invocation.method(
+          #getSingleEvent,
+          [],
+          {#id: id},
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> searchEvents({
+    required String? query,
+    required int? page,
+    required int? size,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #searchEvents,
+          [],
+          {
+            #query: query,
             #page: page,
             #size: size,
           },
