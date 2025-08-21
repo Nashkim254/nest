@@ -4,7 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
-import 'dart:io' as _i13;
+import 'dart:io' as _i12;
 import 'dart:ui' as _i10;
 
 import 'package:flutter/material.dart' as _i8;
@@ -13,6 +13,7 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
 import 'package:nest/abstractClasses/deep_link_handler_interface.dart' as _i24;
 import 'package:nest/models/api_response.dart' as _i3;
+import 'package:nest/models/create_event.dart' as _i32;
 import 'package:nest/models/login_model.dart' as _i21;
 import 'package:nest/models/message_models.dart' as _i16;
 import 'package:nest/models/organization_model.dart' as _i29;
@@ -25,7 +26,7 @@ import 'package:nest/services/deep_link_service.dart' as _i23;
 import 'package:nest/services/event_service.dart' as _i31;
 import 'package:nest/services/file_service.dart' as _i30;
 import 'package:nest/services/global_service.dart' as _i11;
-import 'package:nest/services/image_service.dart' as _i12;
+import 'package:nest/services/image_service.dart' as _i13;
 import 'package:nest/services/location_service.dart' as _i22;
 import 'package:nest/services/message_service.dart' as _i17;
 import 'package:nest/services/share_service.dart' as _i26;
@@ -802,11 +803,54 @@ class MockGlobalService extends _i1.Mock implements _i11.GlobalService {
       ) as String);
 
   @override
-  _i9.Future<dynamic> uploadFileGetURL(String? extension) =>
+  _i9.Future<dynamic> uploadFileGetURL(
+    String? extension, {
+    String? folder,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #uploadFileGetURL,
           [extension],
+          {#folder: folder},
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
+  String getFileExtension(_i12.File? file) => (super.noSuchMethod(
+        Invocation.method(
+          #getFileExtension,
+          [file],
+        ),
+        returnValue: _i7.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getFileExtension,
+            [file],
+          ),
+        ),
+        returnValueForMissingStub: _i7.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getFileExtension,
+            [file],
+          ),
+        ),
+      ) as String);
+
+  @override
+  _i9.Future<dynamic> uploadFile(
+    String? uploadUrl,
+    _i12.File? file,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #uploadFile,
+          [
+            uploadUrl,
+            file,
+          ],
         ),
         returnValue: _i9.Future<dynamic>.value(),
         returnValueForMissingStub: _i9.Future<dynamic>.value(),
@@ -853,7 +897,7 @@ class MockGlobalService extends _i1.Mock implements _i11.GlobalService {
 /// A class which mocks [ImageService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockImageService extends _i1.Mock implements _i12.ImageService {
+class MockImageService extends _i1.Mock implements _i13.ImageService {
   @override
   _i9.Future<bool> requestPermissions() => (super.noSuchMethod(
         Invocation.method(
@@ -865,35 +909,35 @@ class MockImageService extends _i1.Mock implements _i12.ImageService {
       ) as _i9.Future<bool>);
 
   @override
-  _i9.Future<_i13.File?> pickImageFromCamera() => (super.noSuchMethod(
+  _i9.Future<_i12.File?> pickImageFromCamera() => (super.noSuchMethod(
         Invocation.method(
           #pickImageFromCamera,
           [],
         ),
-        returnValue: _i9.Future<_i13.File?>.value(),
-        returnValueForMissingStub: _i9.Future<_i13.File?>.value(),
-      ) as _i9.Future<_i13.File?>);
+        returnValue: _i9.Future<_i12.File?>.value(),
+        returnValueForMissingStub: _i9.Future<_i12.File?>.value(),
+      ) as _i9.Future<_i12.File?>);
 
   @override
-  _i9.Future<_i13.File?> pickImageFromGallery() => (super.noSuchMethod(
+  _i9.Future<_i12.File?> pickImageFromGallery() => (super.noSuchMethod(
         Invocation.method(
           #pickImageFromGallery,
           [],
         ),
-        returnValue: _i9.Future<_i13.File?>.value(),
-        returnValueForMissingStub: _i9.Future<_i13.File?>.value(),
-      ) as _i9.Future<_i13.File?>);
+        returnValue: _i9.Future<_i12.File?>.value(),
+        returnValueForMissingStub: _i9.Future<_i12.File?>.value(),
+      ) as _i9.Future<_i12.File?>);
 
   @override
-  _i9.Future<List<_i13.File>> pickMultipleImages() => (super.noSuchMethod(
+  _i9.Future<List<_i12.File>> pickMultipleImages() => (super.noSuchMethod(
         Invocation.method(
           #pickMultipleImages,
           [],
         ),
-        returnValue: _i9.Future<List<_i13.File>>.value(<_i13.File>[]),
+        returnValue: _i9.Future<List<_i12.File>>.value(<_i12.File>[]),
         returnValueForMissingStub:
-            _i9.Future<List<_i13.File>>.value(<_i13.File>[]),
-      ) as _i9.Future<List<_i13.File>>);
+            _i9.Future<List<_i12.File>>.value(<_i12.File>[]),
+      ) as _i9.Future<List<_i12.File>>);
 }
 
 /// A class which mocks [WebsocketService].
@@ -1695,6 +1739,17 @@ class MockLocationService extends _i1.Mock implements _i22.LocationService {
         returnValue: _i9.Future<String?>.value(),
         returnValueForMissingStub: _i9.Future<String?>.value(),
       ) as _i9.Future<String?>);
+
+  @override
+  _i9.Future<Map<String, double>?> getCoordinatesFromCurrentLocation() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCoordinatesFromCurrentLocation,
+          [],
+        ),
+        returnValue: _i9.Future<Map<String, double>?>.value(),
+        returnValueForMissingStub: _i9.Future<Map<String, double>?>.value(),
+      ) as _i9.Future<Map<String, double>?>);
 }
 
 /// A class which mocks [SharedPreferencesService].
@@ -2337,11 +2392,11 @@ class MockFileService extends _i1.Mock implements _i30.FileService {
       );
 
   @override
-  List<_i13.File> get selectedImages => (super.noSuchMethod(
+  List<_i12.File> get selectedImages => (super.noSuchMethod(
         Invocation.getter(#selectedImages),
-        returnValue: <_i13.File>[],
-        returnValueForMissingStub: <_i13.File>[],
-      ) as List<_i13.File>);
+        returnValue: <_i12.File>[],
+        returnValueForMissingStub: <_i12.File>[],
+      ) as List<_i12.File>);
 
   @override
   int get listenersCount => (super.noSuchMethod(
@@ -2421,4 +2476,48 @@ class MockFileService extends _i1.Mock implements _i30.FileService {
 /// A class which mocks [EventService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEventService extends _i1.Mock implements _i31.EventService {}
+class MockEventService extends _i1.Mock implements _i31.EventService {
+  @override
+  _i2.SharedPreferencesService get prefsService => (super.noSuchMethod(
+        Invocation.getter(#prefsService),
+        returnValue: _FakeSharedPreferencesService_0(
+          this,
+          Invocation.getter(#prefsService),
+        ),
+        returnValueForMissingStub: _FakeSharedPreferencesService_0(
+          this,
+          Invocation.getter(#prefsService),
+        ),
+      ) as _i2.SharedPreferencesService);
+
+  @override
+  _i9.Future<dynamic> getMyEvents({
+    required int? page,
+    required int? size,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMyEvents,
+          [],
+          {
+            #page: page,
+            #size: size,
+          },
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+
+  @override
+  _i9.Future<dynamic> createEvent(
+          {required _i32.CreateEventRequest? requestBody}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createEvent,
+          [],
+          {#requestBody: requestBody},
+        ),
+        returnValue: _i9.Future<dynamic>.value(),
+        returnValueForMissingStub: _i9.Future<dynamic>.value(),
+      ) as _i9.Future<dynamic>);
+}

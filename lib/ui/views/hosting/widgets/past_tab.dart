@@ -22,7 +22,6 @@ class PastTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           verticalSpaceMedium,
-
         ],
       ),
       floatingActionButton: AppButton(

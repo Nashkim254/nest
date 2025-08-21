@@ -16,11 +16,12 @@ import 'event_details.dart';
 
 class CreateEventView extends StackedView<CreateEventViewModel> {
   const CreateEventView({Key? key}) : super(key: key);
-@override
+  @override
   void onViewModelReady(CreateEventViewModel viewModel) {
     viewModel.getCurrentLocation();
     super.onViewModelReady(viewModel);
   }
+
   @override
   Widget builder(
     BuildContext context,

@@ -31,7 +31,7 @@ class HostingView extends StackedView<HostingViewModel> {
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
-          await viewModel.getMyOrganizations();
+          await viewModel.onRefresh();
         },
         child: Scaffold(
           backgroundColor: kcDarkColor,
@@ -146,6 +146,10 @@ class HostingView extends StackedView<HostingViewModel> {
                                   itemBuilder: (context, index) {
                                     return EventCardWidget(
                                       data: viewModel.upcomingEvents[index],
+                                      onTap: () =>
+                                          viewModel.navigateToEventDetails(
+                                        viewModel.upcomingEvents[index],
+                                      ),
                                     );
                                   },
                                   itemCount: viewModel.upcomingEvents.length,

@@ -3,6 +3,7 @@ import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/views/upcoming/widgets/my_tickets.dart';
+import 'package:nest/utils/utilities.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../common/app_colors.dart';
@@ -11,6 +12,11 @@ import 'upcoming_viewmodel.dart';
 
 class UpcomingView extends StackedView<UpcomingViewModel> {
   const UpcomingView({Key? key}) : super(key: key);
+  @override
+  void onViewModelReady(UpcomingViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -58,14 +64,29 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                     SizedBox(
                       width: 100,
                       child: AppButton(
+                        buttonColor: !viewModel.hasOrganizations
+                            ? kcGreyButtonColor
+                            : kcPrimaryColor,
                         height: 30,
                         labelText: 'View all',
-                        onTap: () => viewModel.viewAllPeopleAndOrgs(),
+                        onTap: !viewModel.hasOrganizations
+                            ? () => viewModel.viewAllPeopleAndOrgs()
+                            : () {},
                       ),
                     ),
                   ],
                 ),
                 verticalSpaceSmall,
+                if (!viewModel.hasOrganizations)
+                  Center(
+                    child: Text(
+                      'No organizations at the moment',
+                      style: titleTextMedium.copyWith(
+                        fontSize: 16,
+                        color: kcGreyColor,
+                      ),
+                    ),
+                  ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.16,
                   child: ListView(
@@ -73,7 +94,7 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     children: List.generate(
-                      2,
+                      viewModel.myOrganizations.length,
                       (int i) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
@@ -87,19 +108,23 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                           ),
                           child: Row(
                             children: [
-                              const CircleAvatar(),
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundImage: NetworkImage(
+                                    viewModel.myOrganizations[i].profilePic!),
+                              ),
                               horizontalSpaceSmall,
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Sarah & 2 others',
+                                    "${viewModel.myOrganizations[i].teamMembers!.first.name ?? '--'} ${viewModel.myOrganizations[i].teamMembers!.length - 1 > 0 ? 'and ${viewModel.myOrganizations[i].teamMembers!.length - 1} others' : ''}",
                                     style: titleTextMedium.copyWith(
                                       fontSize: 15,
                                     ),
                                   ),
                                   Text(
-                                    'going to "Electro Groove"',
+                                    'going to "${viewModel.myOrganizations[i].name}" events',
                                     style: titleTextMedium.copyWith(
                                         fontSize: 13, color: kcGreyColor),
                                   ),
@@ -123,14 +148,29 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                     SizedBox(
                       width: 100,
                       child: AppButton(
+                        buttonColor: viewModel.upcomingEvents.isEmpty
+                            ? kcGreyButtonColor
+                            : kcPrimaryColor,
                         height: 30,
                         labelText: 'View all',
-                        onTap: () => viewModel.viewAllEvents(),
+                        onTap: viewModel.upcomingEvents.isEmpty
+                            ? () {}
+                            : () => viewModel.viewAllEvents(),
                       ),
                     ),
                   ],
                 ),
                 verticalSpaceSmall,
+                if (viewModel.upcomingEvents.isEmpty)
+                  Center(
+                    child: Text(
+                      'No events at  the moment',
+                      style: titleTextMedium.copyWith(
+                        fontSize: 16,
+                        color: kcGreyColor,
+                      ),
+                    ),
+                  ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.18,
                   child: ListView(
@@ -138,7 +178,7 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     children: List.generate(
-                      2,
+                      viewModel.upcomingEvents.take(2).length,
                       (int i) => Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
@@ -156,31 +196,34 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                                 child: Container(
                                   height: 60,
                                   width: 60,
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
                                       Radius.circular(13),
                                     ),
                                     image: DecorationImage(
-                                      image: AssetImage(
-                                        ev2,
+                                      image: NetworkImage(
+                                        viewModel.upcomingEvents[i].flyerUrl,
                                       ),
+                                      fit: BoxFit.fill,
                                     ),
                                   ),
                                 ),
                               ),
+                              horizontalSpaceSmall,
                               Expanded(
                                 flex: 2,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Summer Fest 2023',
+                                      viewModel.upcomingEvents[i].title,
                                       style: titleTextMedium.copyWith(
                                         fontSize: 15,
                                       ),
                                     ),
                                     Text(
-                                      'Aug 15, 2023',
+                                      formatter.format(viewModel
+                                          .upcomingEvents[i].startTime),
                                       style: titleTextMedium.copyWith(
                                           fontSize: 13, color: kcGreyColor),
                                     ),
@@ -192,7 +235,8 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                                   width: 100,
                                   child: AppButton(
                                     labelText: 'View',
-                                    onTap: () => viewModel.viewEventDetails(),
+                                    onTap: () => viewModel.viewEventDetails(
+                                        viewModel.upcomingEvents[i]),
                                   ),
                                 ),
                               ),

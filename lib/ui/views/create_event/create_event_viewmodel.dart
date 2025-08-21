@@ -337,6 +337,10 @@ class CreateEventViewModel extends ReactiveViewModel {
   final TextEditingController eventDateTimeController = TextEditingController();
   final TextEditingController eventLocationController = TextEditingController();
   final TextEditingController eventPasswordController = TextEditingController();
+  final TextEditingController eventGuestListController =
+      TextEditingController();
+  final TextEditingController guestListDescriptionController =
+      TextEditingController();
   final eventDetailsKey = GlobalKey<FormState>();
   final ticketSetupKey = GlobalKey<FormState>();
   final eventVisualsFormKey = GlobalKey<FormState>();
@@ -418,8 +422,8 @@ class CreateEventViewModel extends ReactiveViewModel {
         genres: [],
         isPrivate: isPrivate,
         ticketPricing: collectTicketPricingData()!,
-        guestListEnabled: false,
-        guestListLimit: 0,
+        guestListEnabled: isRsvP ? false : showGuestList,
+        guestListLimit: int.parse(eventGuestListController.text),
         longitude: coordinates!['longitude'] ?? 0.0,
         latitude: coordinates!['latitude'] ?? 0.0,
         password: eventPasswordController.text,
@@ -428,11 +432,11 @@ class CreateEventViewModel extends ReactiveViewModel {
       logger.w(request.toJson());
       final response = await eventService.createEvent(requestBody: request);
       if (response.statusCode == 200 || response.statusCode == 201) {
+        navigationService.back(result: true);
         locator<SnackbarService>().showSnackbar(
           message: 'Event created successfully',
           duration: const Duration(seconds: 3),
         );
-        navigationService.back();
         logger.i('Event created successfully');
       } else {
         throw Exception(response.message ?? 'Failed to create event');

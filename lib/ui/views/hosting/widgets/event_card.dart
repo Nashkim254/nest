@@ -16,6 +16,7 @@ class EventCardWidget extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final BorderRadius? borderRadius;
+  final VoidCallback? onTap;
 
   const EventCardWidget({
     Key? key,
@@ -25,6 +26,7 @@ class EventCardWidget extends StatelessWidget {
     this.padding,
     this.margin,
     this.borderRadius,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -34,7 +36,7 @@ class EventCardWidget extends StatelessWidget {
       height: height,
       margin: margin ?? const EdgeInsets.all(8),
       child: GestureDetector(
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(

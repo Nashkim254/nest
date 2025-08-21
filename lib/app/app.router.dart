@@ -5,10 +5,11 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i28;
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as _i28;
 import 'package:nest/models/chats.dart' as _i31;
 import 'package:nest/models/event_activity.dart' as _i30;
+import 'package:nest/models/events.dart' as _i32;
 import 'package:nest/models/registration_model.dart' as _i29;
 import 'package:nest/ui/views/chat/chat_view.dart' as _i16;
 import 'package:nest/ui/views/create_event/create_event_view.dart' as _i19;
@@ -41,7 +42,7 @@ import 'package:nest/ui/views/tickets/tickets_view.dart' as _i11;
 import 'package:nest/ui/views/upcoming/upcoming_view.dart' as _i20;
 import 'package:nest/ui/views/view_event/view_event_view.dart' as _i25;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i32;
+import 'package:stacked_services/stacked_services.dart' as _i33;
 
 class Routes {
   static const homeView = '/home-view';
@@ -381,8 +382,10 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i25.ViewEventView: (data) {
+      final args = data.getArgs<ViewEventViewArguments>(nullOk: false);
       return _i28.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i25.ViewEventView(),
+        builder: (context) =>
+            _i25.ViewEventView(key: args.key, event: args.event),
         settings: data,
       );
     },
@@ -515,7 +518,34 @@ class ChatViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i32.NavigationService {
+class ViewEventViewArguments {
+  const ViewEventViewArguments({
+    this.key,
+    required this.event,
+  });
+
+  final _i28.Key? key;
+
+  final _i32.Event event;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "event": "$event"}';
+  }
+
+  @override
+  bool operator ==(covariant ViewEventViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.event == event;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ event.hashCode;
+  }
+}
+
+extension NavigatorStateExtension on _i33.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -853,14 +883,17 @@ extension NavigatorStateExtension on _i32.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToViewEventView([
+  Future<dynamic> navigateToViewEventView({
+    _i28.Key? key,
+    required _i32.Event event,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.viewEventView,
+        arguments: ViewEventViewArguments(key: key, event: event),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1232,14 +1265,17 @@ extension NavigatorStateExtension on _i32.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithViewEventView([
+  Future<dynamic> replaceWithViewEventView({
+    _i28.Key? key,
+    required _i32.Event event,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.viewEventView,
+        arguments: ViewEventViewArguments(key: key, event: event),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

@@ -28,7 +28,7 @@ class AppUrls {
   static const String updateEvent = '$baseUrl/events';
   static const String deleteEvent = '$baseUrl/events';
   static const String myEventsUrl = '$baseUrl/events/my';
-
+  static const String searchEventsUrl = '$baseUrl/events/search';
 
   static final String NEXT_PUBLIC_GOOGLE_ACCESS_ID =
       dotenv.env['NEXT_PUBLIC_GOOGLE_ACCESS_ID']!;

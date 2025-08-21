@@ -83,6 +83,22 @@ class _TicketSetupState extends State<TicketSetup> {
                                   ),
                                   verticalSpaceSmall,
                                   TextFormField(
+                                    keyboardType: TextInputType.number,
+                                    controller: widget
+                                        .viewModel.eventGuestListController,
+                                    style: titleTextMedium.copyWith(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: kcWhiteColor,
+                                    ),
+                                    validator: (value) {
+                                      if (value != null &&
+                                          value.isNotEmpty &&
+                                          int.tryParse(value) == null) {
+                                        return 'Please enter a valid number';
+                                      }
+                                      return null;
+                                    },
                                     decoration: AppInputDecoration.standard(
                                       hintText: "e.g., '100'",
                                       filled: true,
@@ -99,6 +115,13 @@ class _TicketSetupState extends State<TicketSetup> {
                                   ),
                                   verticalSpaceSmall,
                                   TextFormField(
+                                    controller: widget.viewModel
+                                        .guestListDescriptionController,
+                                    style: titleTextMedium.copyWith(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: kcWhiteColor,
+                                    ),
                                     maxLines: 3,
                                     decoration: AppInputDecoration.standard(
                                       hintText:

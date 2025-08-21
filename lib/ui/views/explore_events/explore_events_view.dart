@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/utils/utilities.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../common/app_custom_button.dart';
@@ -12,6 +13,11 @@ import 'explore_events_viewmodel.dart';
 
 class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
   const ExploreEventsView({Key? key}) : super(key: key);
+  @override
+  void onViewModelReady(ExploreEventsViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -48,159 +54,199 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
           ],
         ),
         backgroundColor: kcDarkColor,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                verticalSpaceMedium,
-                TextFormField(
-                  controller: viewModel.searchController,
-                  decoration: AppInputDecoration.search(
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: kcGreyColor,
+        body: RefreshIndicator(
+          onRefresh: () => viewModel.onRefresh(),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              if (!viewModel.isBusy &&
+                  scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                viewModel.onLoadMore();
+              }
+              return false;
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  verticalSpaceMedium,
+                  TextFormField(
+                    style: titleTextMedium.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: kcWhiteColor,
                     ),
+                    controller: viewModel.searchController,
+                    decoration: AppInputDecoration.search(
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: kcGreyColor,
+                      ),
+                    ),
+                    onChanged: viewModel.onSearchChanged,
                   ),
-                  onChanged: viewModel.onSearchChanged,
-                ),
-                verticalSpaceMedium,
-                Text(
-                  'Explore Events',
-                  style: titleTextMedium,
-                ),
-                verticalSpaceSmall,
-                ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: viewModel.events.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        decoration: BoxDecoration(
-                          color: kcDarkGreyColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: kcContainerBorderColor,
+                  verticalSpaceMedium,
+                  Text(
+                    'Explore Events',
+                    style: titleTextMedium,
+                  ),
+                  verticalSpaceSmall,
+                  Expanded(
+                    child: viewModel.isBusy
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                            color: kcPrimaryColor,
+                          ))
+                        : viewModel.upcomingEvents.isEmpty
+                            ? const Center(
+                                child: Text(
+                                  "No events found",
+                                  style: TextStyle(
+                                      color: Colors.white70, fontSize: 16),
+                                ),
+                              )
+                            : ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: viewModel.upcomingEvents.length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index ==
+                                      viewModel.upcomingEvents.length) {
+                                    // bottom loader (for pagination / load more)
+                                    return viewModel.isBusy
+                                        ? const Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                              color: kcPrimaryColor,
+                                            )),
+                                          )
+                                        : const SizedBox.shrink();
+                                  }
+
+                                  final event = viewModel.upcomingEvents[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell(
+                                      onTap: ()=> viewModel.navigateToViewEvent(event),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: kcDarkGreyColor,
+                                          borderRadius: BorderRadius.circular(16),
+                                          border: Border.all(
+                                              color: kcContainerBorderColor),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 200,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(16),
+                                                  topRight: Radius.circular(16),
+                                                ),
+                                                child: Image.network(
+                                                  event.flyerUrl,
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                event.title,
+                                                style: titleTextMedium.copyWith(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.asset(calendar,
+                                                      color: kcSubtitleColor),
+                                                  horizontalSpaceSmall,
+                                                  Text(
+                                                    formatter
+                                                        .format(event.startTime),
+                                                    style:
+                                                        titleTextMedium.copyWith(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400,
+                                                      color: kcSubtitleColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                children: [
+                                                  SvgPicture.asset(pin,
+                                                      color: kcSubtitleColor),
+                                                  horizontalSpaceSmall,
+                                                  Text(
+                                                    event.location,
+                                                    style:
+                                                        titleTextMedium.copyWith(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400,
+                                                      color: kcSubtitleColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                  ),
+                  verticalSpaceMedium,
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: kcContainerColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Ready to host your own unforgettable\nnight?',
+                          style: titleTextMedium.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        verticalSpaceMedium,
+                        SizedBox(
+                          width: 175,
+                          child: AppButton(
+                            labelText: 'Create New Event',
+                            onTap: () => viewModel.navigateToCreateEvent(),
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Image section - Fixed height instead of Expanded
-                            SizedBox(
-                              height: 200, // Set a fixed height for the image
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(16),
-                                  topRight: Radius.circular(16),
-                                ),
-                                child: Image.asset(
-                                  viewModel.events[index].imageUrl!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
-                              ),
-                            ),
-                            // Content section - Remove Expanded wrapper
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    viewModel.events[index].title,
-                                    style: titleTextMedium.copyWith(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        calendar,
-                                        color: kcSubtitleColor,
-                                      ),
-                                      horizontalSpaceSmall,
-                                      Text(
-                                        viewModel.events[index].dateTime,
-                                        style: titleTextMedium.copyWith(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: kcSubtitleColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        pin,
-                                        color: kcSubtitleColor,
-                                      ),
-                                      horizontalSpaceSmall,
-                                      Text(
-                                        viewModel.events[index].location!,
-                                        style: titleTextMedium.copyWith(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: kcSubtitleColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                verticalSpaceMedium,
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: kcContainerColor,
-                    borderRadius: BorderRadius.circular(16),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Ready to host your own unforgettable\nnight?',
-                        style: titleTextMedium.copyWith(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      verticalSpaceMedium,
-                      SizedBox(
-                        width: 175,
-                        child: AppButton(
-                          labelText: 'Create New Event',
-                          onTap: () => viewModel.navigateToCreateEvent(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                verticalSpaceMedium,
-              ],
+                  verticalSpaceMedium,
+                ],
+              ),
             ),
           ),
         ),

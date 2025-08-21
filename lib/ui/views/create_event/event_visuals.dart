@@ -160,7 +160,6 @@ class EventVisuals extends StatelessWidget {
                       ),
                     ),
                     verticalSpaceSmall,
-
                     TextFormField(
                       validator: (value) => Validators.validateRequired(value),
                       style: titleTextMedium.copyWith(color: kcWhiteColor),
@@ -266,9 +265,8 @@ class EventVisuals extends StatelessWidget {
                     verticalSpaceSmall,
                     TextFormField(
                       readOnly: true,
-                      validator: (value) =>
-                          Validators.validateRequired(value),
-                      onTap: ()=> viewModel.showTimeRangePicker(context),
+                      validator: (value) => Validators.validateRequired(value),
+                      onTap: () => viewModel.showTimeRangePicker(context),
                       style: titleTextMedium.copyWith(color: kcWhiteColor),
                       controller: viewModel.performanceTimeController,
                       decoration: AppInputDecoration.standard(
@@ -768,8 +766,7 @@ Widget _buildAddPhotosButton(CreateEventViewModel viewModel) {
     onTap: () => viewModel.showImageSourceSheet('gallery'),
     child: DottedBorderContainer(
       borderRadius: const BorderRadius.all(Radius.circular(12)),
-      child:
-      Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(

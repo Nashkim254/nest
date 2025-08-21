@@ -51,6 +51,25 @@ class HostingViewModel extends BaseViewModel {
     }
   }
 
+  onRefresh() async {
+    setBusy(true);
+    try {
+      await getMyOrganizations();
+      if (hasOrganizations) {
+        await getOrganizationAnalytics();
+        await getUpcomingEvents();
+      }
+    } catch (e) {
+      logger.e('Error refreshing data: $e');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Error refreshing data: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   Future<Organization> getMyOrganizations() async {
     setBusy(true);
     try {
@@ -118,6 +137,10 @@ class HostingViewModel extends BaseViewModel {
     }
   }
 
+  navigateToEventDetails(Event event) {
+    locator<NavigationService>().navigateToViewEventView(event: event);
+  }
+
   int page = 1;
   int size = 10;
   Future getUpcomingEvents() async {
@@ -130,16 +153,18 @@ class HostingViewModel extends BaseViewModel {
         final eventsList = response.data['events'];
         logger.i('Number of events: ${eventsList.length}');
 
-        upcomingEvents = eventsList.map((event) {
-          logger.i('Parsing event: $event');
-          try {
-            return Event.fromJson(event);
-          } catch (e) {
-            logger.e('Failed to parse event: $event');
-            logger.e('Error: $e');
-            return null;
-          }
-        }).whereType<Event>() // Only keep Event objects, filter out nulls
+        upcomingEvents = eventsList
+            .map((event) {
+              logger.i('Parsing event: $event');
+              try {
+                return Event.fromJson(event);
+              } catch (e) {
+                logger.e('Failed to parse event: $event');
+                logger.e('Error: $e');
+                return null;
+              }
+            })
+            .whereType<Event>() // Only keep Event objects, filter out nulls
             .toList();
         logger.w('Upcoming Events: ${upcomingEvents}');
 
@@ -162,7 +187,12 @@ class HostingViewModel extends BaseViewModel {
     }
   }
 
-  navigateToCreateEvent() {
-    locator<NavigationService>().navigateToCreateEventView();
+  navigateToCreateEvent() async {
+    final result =
+        await locator<NavigationService>().navigateToCreateEventView();
+    if (result == true) {
+      // If the user successfully created an event, refresh the list
+      await getUpcomingEvents();
+    }
   }
 }
