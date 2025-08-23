@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:nest/services/location_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -6,11 +8,29 @@ import '../../../app/app.locator.dart';
 
 class AddLocationSheetModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
+  final _locationService = locator<LocationService>();
   TextEditingController searchController = TextEditingController();
   void closeSheet() {
     _bottomSheetService.completeSheet(SheetResponse(
       confirmed: false,
     ));
+  }
+
+  showStatesSheet() async {
+    setBusy(true);
+    try {
+      String? location = await _locationService.getCurrentCity();
+      _bottomSheetService.completeSheet(SheetResponse(
+        confirmed: true,
+        data: location ?? '',
+      ));
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    } finally {
+      setBusy(false);
+    }
   }
 
   void selectLocation(String location) {

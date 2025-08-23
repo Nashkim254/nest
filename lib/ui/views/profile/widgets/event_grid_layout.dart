@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:nest/models/event_activity.dart';
 
+import '../../../../models/post_models.dart';
 import '../../../common/app_colors.dart';
 import '../../../common/app_styles.dart';
 
 class EventGalleryGrid extends StatelessWidget {
-  final List<EventActivity> eventActivities;
-  final Function(EventActivity selectedActivity) onTap;
-  const EventGalleryGrid(
-      {super.key, required this.eventActivities, required this.onTap});
+  final List<Post> posts;
+  final Function(Post post) onTap;
+  const EventGalleryGrid({super.key, required this.posts, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: eventActivities.isNotEmpty
-          ? null
-          : 100, // Adjust height based on activity
+      height: posts.isNotEmpty ? null : 100, // Adjust height based on activity
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
         color: kcOffWhite8Grey,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: kcContainerBorderColor),
       ),
-      child: eventActivities.isNotEmpty
+      child: posts.isNotEmpty
           ? GridView.builder(
               shrinkWrap: true,
               physics:
                   const NeverScrollableScrollPhysics(), // Prevent internal scrolling
-              itemCount: eventActivities.length,
+              itemCount: posts.length,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 8,
@@ -35,13 +33,13 @@ class EventGalleryGrid extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 return InkWell(
-                  onTap: () => onTap(eventActivities[index]),
+                  onTap: () => onTap(posts[index]),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Hero(
                       tag: index,
-                      child: Image.asset(
-                        eventActivities[index].eventImageUrl,
+                      child: Image.network(
+                        posts[index].imageUrls.first,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -51,7 +49,7 @@ class EventGalleryGrid extends StatelessWidget {
             )
           : Center(
               child: Text(
-                'No public event activity to display.',
+                'No feed to display.',
                 style: titleTextMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w400,

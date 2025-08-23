@@ -97,3 +97,14 @@ enum WebSocketConnectionStatus {
   connected,
   error,
 }
+
+enum ConfirmationMethodType { sms, email }
+
+enum PaymentMethodType {
+  applePay(false),
+  googlePay(false),
+  card(true);
+
+  const PaymentMethodType(this.isEnabled);
+  final bool isEnabled;
+}

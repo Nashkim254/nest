@@ -13,6 +13,11 @@ import 'create_post_viewmodel.dart';
 
 class CreatePostView extends StackedView<CreatePostViewModel> {
   const CreatePostView({Key? key}) : super(key: key);
+  @override
+  void onViewModelReady(CreatePostViewModel viewModel) {
+    viewModel.getUser();
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -55,14 +60,24 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Post',
-                        style: titleTextMedium.copyWith(
-                          color: kcPrimaryColor,
-                          fontSize: 15,
-                        ),
-                      ),
+                      onPressed: viewModel.isLoading
+                          ? null
+                          : () => viewModel.createPost(),
+                      child: viewModel.isLoading
+                          ? Text(
+                              'posting...',
+                              style: titleTextMedium.copyWith(
+                                color: kcPrimaryColor,
+                                fontSize: 15,
+                              ),
+                            )
+                          : Text(
+                              'Post',
+                              style: titleTextMedium.copyWith(
+                                color: kcPrimaryColor,
+                                fontSize: 15,
+                              ),
+                            ),
                     )
                   ],
                 ),
@@ -84,7 +99,72 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                             const CircularProgressIndicator(
                               color: kcPrimaryColor,
                             )
-                          else ...[
+                          else if (viewModel.hasImages) ...[
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 8,
+                                    mainAxisSpacing: 8,
+                                    childAspectRatio: 1.0,
+                                  ),
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: viewModel.selectedImages.length,
+                                  itemBuilder: (context, index) {
+                                    return Stack(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(8),
+                                            ),
+                                            color: kcOffWhite8Grey,
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(8),
+                                            ),
+                                            child: Image.file(
+                                              viewModel.selectedImages[index],
+                                              fit: BoxFit.cover,
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 4,
+                                          right: 4,
+                                          child: InkWell(
+                                            onTap: () =>
+                                                viewModel.removeImage(index),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: const BoxDecoration(
+                                                color: Colors.black54,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ] else ...[
                             SvgPicture.asset(addImg),
                             verticalSpaceSmall,
                             Text(
@@ -135,7 +215,9 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                           SvgPicture.asset(pin),
                           horizontalSpaceSmall,
                           Text(
-                            "Add Location",
+                            viewModel.location.isNotEmpty
+                                ? viewModel.location
+                                : "Add Location",
                             style: titleTextMedium.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -155,44 +237,44 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                   ),
                 ),
                 verticalSpaceMedium,
-                InkWell(
-                  onTap: () => viewModel.showTagPeopleSheet(),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: kcContainerBorderColor),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                      color: kcOffWhite8Grey,
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          horizontalSpaceSmall,
-                          SvgPicture.asset(at),
-                          horizontalSpaceSmall,
-                          Text(
-                            "Tag People",
-                            style: titleTextMedium.copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: kcWhiteColor,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const Spacer(),
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            color: kcFollowColor,
-                          ),
-                          horizontalSpaceSmall,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                // InkWell(
+                //   onTap: () => viewModel.showTagPeopleSheet(),
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(vertical: 16),
+                //     decoration: BoxDecoration(
+                //       border: Border.all(color: kcContainerBorderColor),
+                //       borderRadius: const BorderRadius.all(
+                //         Radius.circular(8),
+                //       ),
+                //       color: kcOffWhite8Grey,
+                //     ),
+                //     child: Center(
+                //       child: Row(
+                //         mainAxisAlignment: MainAxisAlignment.start,
+                //         children: [
+                //           horizontalSpaceSmall,
+                //           SvgPicture.asset(at),
+                //           horizontalSpaceSmall,
+                //           Text(
+                //             "Tag People",
+                //             style: titleTextMedium.copyWith(
+                //               fontSize: 16,
+                //               fontWeight: FontWeight.bold,
+                //               color: kcWhiteColor,
+                //             ),
+                //             textAlign: TextAlign.center,
+                //           ),
+                //           const Spacer(),
+                //           const Icon(
+                //             Icons.arrow_forward_ios,
+                //             color: kcFollowColor,
+                //           ),
+                //           horizontalSpaceSmall,
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -203,8 +285,9 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
             vertical: MediaQuery.of(context).padding.bottom + 20.0,
           ),
           child: AppButton(
+            isBusy: viewModel.isLoading,
             labelText: 'Post',
-            onTap: () {},
+            onTap: () => viewModel.createPost(),
           ),
         ),
       ),

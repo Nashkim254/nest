@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/services/global_service.dart';
 import 'package:nest/services/message_service.dart';
+import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/ui/common/app_urls.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -17,36 +19,6 @@ class ChatViewModel extends ReactiveViewModel {
   TextEditingController messageController = TextEditingController();
   final authService = locator<AuthService>();
   final global = locator<GlobalService>();
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      message: "Hey! Are you going to the Neon Nights party this weekend?",
-      time: "10:30 AM",
-      type: MessageType.received,
-    ),
-    ChatMessage(
-      message: "Yeah, definitely! Heard it's going to be epic. Are you?",
-      time: "10:32 AM",
-      type: MessageType.sent,
-    ),
-    ChatMessage(
-      message:
-          "Absolutely! Can’t miss it. What time are you planning to head over?",
-      time: "10:35 AM",
-      type: MessageType.received,
-    ),
-    ChatMessage(
-      message: "Probably around 9 PM. Want to meet up there?",
-      time: "10:36 AM",
-      type: MessageType.sent,
-    ),
-    ChatMessage(
-      message: "Sounds good! See you then!",
-      time: "10:38 AM",
-      type: MessageType.received,
-    ),
-  ];
-
-  List<ChatMessage> get messages => _messages;
 
   final MessageService _messagingService = locator<MessageService>();
 
@@ -86,6 +58,8 @@ class ChatViewModel extends ReactiveViewModel {
     }
   }
 
+  int get userId => locator<SharedPreferencesService>().getUserInfo()!['id'];
+
   // Message sending
   Future<void> sendMessage() async {
     final content = messageController.text.trim();
@@ -98,10 +72,9 @@ class ChatViewModel extends ReactiveViewModel {
     if (_isTyping) {
       await _stopTyping();
     }
-
     // Create local message for immediate UI update
     final localMessage = Message(
-      senderId: 1, // Replace with actual current user ID
+      senderId: userId,
       receiverId: receiverId,
       conversationId: conversationId,
       content: content,
@@ -162,7 +135,7 @@ class ChatViewModel extends ReactiveViewModel {
   // Connection management
   Future<void> connect() async {
     await _messagingService.connect(
-      'ws://localhost:8080/api/v1/ws',
+      AppUrls.websocketUrl,
       authService.prefsService.getAuthToken()!, // Replace with actual token
     );
   }
@@ -185,6 +158,4 @@ class ChatViewModel extends ReactiveViewModel {
     }
     super.dispose();
   }
-
-
 }

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppUrls {
-  static final String baseUrl =  Platform.isAndroid ? 'http://10.0.2.2:8080/api/v1' : 'http://localhost:8080/api/v1';
+  static final String baseUrl = Platform.isAndroid
+      ? 'http://10.0.2.2:8080/api/v1'
+      : 'http://localhost:8080/api/v1';
 
   // auth
   static final String baseAuthUrl = '$baseUrl/auth';
@@ -27,10 +29,16 @@ class AppUrls {
 //events
   static final String events = '$baseUrl/events';
   static final String createEvent = '$baseUrl/events/';
+  static final String validateTicketPassword = '$baseUrl/events';
   static final String updateEvent = '$baseUrl/events';
   static final String deleteEvent = '$baseUrl/events';
   static final String myEventsUrl = '$baseUrl/events/my';
   static final String searchEventsUrl = '$baseUrl/events/search';
+
+  //websockets
+  static String websocketUrl = Platform.isAndroid
+      ? 'ws://10.0.2.2:8080/api/v1/ws'
+      : 'ws://localhost:8080/api/v1/ws';
 
   //tickets
   static final String tickets = '$baseUrl/tickets';
@@ -38,6 +46,10 @@ class AppUrls {
 
   //messaging
   static final String conversations = '$baseUrl/messaging/conversations';
+
+  //social
+  static final String social = '$baseUrl/social';
+  static final String createPosts = '$social/posts';
 
   static final String NEXT_PUBLIC_GOOGLE_ACCESS_ID =
       dotenv.env['NEXT_PUBLIC_GOOGLE_ACCESS_ID']!;

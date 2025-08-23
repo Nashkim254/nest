@@ -52,6 +52,7 @@ const feedback = '$svgsPath/feedback.svg';
 const email = '$svgsPath/email.svg';
 const lock = '$svgsPath/lock.svg';
 const privacy = '$svgsPath/privacy.svg';
+const card = '$svgsPath/card.svg';
 
 //images
 const splash = '$imagesPath/splash.png';

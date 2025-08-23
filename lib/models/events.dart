@@ -149,6 +149,7 @@ class TicketPricingPreview {
   final String type;
   final double price;
   final int quantity;
+  final bool isPasswordProtected;
 
   TicketPricingPreview({
     required this.id,
@@ -156,6 +157,7 @@ class TicketPricingPreview {
     required this.type,
     required this.price,
     required this.quantity,
+    required this.isPasswordProtected,
   });
 
   factory TicketPricingPreview.fromJson(Map<String, dynamic> json) =>
@@ -165,6 +167,7 @@ class TicketPricingPreview {
         type: json["type"] ?? '',
         price: (json["price"] as num).toDouble(),
         quantity: json["quantity"] ?? 0, // Handle null quantity
+        isPasswordProtected: json["password_required"] ?? false,
       );
 
   Map<String, dynamic> toJson() => {
@@ -173,6 +176,7 @@ class TicketPricingPreview {
         "type": type,
         "price": price,
         "quantity": quantity,
+        "password_required": isPasswordProtected,
       };
 }
 

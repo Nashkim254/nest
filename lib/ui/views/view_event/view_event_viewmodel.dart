@@ -1,7 +1,9 @@
 import 'package:logger/logger.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.dialogs.dart';
 import '../../../app/app.locator.dart';
 import '../../../models/events.dart';
@@ -44,7 +46,7 @@ class ViewEventViewModel extends BaseViewModel {
         logger.i('Upcoming Events: ${response.data['event']}');
 
         final result = response.data;
-        logger.i('event: ${event}');
+        logger.i('event: ${result['']}');
         event = Event.fromJson(result);
         logger.w('Event: ${event!.toJson()}');
         notifyListeners();
@@ -74,36 +76,77 @@ class ViewEventViewModel extends BaseViewModel {
       return 'RSVP';
     } else if (event!.ticketPricing.first.type == 'paid') {
       return 'Buy Ticket';
+    } else if (event!.ticketPricing.first.isPasswordProtected) {
+      return 'Enter Password';
     } else {
       return 'Get Ticket';
     }
   }
 
   final dialogService = locator<DialogService>();
+  final bottomSheetService = locator<BottomSheetService>();
   passwordProtected() async {
     final response = await dialogService.showCustomDialog(
       variant: DialogType.passwordProtected,
       title: 'Type the event password to have purchase the ticket',
       description:
           'This event is password protected. Please enter the password to continue.',
-      barrierDismissible: false,
+      barrierDismissible: true,
     );
     if (response!.confirmed) {
-      final password = response.responseData['password'];
-      if (password == event!.password) {
+      logger.i(response.data);
+      final password = response.data['password'];
 
-        notifyListeners();
-      } else {
-        locator<SnackbarService>().showSnackbar(
-          message: 'Incorrect password. Please try again.',
-          duration: const Duration(seconds: 3),
-        );
-      }
+      await validateTicketPassword(
+        password,
+        event!.id,
+        event!.ticketPricing.first.id,
+      );
+      notifyListeners();
     } else {
       locator<SnackbarService>().showSnackbar(
         message: 'You cancelled the password entry.',
         duration: const Duration(seconds: 3),
       );
+    }
+  }
+
+  bool isValidating = false;
+  Future validateTicketPassword(
+      String password, int eventId, int ticketId) async {
+    isValidating = true;
+    notifyListeners();
+    try {
+      final response = await eventService.validateTicketPassword(
+          password: password, eventId: eventId, ticketId: ticketId);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.w(response.data['ticket']);
+        locator<SharedPreferencesService>().setInt('eventId', eventId);
+        locator<SharedPreferencesService>().setInt('ticketId', ticketId);
+        logger.i('Ticket id-------: ${ticketId}');
+        final result = await bottomSheetService.showCustomSheet(
+          variant: BottomSheetType.tickets,
+          data: response.data,
+        );
+        if (result != null) {
+          logger.i(result);
+        }
+      } else {
+        logger.e(response.message);
+        locator<SnackbarService>().showSnackbar(
+          message: response.message ?? 'Failed to validate ticket password',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    } catch (e, s) {
+      logger.e(s.toString());
+      locator<SnackbarService>().showSnackbar(
+        message: '$e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isValidating = false;
+      notifyListeners();
     }
   }
 }

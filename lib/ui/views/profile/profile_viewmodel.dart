@@ -3,18 +3,21 @@ import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/models/profile.dart';
 import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/services/social_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../models/event_activity.dart';
+import '../../../models/post_models.dart';
 import '../../../services/global_service.dart';
 
 class ProfileViewModel extends ReactiveViewModel {
   bool get isUser => true;
   final globalService = locator<GlobalService>();
   final userService = locator<UserService>();
+  final socialService = locator<SocialService>();
   Logger logger = Logger();
   Profile? profile;
   onEditProfile() async {
@@ -25,93 +28,15 @@ class ProfileViewModel extends ReactiveViewModel {
     }
   }
 
-  final eventActivities = [
-    EventActivity(
-      userName: 'John Doe',
-      userProfileImageUrl: avatar,
-      timeAgo: '2 hours ago',
-      isEditable: true,
-      eventImageUrl: ev1,
-      captionTitle: 'Night Groove Fest – What an amazing night!',
-      captionDescription:
-          "The energy was incredible. Can't wait for the next one!",
-      hashtags: ['#Nightlife', '#MusicFest'],
-      likedByUser: 'Jane Smith',
-      likeCount: 123,
-    ),
-    EventActivity(
-      userName: 'Jane Smith',
-      userProfileImageUrl: avatar,
-      timeAgo: '1 day ago',
-      isEditable: false,
-      eventImageUrl: ev2,
-      captionTitle: 'Sunset Beats – A perfect evening!',
-      captionDescription: "The sunset was breathtaking. Loved every moment!",
-      hashtags: ['#Sunset', '#ChillVibes'],
-      likedByUser: 'John Doe',
-      likeCount: 98,
-    ),
-    EventActivity(
-      userName: 'DJ Electro',
-      userProfileImageUrl: avatar,
-      timeAgo: '3 days ago',
-      isEditable: true,
-      eventImageUrl: ev3,
-      captionTitle: 'Techno Vibes – Lost in the music!',
-      captionDescription:
-          "The beats were hypnotic. Can't wait for the next set!",
-      hashtags: ['#Techno', '#Rave'],
-      likedByUser: 'Luna Beats',
-      likeCount: 150,
-    ),
-    EventActivity(
-      userName: 'Luna Beats',
-      userProfileImageUrl: avatar,
-      timeAgo: '5 days ago',
-      isEditable: false,
-      eventImageUrl: ev4,
-      captionTitle: 'House Party – A night to remember!',
-      captionDescription: "The house beats were on point. Loved the vibe!",
-      hashtags: ['#HouseMusic', '#Party'],
-      likedByUser: 'DJ Electro',
-      likeCount: 200,
-    ),
-    EventActivity(
-      userName: 'Event Masters Inc.',
-      userProfileImageUrl: avatar,
-      timeAgo: '1 week ago',
-      isEditable: true,
-      eventImageUrl: ev5,
-      captionTitle: 'Festival Highlights – What a show!',
-      captionDescription:
-          "The performances were top-notch. Can't wait for next year!",
-      hashtags: ['#Festival', '#Highlights'],
-      likedByUser: 'The Warehouse',
-      likeCount: 300,
-    ),
-    EventActivity(
-      userName: 'The Warehouse',
-      userProfileImageUrl: avatar,
-      timeAgo: '2 weeks ago',
-      isEditable: false,
-      eventImageUrl: ev6,
-      captionTitle: 'Warehouse Rave – An unforgettable night!',
-      captionDescription: "The atmosphere was electric. Loved every beat!",
-      hashtags: ['#Rave', '#Warehouse'],
-      likedByUser: 'Event Masters Inc.',
-      likeCount: 250,
-    ),
-  ];
-
-  void handleEventTap(EventActivity selected) {
+  void handleEventTap(Post selected) {
     final reorderedList = [
       selected,
-      ...eventActivities.where((e) => e != selected),
+      ...posts.where((e) => e != selected),
     ];
     locator<NavigationService>().navigateTo(
       Routes.eventActivityView,
       arguments: EventActivityViewArguments(
-        eventActivities: reorderedList,
+        posts: reorderedList,
       ),
     );
   }
@@ -120,8 +45,12 @@ class ProfileViewModel extends ReactiveViewModel {
     globalService.setIndex = 2; // Assuming index 2 is for messages
   }
 
-  cretePost() {
-    locator<NavigationService>().navigateTo(Routes.createPostView);
+  cretePost() async {
+    final result =
+        await locator<NavigationService>().navigateTo(Routes.createPostView);
+    if (result != null && result is bool && result) {
+      await getUserPosts();
+    }
   }
 
   getUser() {
@@ -130,14 +59,19 @@ class ProfileViewModel extends ReactiveViewModel {
     notifyListeners();
   }
 
+  init() async {
+    await getUserProfile(false);
+    await getUserPosts();
+  }
+
   Future getUserProfile(bool isRefresh) async {
-    if (!isRefresh) {
-      getUser();
-      if (profile != null) {
-        logger.i('User profile already loaded: ${profile!.toJson()}');
-        return;
-      }
-    }
+    // if (!isRefresh) {
+    //   await getUser();
+    //   if (profile != null) {
+    //     logger.i('User profile already loaded: ${profile!.toJson()}');
+    //     return;
+    //   }
+    // }
 
     setBusy(true);
     try {
@@ -155,6 +89,35 @@ class ProfileViewModel extends ReactiveViewModel {
 
       locator<SnackbarService>().showSnackbar(
         message: 'Failed to load user profile: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  int page = 1;
+  int size = 10;
+  List<Post> posts = [];
+  Future getUserPosts() async {
+    setBusy(true);
+    try {
+      final response = await socialService.getPosts(page: page, size: size);
+      if (response.statusCode == 200 && response.data != null) {
+        final List<dynamic> postsJson = response.data['posts'];
+        logger.i('User posts loaded successfully: ${response.data}');
+        // Convert each JSON object to Post model
+        posts = postsJson.map((postJson) => Post.fromJson(postJson)).toList();
+        notifyListeners();
+      } else {
+        throw Exception(response.message ?? 'Failed to load user posts');
+      }
+    } catch (e, s) {
+      logger.i('error: $e');
+      logger.e('error: $s');
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to load user posts: $e',
         duration: const Duration(seconds: 3),
       );
     } finally {

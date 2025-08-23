@@ -11,47 +11,8 @@ import '../../../models/message_models.dart';
 
 class MessagesViewModel extends BaseViewModel {
   final MessageService _messagingService = locator<MessageService>();
-  final List<Chats> chats = [
-    Chats(
-      id: '1',
-      senderName: 'Sarah J.',
-      senderImage: avatar,
-      message: 'Sounds good! See you then!',
-      time: '10:38 AM',
-      unreadCount: 2,
-    ),
-    Chats(
-      id: '2',
-      senderName: 'Alex M.',
-      senderImage: avatar,
-      message: "Don't forget about the afterparty!",
-      time: 'Yesterday',
-    ),
-    Chats(
-      id: '3',
-      senderName: 'Party Crew',
-      senderImage: avatar,
-      message: "We're meeting at the entrance.",
-      time: 'Mon',
-      unreadCount: 5,
-    ),
-    Chats(
-      id: '4',
-      senderName: 'DJ Beat',
-      senderImage: avatar,
-      message: "Thanks for coming to the show!",
-      time: 'Last Week',
-    ),
-    Chats(
-      id: '5',
-      senderName: 'Event Organizers',
-      senderImage: avatar,
-      message: "Your tickets have been confirmed.",
-      time: '03/15',
-    ),
-  ];
 
-  goToChatDetail(Chats chat) {
+  goToChatDetail(Conversation chat) {
     locator<NavigationService>()
         .navigateTo(Routes.chatView, arguments: ChatViewArguments(chat: chat));
   }
@@ -63,11 +24,12 @@ class MessagesViewModel extends BaseViewModel {
   Logger logger = Logger();
   List<Conversation> conversations = [];
   Future getConversations() async {
+    setBusy(true);
     try {
       final response = await _messagingService.fetchConversations();
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('Conversations fetched successfully: ${response.data}');
-        final conversationsList = response.data['conversations'];
+        final conversationsList = response.data['conversations'] ?? [];
 
         logger.i(conversations);
         final parsedConversations = conversationsList
@@ -97,6 +59,8 @@ class MessagesViewModel extends BaseViewModel {
         message: 'Error fetching conversations: $e',
         duration: const Duration(seconds: 3),
       );
+    } finally {
+      setBusy(false);
     }
   }
 }

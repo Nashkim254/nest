@@ -14,6 +14,7 @@ import '../ui/bottom_sheets/notice/notice_sheet.dart';
 import '../ui/bottom_sheets/report/report_sheet.dart';
 import '../ui/bottom_sheets/share/share_sheet.dart';
 import '../ui/bottom_sheets/tag_people/tag_people_sheet.dart';
+import '../ui/bottom_sheets/tickets/tickets_sheet.dart';
 
 enum BottomSheetType {
   notice,
@@ -23,6 +24,7 @@ enum BottomSheetType {
   share,
   report,
   finEvents,
+  tickets,
 }
 
 void setupBottomSheetUi() {
@@ -43,6 +45,8 @@ void setupBottomSheetUi() {
         ReportSheet(request: request, completer: completer),
     BottomSheetType.finEvents: (context, request, completer) =>
         FinEventsSheet(request: request, completer: completer),
+    BottomSheetType.tickets: (context, request, completer) =>
+        TicketsSheet(request: request, completer: completer),
   };
 
   bottomsheetService.setCustomSheetBuilders(builders);

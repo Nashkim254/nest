@@ -21,8 +21,11 @@ import '../services/global_service.dart';
 import '../services/image_service.dart';
 import '../services/location_service.dart';
 import '../services/message_service.dart';
+import '../services/payment_service.dart';
 import '../services/share_service.dart';
 import '../services/shared_preferences_service.dart';
+import '../services/social_service.dart';
+import '../services/stripe_service.dart';
 import '../services/user_service.dart';
 import '../services/websocket_service.dart';
 
@@ -57,4 +60,7 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => UserService());
   locator.registerLazySingleton(() => FileService());
   locator.registerLazySingleton(() => EventService());
+  locator.registerLazySingleton(() => PaymentService());
+  locator.registerLazySingleton(() => StripeService());
+  locator.registerLazySingleton(() => SocialService());
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:nest/app/app.bottomsheets.dart';
 import 'package:nest/app/app.dialogs.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/services/api_service.dart';
 import 'package:nest/services/deep_link_service.dart';
+import 'package:nest/utils/stripe_configs.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'abstractClasses/abstract_class.dart';
@@ -19,6 +21,8 @@ Future<void> main() async {
   setupBottomSheetUi();
   setupServiceLocator();
   await dotenv.load(fileName: '.env');
+  Stripe.publishableKey = StripeConfig.publishableKey;
+  await Stripe.instance.applySettings();
   runApp(const MainApp());
 }
 

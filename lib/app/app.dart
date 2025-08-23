@@ -52,6 +52,13 @@ import 'package:nest/ui/views/create_organization/create_organization_view.dart'
 import 'package:nest/ui/dialogs/add_social/add_social_dialog.dart';
 import 'package:nest/services/event_service.dart';
 import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dart';
+import 'package:nest/ui/bottom_sheets/tickets/tickets_sheet.dart';
+import 'package:nest/ui/views/checkout/checkout_view.dart';
+import 'package:nest/services/payment_service.dart';
+import 'package:nest/services/stripe_service.dart';
+import 'package:nest/services/social_service.dart';
+import 'package:nest/ui/views/paymentweb/paymentweb_view.dart';
+import 'package:nest/ui/dialogs/payment_successful/payment_successful_dialog.dart';
 // @stacked-import
 
 @StackedApp(
@@ -82,6 +89,8 @@ import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dar
     MaterialRoute(page: ViewEventView),
     MaterialRoute(page: SettingsView),
     MaterialRoute(page: CreateOrganizationView),
+    MaterialRoute(page: CheckoutView),
+    MaterialRoute(page: PaymentwebView),
 // @stacked-route
   ],
   dependencies: [
@@ -104,6 +113,9 @@ import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dar
     LazySingleton(classType: UserService),
     LazySingleton(classType: FileService),
     LazySingleton(classType: EventService),
+    LazySingleton(classType: PaymentService),
+    LazySingleton(classType: StripeService),
+    LazySingleton(classType: SocialService),
 // @stacked-service
   ],
   bottomsheets: [
@@ -114,6 +126,7 @@ import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dar
     StackedBottomsheet(classType: ShareSheet),
     StackedBottomsheet(classType: ReportSheet),
     StackedBottomsheet(classType: FinEventsSheet),
+    StackedBottomsheet(classType: TicketsSheet),
 // @stacked-bottom-sheet
   ],
   dialogs: [
@@ -122,6 +135,7 @@ import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dar
     StackedDialog(classType: ChangePasswordDialog),
     StackedDialog(classType: AddSocialDialog),
     StackedDialog(classType: PasswordProtectedDialog),
+    StackedDialog(classType: PaymentSuccessfulDialog),
 // @stacked-dialog
   ],
 )

@@ -70,18 +70,23 @@ class AddLocationSheet extends StackedView<AddLocationSheetModel> {
             onChanged: viewModel.onSearchChanged,
           ),
           verticalSpaceMedium,
-          Row(
-            children: [
-              SvgPicture.asset(pin, color: kcPrimaryColor),
-              horizontalSpaceSmall,
-              Text(
-                'Current Location',
-                style: titleTextMedium.copyWith(
-                  fontSize: 16,
-                  color: kcWhiteColor,
-                ),
-              ),
-            ],
+          InkWell(
+            onTap: viewModel.isBusy ? null : () => viewModel.showStatesSheet(),
+            child: Row(
+              children: [
+                SvgPicture.asset(pin, color: kcPrimaryColor),
+                horizontalSpaceSmall,
+                viewModel.isBusy
+                    ? const CircularProgressIndicator(color: kcPrimaryColor)
+                    : Text(
+                        'Current Location',
+                        style: titleTextMedium.copyWith(
+                          fontSize: 16,
+                          color: kcWhiteColor,
+                        ),
+                      ),
+              ],
+            ),
           ),
           Expanded(
             child: ListView.separated(
@@ -94,7 +99,6 @@ class AddLocationSheet extends StackedView<AddLocationSheetModel> {
                     style: titleTextMedium.copyWith(color: kcWhiteColor),
                   ),
                   onTap: () {
-                    viewModel.closeSheet();
                     viewModel.selectLocation(
                       viewModel.filteredStates[index],
                     );

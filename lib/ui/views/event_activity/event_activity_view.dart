@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nest/models/event_activity.dart';
+import 'package:nest/models/post_models.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/views/event_activity/widgets/event_activity_card.dart';
 import 'package:stacked/stacked.dart';
@@ -9,9 +10,8 @@ import '../../common/ui_helpers.dart';
 import 'event_activity_viewmodel.dart';
 
 class EventActivityView extends StackedView<EventActivityViewModel> {
-  const EventActivityView({Key? key, required this.eventActivities})
-      : super(key: key);
-  final List<EventActivity> eventActivities;
+  const EventActivityView({Key? key, required this.posts}) : super(key: key);
+  final List<Post> posts;
   @override
   Widget builder(
     BuildContext context,
@@ -53,10 +53,10 @@ class EventActivityView extends StackedView<EventActivityViewModel> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: eventActivities.length,
+                itemCount: posts.length,
                 itemBuilder: (context, index) {
-                  final activity = eventActivities[index];
-                  return EventActivityCard(activity: activity, index: index);
+                  final post = posts[index];
+                  return EventActivityCard(post: post, index: index);
                 },
               ),
             ],

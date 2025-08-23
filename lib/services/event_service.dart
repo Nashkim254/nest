@@ -87,4 +87,43 @@ class EventService {
       rethrow;
     }
   }
+
+  Future validateTicketPassword(
+      {required String password,
+      required int eventId,
+      required int ticketId}) async {
+    try {
+      final response = await _apiService.post(
+        '${AppUrls.validateTicketPassword}/$eventId/tickets/$ticketId/validate-password',
+        data: {'password': password},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future createBooking({
+    required int eventId,
+    required Map<String, dynamic> requestBody,
+  }) async {
+    try {
+      final response = await _apiService.post(
+          '${AppUrls.validateTicketPassword}/$eventId/bookings',
+          data: requestBody);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

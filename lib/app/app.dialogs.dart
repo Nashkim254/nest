@@ -12,6 +12,7 @@ import '../ui/dialogs/change_password/change_password_dialog.dart';
 import '../ui/dialogs/comments/comments_dialog.dart';
 import '../ui/dialogs/info_alert/info_alert_dialog.dart';
 import '../ui/dialogs/password_protected/password_protected_dialog.dart';
+import '../ui/dialogs/payment_successful/payment_successful_dialog.dart';
 
 enum DialogType {
   infoAlert,
@@ -19,6 +20,7 @@ enum DialogType {
   changePassword,
   addSocial,
   passwordProtected,
+  paymentSuccessful,
 }
 
 void setupDialogUi() {
@@ -35,6 +37,8 @@ void setupDialogUi() {
         AddSocialDialog(request: request, completer: completer),
     DialogType.passwordProtected: (context, request, completer) =>
         PasswordProtectedDialog(request: request, completer: completer),
+    DialogType.paymentSuccessful: (context, request, completer) =>
+        PaymentSuccessfulDialog(request: request, completer: completer),
   };
 
   dialogService.registerCustomDialogBuilders(builders);

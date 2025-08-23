@@ -16,6 +16,9 @@ import 'package:nest/services/share_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:nest/services/file_service.dart';
 import 'package:nest/services/event_service.dart';
+import 'package:nest/services/payment_service.dart';
+import 'package:nest/services/stripe_service.dart';
+import 'package:nest/services/social_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -42,6 +45,9 @@ import 'test_helpers.mocks.dart';
     MockSpec<UserService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<FileService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<EventService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<PaymentService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<StripeService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<SocialService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -63,6 +69,9 @@ void registerServices() {
   getAndRegisterUserService();
   getAndRegisterFileService();
   getAndRegisterEventService();
+  getAndRegisterPaymentService();
+  getAndRegisterStripeService();
+  getAndRegisterSocialService();
 // @stacked-mock-register
 }
 
@@ -215,6 +224,27 @@ MockEventService getAndRegisterEventService() {
   _removeRegistrationIfExists<EventService>();
   final service = MockEventService();
   locator.registerSingleton<EventService>(service);
+  return service;
+}
+
+MockPaymentService getAndRegisterPaymentService() {
+  _removeRegistrationIfExists<PaymentService>();
+  final service = MockPaymentService();
+  locator.registerSingleton<PaymentService>(service);
+  return service;
+}
+
+MockStripeService getAndRegisterStripeService() {
+  _removeRegistrationIfExists<StripeService>();
+  final service = MockStripeService();
+  locator.registerSingleton<StripeService>(service);
+  return service;
+}
+
+MockSocialService getAndRegisterSocialService() {
+  _removeRegistrationIfExists<SocialService>();
+  final service = MockSocialService();
+  locator.registerSingleton<SocialService>(service);
   return service;
 }
 // @stacked-mock-create

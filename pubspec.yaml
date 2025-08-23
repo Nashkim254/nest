@@ -31,6 +31,9 @@ dependencies:
   web_socket_channel: ^3.0.3
   flutter_map: ^5.0.0
   latlong2: ^0.9.1
+  shimmer: ^3.0.0
+  flutter_stripe: ^11.5.0
+  webview_flutter: ^4.13.0
 dev_dependencies:
   freezed: ^2.4.6
   json_serializable: ^6.7.1

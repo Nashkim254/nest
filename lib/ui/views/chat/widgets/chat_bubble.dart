@@ -1,19 +1,24 @@
 // ui/views/chat/widgets/chat_bubble.dart
 
 import 'package:flutter/material.dart';
+import 'package:nest/app/app.locator.dart';
+import 'package:nest/models/message_models.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/utils/utilities.dart';
 
 import '../../../../models/chat_message.dart';
 import '../../../common/app_enums.dart';
 
 class ChatBubble extends StatelessWidget {
-  final ChatMessage message;
+  final Message message;
 
   const ChatBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
-    final isSent = message.type == MessageType.sent;
+    final isSent = message.senderId ==
+        locator<SharedPreferencesService>().getUserInfo()!['id'];
 
     return Align(
       alignment: isSent ? Alignment.centerRight : Alignment.centerLeft,
@@ -31,13 +36,13 @@ class ChatBubble extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
-                message.message,
+                message.content,
                 style: const TextStyle(color: Colors.white),
               ),
             ),
             const SizedBox(height: 4),
             Text(
-              message.time,
+              formatter.format(message.createdAt!),
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.grey[500],

@@ -4,7 +4,10 @@ import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/ui/views/chat/widgets/chat_bubble.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../../app/app.locator.dart';
 import '../../../models/chats.dart';
+import '../../../models/message_models.dart';
+import '../../../services/shared_preferences_service.dart';
 import '../../common/app_colors.dart';
 import '../../common/app_inputdecoration.dart';
 import '../../common/app_strings.dart';
@@ -13,7 +16,7 @@ import 'chat_viewmodel.dart';
 
 class ChatView extends StackedView<ChatViewModel> {
   const ChatView({Key? key, required this.chat}) : super(key: key);
-  final Chats chat;
+  final Conversation chat;
   @override
   Widget builder(
     BuildContext context,
@@ -38,7 +41,7 @@ class ChatView extends StackedView<ChatViewModel> {
             ),
             horizontalSpaceMedium,
             Text(
-              chat.senderName,
+              chat.messages.last.sender!.name,
               style: titleTextMedium.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -56,9 +59,9 @@ class ChatView extends StackedView<ChatViewModel> {
             spacedDivider,
             ListView.builder(
               shrinkWrap: true,
-              itemCount: viewModel.messages.length,
+              itemCount: chat.messages.length,
               itemBuilder: (context, index) {
-                return ChatBubble(message: viewModel.messages[index]);
+                return ChatBubble(message: chat.messages[index]);
               },
             ),
           ],
@@ -114,7 +117,10 @@ class ChatView extends StackedView<ChatViewModel> {
     BuildContext context,
   ) =>
       ChatViewModel(
-        conversationId: chat.id,
-        receiverId: 2,
+        conversationId: chat.conversationId,
+        receiverId: chat.participantIds
+            .where((i) =>
+                i != locator<SharedPreferencesService>().getUserInfo()!['id'])
+            .first,
       );
 }
