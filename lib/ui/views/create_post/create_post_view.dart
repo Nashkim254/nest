@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_dotted_container.dart';
+import 'package:nest/ui/common/app_enums.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../common/app_colors.dart';
@@ -83,7 +84,7 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                 ),
                 verticalSpaceMedium,
                 InkWell(
-                  onTap: () => viewModel.showImageSourceSheet(),
+                  onTap: () => viewModel.showImageSourceSheet(FileType.image),
                   child: DottedBorderContainer(
                     borderColor: kcContainerBorderColor,
                     height: 200,

@@ -8,6 +8,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import 'app.locator.dart';
 import '../ui/bottom_sheets/add_location/add_location_sheet.dart';
+import '../ui/bottom_sheets/comments/comments_sheet.dart';
 import '../ui/bottom_sheets/fin_events/fin_events_sheet.dart';
 import '../ui/bottom_sheets/image_source/image_source_sheet.dart';
 import '../ui/bottom_sheets/notice/notice_sheet.dart';
@@ -25,6 +26,7 @@ enum BottomSheetType {
   report,
   finEvents,
   tickets,
+  comments,
 }
 
 void setupBottomSheetUi() {
@@ -47,6 +49,8 @@ void setupBottomSheetUi() {
         FinEventsSheet(request: request, completer: completer),
     BottomSheetType.tickets: (context, request, completer) =>
         TicketsSheet(request: request, completer: completer),
+    BottomSheetType.comments: (context, request, completer) =>
+        CommentsSheet(request: request, completer: completer),
   };
 
   bottomsheetService.setCustomSheetBuilders(builders);

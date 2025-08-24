@@ -81,7 +81,7 @@ class ChatViewModel extends ReactiveViewModel {
       messageType: 'text',
       createdAt: DateTime.now(),
     );
-
+    Logger().d('Sending message: $content to conversation: $receiverId');
     // Add to local messages immediately
     _messagingService.addLocalMessage(conversationId, localMessage);
 
@@ -132,6 +132,11 @@ class ChatViewModel extends ReactiveViewModel {
     );
   }
 
+  init() async {
+    // connect();
+    await createConversation();
+  }
+
   // Connection management
   Future<void> connect() async {
     await _messagingService.connect(
@@ -146,6 +151,25 @@ class ChatViewModel extends ReactiveViewModel {
         messageId: message.id!,
         conversationId: conversationId,
       );
+    }
+  }
+
+  Future createConversation() async {
+    List<int> participantIds = [userId, receiverId!];
+    var body = {
+      "participant_ids": participantIds,
+      "group_name": '$receiverId-$userId',
+      "group_avatar": ''
+    };
+    Logger().d('Creating conversation with body: $body');
+    try {
+      final response = await _messagingService.createGroupConvo(body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Logger().d('Conversation created successfully');
+        Logger().d('Conversation created: ${response.data}');
+      }
+    } catch (e) {
+      Logger().e('Error creating conversation: $e');
     }
   }
 

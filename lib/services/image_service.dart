@@ -18,9 +18,20 @@ class ImageService {
 
   Future<File?> pickImageFromCamera() async {
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
+      final XFile? image = await _picker.pickMedia(
         imageQuality: 80,
+      );
+      return image != null ? File(image.path) : null;
+    } catch (e) {
+      throw Exception('Error picking image from camera: $e');
+    }
+  }
+
+  Future<File?> pickVideoFromCamera() async {
+    try {
+      final XFile? image = await _picker.pickVideo(
+        source: ImageSource.camera,
+        maxDuration: const Duration(seconds: 30),
       );
       return image != null ? File(image.path) : null;
     } catch (e) {
@@ -30,9 +41,20 @@ class ImageService {
 
   Future<File?> pickImageFromGallery() async {
     try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
+      final XFile? image = await _picker.pickMedia(
         imageQuality: 80,
+      );
+      return image != null ? File(image.path) : null;
+    } catch (e) {
+      throw Exception('Error picking image from gallery: $e');
+    }
+  }
+
+  Future<File?> pickVideoFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickVideo(
+        source: ImageSource.gallery,
+        maxDuration: const Duration(seconds: 30),
       );
       return image != null ? File(image.path) : null;
     } catch (e) {
@@ -42,7 +64,7 @@ class ImageService {
 
   Future<List<File>> pickMultipleImages() async {
     try {
-      final List<XFile> images = await _picker.pickMultiImage(
+      final List<XFile> images = await _picker.pickMultipleMedia(
         imageQuality: 80,
       );
       return images.map((image) => File(image.path)).toList();

@@ -189,4 +189,23 @@ class MessageService with ListenableServiceMixin {
       throw Exception('Failed to load conversations: ${response.message}');
     }
   }
+
+  Future sendMessageApi() async {
+    final response = await apiService.post(AppUrls.sendMessage);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response;
+    } else {
+      throw Exception('Failed to load conversations: ${response.message}');
+    }
+  }
+
+  Future createGroupConvo(var body) async {
+    final response =
+        await apiService.post(AppUrls.createGroupConvo, data: body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response;
+    } else {
+      throw Exception('Failed to load conversations: ${response.message}');
+    }
+  }
 }

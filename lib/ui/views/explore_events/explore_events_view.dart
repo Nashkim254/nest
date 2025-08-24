@@ -28,7 +28,15 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () {
+              viewModel.navigationService.back();
+            },
+            icon: const Icon(
+              Icons.arrow_back,
+              color: kcWhiteColor,
+            ),
+          ),
           backgroundColor: kcDarkColor,
           title: Text(
             "My Nest",

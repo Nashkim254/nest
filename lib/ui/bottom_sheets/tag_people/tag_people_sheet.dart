@@ -17,6 +17,11 @@ class TagPeopleSheet extends StackedView<TagPeopleSheetModel> {
     required this.completer,
     required this.request,
   }) : super(key: key);
+  @override
+  void onViewModelReady(TagPeopleSheetModel viewModel) {
+    viewModel.init(request);
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -70,16 +75,16 @@ class TagPeopleSheet extends StackedView<TagPeopleSheetModel> {
           verticalSpaceMedium,
           Expanded(
             child: ListView.separated(
-              itemCount: viewModel.filteredUsers.length,
+              itemCount: viewModel.userList.length,
               itemBuilder: (context, index) {
-                final user = viewModel.filteredUsers[index];
+                final user = viewModel.userList[index];
                 return ListTile(
                   onTap: () => viewModel.toggleTagUser(user, index),
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage(user.imageUrl),
+                    backgroundImage: NetworkImage(user.profilePicture),
                   ),
                   title: Text(
-                    user.name,
+                    '${user.firstName} ${user.lastName}',
                     style: titleTextMedium.copyWith(
                       fontSize: 15,
                     ),

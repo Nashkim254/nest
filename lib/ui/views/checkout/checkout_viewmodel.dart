@@ -214,8 +214,8 @@ class CheckoutViewModel extends BaseViewModel {
     );
   }
 
-  void _showSuccessDialog() async{
-   final response = await dialogService.showCustomDialog(
+  void _showSuccessDialog() async {
+    final response = await dialogService.showCustomDialog(
       variant: DialogType.paymentSuccessful,
       title: 'Payment Successful',
       description: 'Your payment has been processed successfully!',

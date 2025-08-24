@@ -41,7 +41,7 @@ class EditProfileViewModel extends ReactiveViewModel {
 
   final _bottomSheetService = locator<BottomSheetService>();
 
-  Future<void> showImageSourceSheet() async {
+  Future<void> showImageSourceSheet(FileType fileType) async {
     SheetResponse? response = await _bottomSheetService.showCustomSheet(
       variant: BottomSheetType.imageSource,
       isScrollControlled: true,
@@ -52,7 +52,7 @@ class EditProfileViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera();
+          await fileService.pickImageFromCamera(fileType);
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();

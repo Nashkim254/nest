@@ -25,10 +25,47 @@ class SocialService {
     }
   }
 
+  Future claudFlareSignVideo({int maxDurationSeconds = 30}) async {
+    try {
+      final response = await _apiService.get(
+        AppUrls.cloudflareSignVideo,
+        queryParameters: {'max': maxDurationSeconds.toString()},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future getPosts({required int page, required int size}) async {
     try {
       final response =
           await _apiService.get(AppUrls.createPosts, queryParameters: {
+        'page': page,
+        'limit': size,
+      });
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getUserPosts({required int page, required int size}) async {
+    try {
+      int id = locator<SharedPreferencesService>().getUserInfo()!['id'] ??
+          locator<SharedPreferencesService>().getUserInfo()!['ID'];
+      final response = await _apiService
+          .get('${AppUrls.getUserPostsUrl}/$id', queryParameters: {
         'page': page,
         'limit': size,
       });

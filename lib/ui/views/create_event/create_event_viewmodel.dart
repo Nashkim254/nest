@@ -94,7 +94,7 @@ class CreateEventViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera();
+          await fileService.pickImageFromCamera(FileType.image);
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();

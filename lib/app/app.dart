@@ -24,7 +24,6 @@ import 'package:nest/ui/bottom_sheets/image_source/image_source_sheet.dart';
 import 'package:nest/ui/bottom_sheets/add_location/add_location_sheet.dart';
 import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet.dart';
 import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dart';
-import 'package:nest/ui/dialogs/comments/comments_dialog.dart';
 import 'package:nest/ui/bottom_sheets/share/share_sheet.dart';
 import 'package:nest/ui/bottom_sheets/report/report_sheet.dart';
 import 'package:nest/ui/views/create_event/create_event_view.dart';
@@ -59,6 +58,9 @@ import 'package:nest/services/stripe_service.dart';
 import 'package:nest/services/social_service.dart';
 import 'package:nest/ui/views/paymentweb/paymentweb_view.dart';
 import 'package:nest/ui/dialogs/payment_successful/payment_successful_dialog.dart';
+import 'package:nest/ui/bottom_sheets/comments/comments_sheet.dart';
+import 'package:nest/services/comments_service.dart';
+import 'package:nest/ui/views/analytics/analytics_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -91,6 +93,7 @@ import 'package:nest/ui/dialogs/payment_successful/payment_successful_dialog.dar
     MaterialRoute(page: CreateOrganizationView),
     MaterialRoute(page: CheckoutView),
     MaterialRoute(page: PaymentwebView),
+    MaterialRoute(page: AnalyticsView),
 // @stacked-route
   ],
   dependencies: [
@@ -116,6 +119,7 @@ import 'package:nest/ui/dialogs/payment_successful/payment_successful_dialog.dar
     LazySingleton(classType: PaymentService),
     LazySingleton(classType: StripeService),
     LazySingleton(classType: SocialService),
+    LazySingleton(classType: CommentsService),
 // @stacked-service
   ],
   bottomsheets: [
@@ -127,11 +131,11 @@ import 'package:nest/ui/dialogs/payment_successful/payment_successful_dialog.dar
     StackedBottomsheet(classType: ReportSheet),
     StackedBottomsheet(classType: FinEventsSheet),
     StackedBottomsheet(classType: TicketsSheet),
+    StackedBottomsheet(classType: CommentsSheet),
 // @stacked-bottom-sheet
   ],
   dialogs: [
     StackedDialog(classType: InfoAlertDialog),
-    StackedDialog(classType: CommentsDialog),
     StackedDialog(classType: ChangePasswordDialog),
     StackedDialog(classType: AddSocialDialog),
     StackedDialog(classType: PasswordProtectedDialog),

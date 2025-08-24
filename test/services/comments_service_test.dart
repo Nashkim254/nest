@@ -4,7 +4,7 @@ import 'package:nest/app/app.locator.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {
-  group('CommentsDialogModel Tests -', () {
+  group('CommentsServiceTest -', () {
     setUp(() => registerServices());
     tearDown(() => locator.reset());
   });

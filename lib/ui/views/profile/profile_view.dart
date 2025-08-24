@@ -115,7 +115,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
         verticalSpaceMedium,
         Align(
           child: Text(
-            viewModel.profile!.interests.join(', '),
+            viewModel.profile!.bio,
             style: bodyText.copyWith(color: kcGreyColor),
             textAlign: TextAlign.center,
           ),
@@ -229,19 +229,22 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 avatar: instagram,
                 name: "Instagram",
                 handle: viewModel.profile!.instagram ?? "",
-                onTap: () {},
+                onTap: () =>
+                    viewModel.openSocialLink(viewModel.profile!.instagram!),
               ),
               Socials(
                 avatar: x,
                 name: "X (Twitter)",
                 handle: viewModel.profile!.twitter ?? "",
-                onTap: () {},
+                onTap: () =>
+                    viewModel.openSocialLink(viewModel.profile!.twitter!),
               ),
               Socials(
                 avatar: linkedin,
                 name: "Linkein",
                 handle: viewModel.profile!.linkedIn ?? "",
-                onTap: () {},
+                onTap: () =>
+                    viewModel.openSocialLink(viewModel.profile!.linkedIn!),
               ),
             ],
           ),

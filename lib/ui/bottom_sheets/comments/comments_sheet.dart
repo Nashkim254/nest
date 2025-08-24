@@ -1,31 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-import '../../../models/comments.dart';
+import '../../../models/comment.dart';
 import '../../common/app_inputdecoration.dart';
-import 'comments_dialog_model.dart';
+import 'comments_sheet_model.dart';
 
-class CommentsDialog extends StackedView<CommentsDialogModel> {
-  final DialogRequest request;
-  final Function(DialogResponse) completer;
-  const CommentsDialog({
+class CommentsSheet extends StackedView<CommentsSheetModel> {
+  final Function(SheetResponse response)? completer;
+  final SheetRequest request;
+  const CommentsSheet({
     Key? key,
-    required this.request,
     required this.completer,
+    required this.request,
   }) : super(key: key);
 
   @override
   Widget builder(
-      BuildContext context, CommentsDialogModel viewModel, Widget? child) {
-    return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 40),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      backgroundColor: kcDarkColor,
+    BuildContext context,
+    CommentsSheetModel viewModel,
+    Widget? child,
+  ) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: const BoxDecoration(
+        color: kcDarkColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
+          // Drag Handle
+          Container(
+            margin: const EdgeInsets.only(top: 8, bottom: 8),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[600],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+
           // Header
           const CommentsHeaderWidget(),
 
@@ -57,16 +76,16 @@ class CommentsDialog extends StackedView<CommentsDialogModel> {
   }
 
   @override
-  CommentsDialogModel viewModelBuilder(BuildContext context) =>
-      CommentsDialogModel();
+  void onViewModelReady(CommentsSheetModel viewModel) {
+    viewModel.initialize(int.parse(request.data.toString()));
+    super.onViewModelReady(viewModel);
+  }
 
   @override
-  void onViewModelReady(CommentsDialogModel viewModel) {
-    viewModel.initialize(request.data as String);
-  }
+  CommentsSheetModel viewModelBuilder(BuildContext context) =>
+      CommentsSheetModel();
 }
 
-// Comments Header Widget
 class CommentsHeaderWidget extends StatelessWidget {
   const CommentsHeaderWidget({Key? key}) : super(key: key);
 
@@ -111,7 +130,7 @@ class CommentsHeaderWidget extends StatelessWidget {
 class CommentsListWidget extends StatelessWidget {
   final List<Comment> comments;
   final ScrollController scrollController;
-  final Function(String) onLikeComment;
+  final Function(int) onLikeComment;
 
   const CommentsListWidget({
     Key? key,

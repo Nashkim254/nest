@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
+import 'package:nest/app/app.locator.dart';
 import 'package:nest/models/event_activity.dart';
 import 'package:nest/models/post_models.dart';
+import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/utils/utilities.dart';
@@ -11,7 +14,18 @@ import '../../../common/app_styles.dart';
 class EventActivityCard extends StatelessWidget {
   final Post post;
   final int index;
-  const EventActivityCard({super.key, required this.post, required this.index});
+  final Function(Post) onLike;
+  final Function(Post) onComment;
+  final Function(Post) onEdit;
+  final Function(Post) onShare;
+  const EventActivityCard(
+      {super.key,
+      required this.post,
+      required this.index,
+      required this.onLike,
+      required this.onEdit,
+      required this.onShare,
+      required this.onComment});
 
   @override
   Widget build(BuildContext context) {
@@ -32,28 +46,29 @@ class EventActivityCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(post.user.profilePicture!),
+                    backgroundImage: NetworkImage(post.user!.profilePicture!),
                     radius: 20,
                   ),
                 ),
                 Expanded(
                   flex: 2,
-                  child: Text(post.user.displayName, style: titleTextMedium),
+                  child: Text(post.user!.displayName, style: titleTextMedium),
                 ),
                 Expanded(
                   flex: 2,
                   child: Text(
-                    formatter.format(post.createdAt),
+                    formatter.format(post.createdAt ?? DateTime.now()),
                     style: titleTextMedium.copyWith(color: Colors.grey),
                   ),
                 ),
-                if (!post.isPrivate)
+                if (post.user!.id ==
+                        locator<SharedPreferencesService>()
+                            .getUserInfo()!['id'] ??
+                    locator<SharedPreferencesService>().getUserInfo()!['ID'])
                   Expanded(
                     flex: 2,
                     child: TextButton(
-                      onPressed: () {
-                        // Edit action
-                      },
+                      onPressed: () => onEdit(post),
                       child: Text('Edit',
                           style:
                               bodyTextMedium.copyWith(color: kcPrimaryColor)),
@@ -71,11 +86,21 @@ class EventActivityCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               children: [
-                SvgPicture.asset(like),
+                InkWell(
+                  onTap: () => onLike(post),
+                  child: SvgPicture.asset(like,
+                      color: post.isLiked ? kcPrimaryColor : kcWhiteColor),
+                ),
                 horizontalSpaceMedium,
-                SvgPicture.asset(comment),
+                InkWell(
+                  onTap: () => onComment(post),
+                  child: SvgPicture.asset(comment),
+                ),
                 horizontalSpaceMedium,
-                SvgPicture.asset(send),
+                InkWell(
+                  onTap: () => onShare(post),
+                  child: SvgPicture.asset(send),
+                ),
               ],
             ),
           ),

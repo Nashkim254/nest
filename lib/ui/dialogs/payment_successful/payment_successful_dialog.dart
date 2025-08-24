@@ -7,7 +7,6 @@ import 'package:stacked_services/stacked_services.dart';
 
 import 'payment_successful_dialog_model.dart';
 
-
 const double _graphicSize = 60;
 
 class PaymentSuccessfulDialog
@@ -27,16 +26,30 @@ class PaymentSuccessfulDialog
     final description = request.description?.toLowerCase() ?? '';
 
     // Check for success keywords
-    final successKeywords = ['success', 'successful', 'complete', 'completed', 'confirmed', 'approved'];
-    final failureKeywords = ['failed', 'error', 'declined', 'rejected', 'unsuccessful', 'cancelled'];
+    final successKeywords = [
+      'success',
+      'successful',
+      'complete',
+      'completed',
+      'confirmed',
+      'approved'
+    ];
+    final failureKeywords = [
+      'failed',
+      'error',
+      'declined',
+      'rejected',
+      'unsuccessful',
+      'cancelled'
+    ];
 
     // Check if any success keywords are present
-    bool hasSuccessKeywords = successKeywords.any((keyword) =>
-    title.contains(keyword) || description.contains(keyword));
+    bool hasSuccessKeywords = successKeywords.any(
+        (keyword) => title.contains(keyword) || description.contains(keyword));
 
     // Check if any failure keywords are present
-    bool hasFailureKeywords = failureKeywords.any((keyword) =>
-    title.contains(keyword) || description.contains(keyword));
+    bool hasFailureKeywords = failureKeywords.any(
+        (keyword) => title.contains(keyword) || description.contains(keyword));
 
     // If both or neither, default based on explicit success indicators
     if (hasSuccessKeywords && !hasFailureKeywords) return true;
@@ -51,23 +64,22 @@ class PaymentSuccessfulDialog
 
   // Get the appropriate background color for the icon
   Color get _iconBackgroundColor => _isSuccess
-      ? const Color(0xFFE8F5E8)  // Light green
+      ? const Color(0xFFE8F5E8) // Light green
       : const Color(0xFFFFEBEE); // Light red
 
   // Get the appropriate button color
-  Color get _buttonColor => _isSuccess
-      ? Colors.black
-      : kcRedColor; // Red for errors
+  Color get _buttonColor =>
+      _isSuccess ? Colors.black : kcRedColor; // Red for errors
 
   // Get the appropriate button text
   String get _buttonText => _isSuccess ? 'Got it' : 'Try Again';
 
   @override
   Widget builder(
-      BuildContext context,
-      PaymentSuccessfulDialogModel viewModel,
-      Widget? child,
-      ) {
+    BuildContext context,
+    PaymentSuccessfulDialogModel viewModel,
+    Widget? child,
+  ) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       backgroundColor: kcDarkColor,

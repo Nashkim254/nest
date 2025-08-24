@@ -5,11 +5,9 @@ import 'package:nest/models/profile.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/services/social_service.dart';
 import 'package:nest/services/user_service.dart';
-import 'package:nest/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
-import '../../../models/event_activity.dart';
 import '../../../models/post_models.dart';
 import '../../../services/global_service.dart';
 
@@ -102,10 +100,10 @@ class ProfileViewModel extends ReactiveViewModel {
   Future getUserPosts() async {
     setBusy(true);
     try {
-      final response = await socialService.getPosts(page: page, size: size);
+      final response = await socialService.getUserPosts(page: page, size: size);
       if (response.statusCode == 200 && response.data != null) {
         final List<dynamic> postsJson = response.data['posts'];
-        logger.i('User posts loaded successfully: ${response.data}');
+        logger.i('User posts loaded successfully: ${postsJson.length}');
         // Convert each JSON object to Post model
         posts = postsJson.map((postJson) => Post.fromJson(postJson)).toList();
         notifyListeners();
@@ -122,6 +120,18 @@ class ProfileViewModel extends ReactiveViewModel {
       );
     } finally {
       setBusy(false);
+    }
+  }
+
+//url launcher to open links to socials
+  Future openSocialLink(String url) async {
+    try {
+      await userService.openSocialLink(url);
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(
+        message: 'Could not open the link: $e',
+        duration: const Duration(seconds: 3),
+      );
     }
   }
 

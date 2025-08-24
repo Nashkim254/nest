@@ -41,18 +41,28 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                   style: titleTextMedium,
                 ),
                 verticalSpaceSmall,
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.21,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: List.generate(
-                      viewModel.tickets.length,
-                      (int i) => MyTicketWidget(
-                        ticket: viewModel.tickets[i],
+                viewModel.tickets.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No tickets at the moment',
+                          style: titleTextMedium.copyWith(
+                            fontSize: 16,
+                            color: kcGreyColor,
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.21,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: List.generate(
+                            viewModel.tickets.length,
+                            (int i) => MyTicketWidget(
+                              ticket: viewModel.tickets[i],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
                 verticalSpaceMedium,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -7,10 +7,10 @@ part of 'post_models.dart';
 // **************************************************************************
 
 UserPreview _$UserPreviewFromJson(Map<String, dynamic> json) => UserPreview(
-      id: (json['id'] as num).toInt(),
-      displayName: json['display_name'] as String,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      displayName: json['display_name'] as String? ?? '',
       profilePicture: json['profile_picture'] as String?,
-      isVerified: json['is_verified'] as bool,
+      isVerified: json['is_verified'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$UserPreviewToJson(UserPreview instance) =>
@@ -22,27 +22,30 @@ Map<String, dynamic> _$UserPreviewToJson(UserPreview instance) =>
     };
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
-      id: (json['id'] as num).toInt(),
-      content: json['content'] as String,
-      imageUrls: (json['image_urls'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      hashtags:
-          (json['hashtags'] as List<dynamic>).map((e) => e as String).toList(),
-      isPrivate: json['is_private'] as bool,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      content: json['content'] as String? ?? '',
+      imageUrls: (json['image_urls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      hashtags: (json['hashtags'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      isPrivate: json['is_private'] as bool? ?? false,
       location: json['location'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      likeCount: (json['like_count'] as num).toInt(),
-      commentCount: (json['comment_count'] as num).toInt(),
-      shareCount: (json['share_count'] as num).toInt(),
-      viewCount: (json['view_count'] as num).toInt(),
+      createdAt: Post._dateTimeFromJson(json['created_at']),
+      updatedAt: Post._dateTimeFromJson(json['updated_at']),
+      likeCount: (json['like_count'] as num?)?.toInt() ?? 0,
+      commentCount: (json['comment_count'] as num?)?.toInt() ?? 0,
+      shareCount: (json['share_count'] as num?)?.toInt() ?? 0,
+      viewCount: (json['view_count'] as num?)?.toInt() ?? 0,
       mediaId: json['media_id'] as String?,
       videoUrl: json['video_url'] as String?,
       videoThumbnail: json['video_thumbnail'] as String?,
-      videoReady: json['video_ready'] as bool,
-      user: UserPreview.fromJson(json['user'] as Map<String, dynamic>),
-      isLiked: json['is_liked'] as bool,
+      videoReady: json['video_ready'] as bool? ?? false,
+      user: Post._userPreviewFromJson(json['user']),
+      isLiked: json['is_liked'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
@@ -52,8 +55,8 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'hashtags': instance.hashtags,
       'is_private': instance.isPrivate,
       'location': instance.location,
-      'created_at': instance.createdAt.toIso8601String(),
-      'updated_at': instance.updatedAt.toIso8601String(),
+      'created_at': Post._dateTimeToJson(instance.createdAt),
+      'updated_at': Post._dateTimeToJson(instance.updatedAt),
       'like_count': instance.likeCount,
       'comment_count': instance.commentCount,
       'share_count': instance.shareCount,
@@ -62,6 +65,6 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'video_url': instance.videoUrl,
       'video_thumbnail': instance.videoThumbnail,
       'video_ready': instance.videoReady,
-      'user': instance.user,
+      'user': Post._userPreviewToJson(instance.user),
       'is_liked': instance.isLiked,
     };

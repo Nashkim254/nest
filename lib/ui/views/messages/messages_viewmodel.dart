@@ -1,17 +1,18 @@
 import 'package:logger/logger.dart';
+import 'package:nest/app/app.bottomsheets.dart';
 import 'package:nest/services/message_service.dart';
-import 'package:nest/ui/common/app_strings.dart';
+import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
-import '../../../models/chats.dart';
 import '../../../models/message_models.dart';
+import '../../../models/people_model.dart';
 
 class MessagesViewModel extends BaseViewModel {
   final MessageService _messagingService = locator<MessageService>();
-
+  final bottomSheet = locator<BottomSheetService>();
   goToChatDetail(Conversation chat) {
     locator<NavigationService>()
         .navigateTo(Routes.chatView, arguments: ChatViewArguments(chat: chat));
@@ -62,5 +63,37 @@ class MessagesViewModel extends BaseViewModel {
     } finally {
       setBusy(false);
     }
+  }
+
+  startNewChat() async {
+    final response = bottomSheet.showCustomSheet(
+      variant: BottomSheetType.tagPeople,
+      title: 'Add Team Member',
+      isScrollControlled: true,
+      barrierDismissible: true,
+    );
+    response.then((sheetResponse) {
+      if (sheetResponse?.confirmed == true && sheetResponse?.data != null) {
+        var data = sheetResponse!.data as List<UserSearchResult>;
+        if (data.isEmpty) {
+          locator<SnackbarService>().showSnackbar(
+            message: 'No user selected',
+            duration: const Duration(seconds: 3),
+          );
+          return;
+        } else {
+          locator<NavigationService>().navigateTo(
+            Routes.chatView,
+            arguments: ChatViewArguments(
+              chat: null,
+              user: data.first,
+            ),
+          ); // start new chat with first user
+        }
+
+        logger.i('Data from sheet: ${data.first.toJson()}');
+        notifyListeners();
+      }
+    });
   }
 }

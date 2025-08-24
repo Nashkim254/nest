@@ -12,7 +12,6 @@ import '../../../app/app.locator.dart';
 import '../../../models/events.dart';
 import '../../../models/organization_analytics.dart';
 import '../../../services/user_service.dart';
-import '../../common/app_colors.dart';
 import '../../common/app_enums.dart';
 
 class HostingViewModel extends BaseViewModel {
@@ -166,7 +165,7 @@ class HostingViewModel extends BaseViewModel {
             })
             .whereType<Event>() // Only keep Event objects, filter out nulls
             .toList();
-        logger.w('Upcoming Events: ${upcomingEvents}');
+        logger.w('Upcoming Events: $upcomingEvents');
 
         return response.data;
       } else {
@@ -194,5 +193,9 @@ class HostingViewModel extends BaseViewModel {
       // If the user successfully created an event, refresh the list
       await getUpcomingEvents();
     }
+  }
+
+  navigateToOrganizationAnalytics() {
+    locator<NavigationService>().navigateToAnalyticsView(organizationId: organization!.id!);
   }
 }

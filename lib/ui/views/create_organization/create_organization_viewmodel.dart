@@ -214,7 +214,7 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
 
   final _bottomSheetService = locator<BottomSheetService>();
 
-  Future<void> showImageSourceSheet(String type) async {
+  Future<void> showImageSourceSheet(String type, FileType fileType) async {
     SheetResponse? response = await _bottomSheetService.showCustomSheet(
       variant: BottomSheetType.imageSource,
       isScrollControlled: true,
@@ -225,7 +225,7 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera();
+          await fileService.pickImageFromCamera(fileType);
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();

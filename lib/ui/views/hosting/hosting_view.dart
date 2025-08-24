@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
-import 'package:nest/ui/common/app_enums.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
-import 'package:nest/ui/views/hosting/widgets/analytics.dart';
 import 'package:nest/ui/views/hosting/widgets/event_card.dart';
-import 'package:nest/ui/views/hosting/widgets/events.dart';
 import 'package:stacked/stacked.dart';
 
-import '../../../models/event_data.dart';
 import '../../common/app_strings.dart';
 import 'hosting_viewmodel.dart';
 
@@ -129,7 +125,8 @@ class HostingView extends StackedView<HostingViewModel> {
                                 AppButton(
                                   buttonColor: kcSecondaryWithOpacityColor,
                                   labelText: 'View Analytics',
-                                  onTap: () {},
+                                  onTap: () => viewModel
+                                      .navigateToOrganizationAnalytics(),
                                   leadingIcon: analytics,
                                 ),
                                 verticalSpaceMedium,

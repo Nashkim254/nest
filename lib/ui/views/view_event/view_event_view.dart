@@ -410,14 +410,14 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                           ),
                         const SizedBox(width: 12),
                         Text(
-                          '${viewModel.event!.goingUsers.length} of your friends are\ngoing',
+                          '${viewModel.event!.goingUsers.length} people are going',
                           style: const TextStyle(
                               color: kcGrey4Color, fontSize: 14),
                         ),
                         const Spacer(),
                         TextButton(
                           onPressed: viewModel.event!.goingUsers.isNotEmpty
-                              ? () {}
+                              ? () {} //start chat
                               : null,
                           child: Text(
                             'View\nAll',

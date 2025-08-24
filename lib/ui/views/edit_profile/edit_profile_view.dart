@@ -101,7 +101,7 @@ class EditProfileView extends StackedView<EditProfileViewModel> {
                         )
                       : TextButton(
                           onPressed: () {
-                            viewModel.showImageSourceSheet();
+                            viewModel.showImageSourceSheet(FileType.image);
                           },
                           child: Text(
                             "Edit Photo",

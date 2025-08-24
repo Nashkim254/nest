@@ -108,3 +108,5 @@ enum PaymentMethodType {
   const PaymentMethodType(this.isEnabled);
   final bool isEnabled;
 }
+
+enum FileType { image, video, audio, document, other }

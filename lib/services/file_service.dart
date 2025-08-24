@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:logger/logger.dart';
+import 'package:nest/ui/common/app_enums.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -16,17 +17,23 @@ class FileService with ListenableServiceMixin {
   final ImageService _imageService = locator<ImageService>();
   final List<File> _selectedImages = [];
   List<File> get selectedImages => _selectedImages;
-  Future<void> pickImageFromCamera() async {
+  Future<void> pickImageFromCamera(FileType fileType) async {
     try {
       bool hasPermission = await _imageService.requestPermissions();
       if (!hasPermission) {
         return;
       }
-
-      File? image = await _imageService.pickImageFromCamera();
-      if (image != null) {
+      if (fileType == FileType.image) {
+        File? image = await _imageService.pickImageFromCamera();
+        if (image != null) {
+          _selectedImages.clear();
+          _selectedImages.add(image);
+          notifyListeners();
+        }
+      } else if (fileType == FileType.video) {
+        File? video = await _imageService.pickVideoFromCamera();
         _selectedImages.clear();
-        _selectedImages.add(image);
+        _selectedImages.add(video!);
         notifyListeners();
       }
     } catch (e) {
@@ -40,7 +47,6 @@ class FileService with ListenableServiceMixin {
       if (!hasPermission) {
         return;
       }
-
       File? image = await _imageService.pickImageFromGallery();
       if (image != null) {
         _selectedImages.clear();

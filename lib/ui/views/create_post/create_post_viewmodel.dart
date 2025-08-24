@@ -32,7 +32,7 @@ class CreatePostViewModel extends ReactiveViewModel {
   bool get hasImages => selectedImages.isNotEmpty;
   List<String> uploadImageUrls = [];
   final _bottomSheetService = locator<BottomSheetService>();
-  Future<void> showImageSourceSheet() async {
+  Future<void> showImageSourceSheet(FileType fileType) async {
     SheetResponse? response = await _bottomSheetService.showCustomSheet(
       variant: BottomSheetType.imageSource,
       isScrollControlled: true,
@@ -43,7 +43,7 @@ class CreatePostViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera();
+          await fileService.pickImageFromCamera(fileType);
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();
@@ -53,12 +53,34 @@ class CreatePostViewModel extends ReactiveViewModel {
           break;
       }
       if (selectedImages.isNotEmpty) {
+        if (fileType == FileType.video) {
+          await getSignedURL();
+          return;
+        }
         await getFileUploadUrl();
       }
     }
   }
 
   Logger logger = Logger();
+  Future getSignedURL() async {
+    try {
+      final response = await socialService.claudFlareSignVideo();
+      if (response.statusCode == 200 && response.data != null) {
+        logger.i(response.data);
+        return response.data;
+      } else {
+        throw Exception(
+            'Failed to get signed URL: ${response.message ?? 'Unknown error'}');
+      }
+    } catch (e) {
+      logger.e('Failed to get signed URL:', e);
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to get signed URL: $e',
+        duration: const Duration(seconds: 3),
+      );
+    }
+  }
 
   Future getFileUploadUrl() async {
     setBusy(true);

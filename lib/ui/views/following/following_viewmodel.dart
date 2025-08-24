@@ -275,15 +275,14 @@ class FollowingViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void openComments(String postId) {
-    final result = dialogService.showCustomDialog(
-      variant: DialogType.comments,
+  void openComments(String postId) async {
+    final result = await bottomSheet.showCustomSheet(
+      variant: BottomSheetType.comments,
       title: 'Comments',
-      data: postId,
+      data: postId, // or whatever data you need to pass
+      isScrollControlled: true,
     );
-    result.then((value) {
-      if (value != null && value.confirmed) {}
-    });
+    if (result != null && result.confirmed) {}
     notifyListeners();
   }
 

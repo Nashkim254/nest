@@ -13,6 +13,7 @@ import 'package:stacked_shared/stacked_shared.dart';
 
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/comments_service.dart';
 import '../services/deep_link_generator_service.dart';
 import '../services/deep_link_service.dart';
 import '../services/event_service.dart';
@@ -63,4 +64,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => PaymentService());
   locator.registerLazySingleton(() => StripeService());
   locator.registerLazySingleton(() => SocialService());
+  locator.registerLazySingleton(() => CommentsService());
 }

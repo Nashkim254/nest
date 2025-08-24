@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet_model.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/ui/views/chat/widgets/chat_bubble.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../../app/app.locator.dart';
-import '../../../models/chats.dart';
 import '../../../models/message_models.dart';
 import '../../../services/shared_preferences_service.dart';
 import '../../common/app_colors.dart';
@@ -15,8 +15,15 @@ import '../../common/app_styles.dart';
 import 'chat_viewmodel.dart';
 
 class ChatView extends StackedView<ChatViewModel> {
-  const ChatView({Key? key, required this.chat}) : super(key: key);
-  final Conversation chat;
+  const ChatView({Key? key, required this.chat, this.user}) : super(key: key);
+  final Conversation? chat;
+  final UserSearchResult? user;
+  @override
+  void onViewModelReady(ChatViewModel viewModel) {
+    viewModel.init();
+    super.onViewModelReady(viewModel);
+  }
+
   @override
   Widget builder(
     BuildContext context,
@@ -34,20 +41,29 @@ class ChatView extends StackedView<ChatViewModel> {
         backgroundColor: kcDarkColor,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 20,
-              backgroundImage: AssetImage(avatar),
+              backgroundImage: NetworkImage(user!.profilePicture),
               backgroundColor: kcPrimaryColor,
             ),
             horizontalSpaceMedium,
-            Text(
-              chat.messages.last.sender!.name,
-              style: titleTextMedium.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: kcWhiteColor,
-              ),
-            ),
+            chat == null
+                ? Text(
+                    '${user!.firstName} ${user!.lastName}',
+                    style: titleTextMedium.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: kcWhiteColor,
+                    ),
+                  )
+                : Text(
+                    chat!.messages.last.sender!.name,
+                    style: titleTextMedium.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: kcWhiteColor,
+                    ),
+                  ),
           ],
         ),
         elevation: 0,
@@ -57,13 +73,29 @@ class ChatView extends StackedView<ChatViewModel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             spacedDivider,
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: chat.messages.length,
-              itemBuilder: (context, index) {
-                return ChatBubble(message: chat.messages[index]);
-              },
-            ),
+            //empty state
+            if (chat == null)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 200),
+                  child: Text(
+                    'No messages yet',
+                    style: titleTextMedium.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: kcDisableIconColor,
+                    ),
+                  ),
+                ),
+              )
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: chat!.messages.length,
+                itemBuilder: (context, index) {
+                  return ChatBubble(message: chat!.messages[index]);
+                },
+              ),
           ],
         ),
       ),
@@ -101,7 +133,7 @@ class ChatView extends StackedView<ChatViewModel> {
                 Expanded(
                   child: InkWell(
                     child: SvgPicture.asset(send),
-                    onTap: () {},
+                    onTap: () => viewModel.sendMessage(),
                   ),
                 ),
               ],
@@ -117,10 +149,13 @@ class ChatView extends StackedView<ChatViewModel> {
     BuildContext context,
   ) =>
       ChatViewModel(
-        conversationId: chat.conversationId,
-        receiverId: chat.participantIds
-            .where((i) =>
-                i != locator<SharedPreferencesService>().getUserInfo()!['id'])
-            .first,
+        conversationId: chat == null ? '0' : chat!.conversationId,
+        receiverId: chat == null
+            ? user!.id
+            : chat!.participantIds
+                .where((i) =>
+                    i !=
+                    locator<SharedPreferencesService>().getUserInfo()!['id'])
+                .first,
       );
 }

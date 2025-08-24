@@ -25,6 +25,7 @@ import 'package:nest/models/registration_model.dart' as _i22;
 import 'package:nest/models/update_profile_input.dart' as _i30;
 import 'package:nest/services/api_service.dart' as _i20;
 import 'package:nest/services/auth_service.dart' as _i21;
+import 'package:nest/services/comments_service.dart' as _i40;
 import 'package:nest/services/deep_link_generator_service.dart' as _i27;
 import 'package:nest/services/deep_link_service.dart' as _i25;
 import 'package:nest/services/event_service.dart' as _i33;
@@ -946,9 +947,29 @@ class MockImageService extends _i1.Mock implements _i15.ImageService {
       ) as _i11.Future<_i14.File?>);
 
   @override
+  _i11.Future<_i14.File?> pickVideoFromCamera() => (super.noSuchMethod(
+        Invocation.method(
+          #pickVideoFromCamera,
+          [],
+        ),
+        returnValue: _i11.Future<_i14.File?>.value(),
+        returnValueForMissingStub: _i11.Future<_i14.File?>.value(),
+      ) as _i11.Future<_i14.File?>);
+
+  @override
   _i11.Future<_i14.File?> pickImageFromGallery() => (super.noSuchMethod(
         Invocation.method(
           #pickImageFromGallery,
+          [],
+        ),
+        returnValue: _i11.Future<_i14.File?>.value(),
+        returnValueForMissingStub: _i11.Future<_i14.File?>.value(),
+      ) as _i11.Future<_i14.File?>);
+
+  @override
+  _i11.Future<_i14.File?> pickVideoFromGallery() => (super.noSuchMethod(
+        Invocation.method(
+          #pickVideoFromGallery,
           [],
         ),
         returnValue: _i11.Future<_i14.File?>.value(),
@@ -1317,6 +1338,26 @@ class MockMessageService extends _i1.Mock implements _i19.MessageService {
         Invocation.method(
           #fetchConversations,
           [],
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
+  _i11.Future<dynamic> sendMessageApi() => (super.noSuchMethod(
+        Invocation.method(
+          #sendMessageApi,
+          [],
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
+  _i11.Future<dynamic> createGroupConvo(dynamic body) => (super.noSuchMethod(
+        Invocation.method(
+          #createGroupConvo,
+          [body],
         ),
         returnValue: _i11.Future<dynamic>.value(),
         returnValueForMissingStub: _i11.Future<dynamic>.value(),
@@ -2319,6 +2360,36 @@ class MockUserService extends _i1.Mock implements _i29.UserService {
       ) as _i11.Future<dynamic>);
 
   @override
+  _i11.Future<dynamic> getRecommendedUsers() => (super.noSuchMethod(
+        Invocation.method(
+          #getRecommendedUsers,
+          [],
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
+  _i11.Future<dynamic> searchUsers({
+    required String? query,
+    required int? page,
+    required int? limit,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #searchUsers,
+          [],
+          {
+            #query: query,
+            #page: page,
+            #limit: limit,
+          },
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
   _i11.Future<dynamic> getMyTickets() => (super.noSuchMethod(
         Invocation.method(
           #getMyTickets,
@@ -2392,6 +2463,16 @@ class MockUserService extends _i1.Mock implements _i29.UserService {
         returnValue: _i11.Future<dynamic>.value(),
         returnValueForMissingStub: _i11.Future<dynamic>.value(),
       ) as _i11.Future<dynamic>);
+
+  @override
+  _i11.Future<void> openSocialLink(String? url) => (super.noSuchMethod(
+        Invocation.method(
+          #openSocialLink,
+          [url],
+        ),
+        returnValue: _i11.Future<void>.value(),
+        returnValueForMissingStub: _i11.Future<void>.value(),
+      ) as _i11.Future<void>);
 
   @override
   void listenToReactiveValues(List<dynamic>? reactiveValues) =>
@@ -2472,10 +2553,11 @@ class MockFileService extends _i1.Mock implements _i32.FileService {
       ) as int);
 
   @override
-  _i11.Future<void> pickImageFromCamera() => (super.noSuchMethod(
+  _i11.Future<void> pickImageFromCamera(_i17.FileType? fileType) =>
+      (super.noSuchMethod(
         Invocation.method(
           #pickImageFromCamera,
-          [],
+          [fileType],
         ),
         returnValue: _i11.Future<void>.value(),
         returnValueForMissingStub: _i11.Future<void>.value(),
@@ -2852,6 +2934,18 @@ class MockSocialService extends _i1.Mock implements _i38.SocialService {
       ) as _i11.Future<dynamic>);
 
   @override
+  _i11.Future<dynamic> claudFlareSignVideo({int? maxDurationSeconds = 30}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #claudFlareSignVideo,
+          [],
+          {#maxDurationSeconds: maxDurationSeconds},
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
   _i11.Future<dynamic> getPosts({
     required int? page,
     required int? size,
@@ -2868,4 +2962,130 @@ class MockSocialService extends _i1.Mock implements _i38.SocialService {
         returnValue: _i11.Future<dynamic>.value(),
         returnValueForMissingStub: _i11.Future<dynamic>.value(),
       ) as _i11.Future<dynamic>);
+
+  @override
+  _i11.Future<dynamic> getUserPosts({
+    required int? page,
+    required int? size,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getUserPosts,
+          [],
+          {
+            #page: page,
+            #size: size,
+          },
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+}
+
+/// A class which mocks [CommentsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockCommentsService extends _i1.Mock implements _i40.CommentsService {
+  @override
+  _i2.IApiService get apiService => (super.noSuchMethod(
+        Invocation.getter(#apiService),
+        returnValue: _FakeIApiService_0(
+          this,
+          Invocation.getter(#apiService),
+        ),
+        returnValueForMissingStub: _FakeIApiService_0(
+          this,
+          Invocation.getter(#apiService),
+        ),
+      ) as _i2.IApiService);
+
+  @override
+  dynamic getComments(int? postId) => super.noSuchMethod(
+        Invocation.method(
+          #getComments,
+          [postId],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  dynamic getMoreComments(
+    int? postId, {
+    required int? offset,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #getMoreComments,
+          [postId],
+          {#offset: offset},
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i11.Future<dynamic> postComment(
+    int? postId,
+    String? commentText,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #postComment,
+          [
+            postId,
+            commentText,
+          ],
+        ),
+        returnValue: _i11.Future<dynamic>.value(),
+        returnValueForMissingStub: _i11.Future<dynamic>.value(),
+      ) as _i11.Future<dynamic>);
+
+  @override
+  _i11.Future<_i4.ApiResponse<dynamic>> toggleLikeComment(int? commentId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #toggleLikeComment,
+          [commentId],
+        ),
+        returnValue: _i11.Future<_i4.ApiResponse<dynamic>>.value(
+            _FakeApiResponse_2<dynamic>(
+          this,
+          Invocation.method(
+            #toggleLikeComment,
+            [commentId],
+          ),
+        )),
+        returnValueForMissingStub: _i11.Future<_i4.ApiResponse<dynamic>>.value(
+            _FakeApiResponse_2<dynamic>(
+          this,
+          Invocation.method(
+            #toggleLikeComment,
+            [commentId],
+          ),
+        )),
+      ) as _i11.Future<_i4.ApiResponse<dynamic>>);
+
+  @override
+  _i11.Future<_i4.ApiResponse<dynamic>> toggleLikePost(int? postId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #toggleLikePost,
+          [postId],
+        ),
+        returnValue: _i11.Future<_i4.ApiResponse<dynamic>>.value(
+            _FakeApiResponse_2<dynamic>(
+          this,
+          Invocation.method(
+            #toggleLikePost,
+            [postId],
+          ),
+        )),
+        returnValueForMissingStub: _i11.Future<_i4.ApiResponse<dynamic>>.value(
+            _FakeApiResponse_2<dynamic>(
+          this,
+          Invocation.method(
+            #toggleLikePost,
+            [postId],
+          ),
+        )),
+      ) as _i11.Future<_i4.ApiResponse<dynamic>>);
 }

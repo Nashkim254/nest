@@ -5,6 +5,7 @@ import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
+import 'package:nest/utils/utilities.dart';
 import 'package:stacked/stacked.dart';
 
 import '../upcoming_viewmodel.dart';
@@ -51,7 +52,7 @@ class MyTicketWidget extends StatelessWidget {
                 verticalSpaceTiny,
                 // Date and time
                 Text(
-                  '${ticket.eventDate}',
+                  formatter.format(ticket.eventDate!),
                   style: titleTextMedium.copyWith(
                     color: kcGreyColor,
                     fontSize: 13,

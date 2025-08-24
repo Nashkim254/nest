@@ -48,7 +48,7 @@ class TicketsView extends StackedView<TicketsViewModel> {
             labelStyle: titleTextMedium,
             tabs: const [
               Tab(text: 'Upcoming'),
-              Tab(text: 'Past'),
+              Tab(text: 'All'),
             ],
           ),
         ),

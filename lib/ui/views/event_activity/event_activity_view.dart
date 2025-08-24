@@ -56,7 +56,17 @@ class EventActivityView extends StackedView<EventActivityViewModel> {
                 itemCount: posts.length,
                 itemBuilder: (context, index) {
                   final post = posts[index];
-                  return EventActivityCard(post: post, index: index);
+                  return EventActivityCard(
+                    post: post,
+                    index: index,
+                    onLike: (post) => viewModel.toggleLike(post),
+                    onComment: (post) {
+                      print('Tapped');
+                      viewModel.openComments(post.id);
+                    },
+                    onShare: (post) => viewModel.sharePost(post.id),
+                    onEdit: (post) => viewModel.editPost(post.id),
+                  );
                 },
               ),
             ],

@@ -1,5 +1,6 @@
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../abstractClasses/abstract_class.dart';
 import '../app/app.locator.dart';
@@ -22,6 +23,44 @@ class UserService with ListenableServiceMixin {
         return response;
       } else {
         throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getRecommendedUsers() async {
+    try {
+      final response = await _apiService.get(
+        AppUrls.recommendedUsers,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future searchUsers(
+      {required String query, required int page, required int limit}) async {
+    try {
+      final response = await _apiService.get(
+        AppUrls.searchUsers,
+        queryParameters: {
+          'q': query,
+          'page': page,
+          'limit': limit,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        return response;
       }
     } catch (e) {
       rethrow;
@@ -121,5 +160,13 @@ class UserService with ListenableServiceMixin {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> openSocialLink(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    await launchUrl(
+      uri,
+    );
   }
 }

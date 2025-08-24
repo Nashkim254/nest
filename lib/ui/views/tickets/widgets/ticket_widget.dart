@@ -4,6 +4,7 @@ import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_styles.dart';
 
+import '../../../../utils/utilities.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/ui_helpers.dart';
 
@@ -31,7 +32,7 @@ class TicketWidget extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              '${ticket.eventDate}',
+              formatter.format(ticket.eventDate!),
               style: titleTextMedium.copyWith(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -80,11 +81,11 @@ class TicketWidget extends StatelessWidget {
             ),
           ),
           verticalSpaceMedium,
-          AppButton(
-            leadingIcon: wallet,
-            labelText: 'Save to Wallet',
-            onTap: () {},
-          ),
+          // AppButton(
+          //   leadingIcon: wallet,
+          //   labelText: 'Save to Wallet',
+          //   onTap: () {},
+          // ),
           verticalSpaceMedium
         ],
       ),

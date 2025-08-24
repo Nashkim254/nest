@@ -19,6 +19,7 @@ import 'package:nest/services/event_service.dart';
 import 'package:nest/services/payment_service.dart';
 import 'package:nest/services/stripe_service.dart';
 import 'package:nest/services/social_service.dart';
+import 'package:nest/services/comments_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -48,6 +49,7 @@ import 'test_helpers.mocks.dart';
     MockSpec<PaymentService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<StripeService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<SocialService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<CommentsService>(onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -72,6 +74,7 @@ void registerServices() {
   getAndRegisterPaymentService();
   getAndRegisterStripeService();
   getAndRegisterSocialService();
+  getAndRegisterCommentsService();
 // @stacked-mock-register
 }
 
@@ -245,6 +248,13 @@ MockSocialService getAndRegisterSocialService() {
   _removeRegistrationIfExists<SocialService>();
   final service = MockSocialService();
   locator.registerSingleton<SocialService>(service);
+  return service;
+}
+
+MockCommentsService getAndRegisterCommentsService() {
+  _removeRegistrationIfExists<CommentsService>();
+  final service = MockCommentsService();
+  locator.registerSingleton<CommentsService>(service);
   return service;
 }
 // @stacked-mock-create

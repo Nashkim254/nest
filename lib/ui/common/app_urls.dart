@@ -14,11 +14,15 @@ class AppUrls {
   static final String reQuestPasswordReset = '$baseAuthUrl/reset-password';
   static final String resetPassword = '$baseAuthUrl/reset-password/confirm';
   static final String userProfile = '$baseUrl/users/me';
+  static final String recommendedUsers = '$baseUrl/users/recommendations';
+  static final String searchUsers = '$baseUrl/users/search';
   static final String followUser = '$baseUrl/users';
   static final String updateProfile = '$baseUrl/users/update';
   static final String fetchPosts = '$baseUrl/posts';
   static final String createPost = '$baseUrl/posts/create';
   static final String deletePost = '$baseUrl/posts/delete';
+  static final String cloudflareSignVideo =
+      '$baseUrl/social/cloudflare/sign-video';
   static final String getUploadFileUrl = '$baseUrl/uploads/url';
 
   // Add more URLs as needed
@@ -46,10 +50,14 @@ class AppUrls {
 
   //messaging
   static final String conversations = '$baseUrl/messaging/conversations';
+  static final String sendMessage = '$baseUrl/messaging/messages';
+  static final String createGroupConvo =
+      '$baseUrl/messaging/conversations/group';
 
   //social
   static final String social = '$baseUrl/social';
   static final String createPosts = '$social/posts';
+  static final String getUserPostsUrl = '$social/user/posts';
 
   static final String NEXT_PUBLIC_GOOGLE_ACCESS_ID =
       dotenv.env['NEXT_PUBLIC_GOOGLE_ACCESS_ID']!;

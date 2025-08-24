@@ -63,7 +63,7 @@ class MessagesView extends StackedView<MessagesViewModel> {
     }
 
     if (viewModel.conversations.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(viewModel);
     }
 
     return _buildMessagesList(viewModel);
@@ -118,7 +118,7 @@ class MessagesView extends StackedView<MessagesViewModel> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(MessagesViewModel viewModel) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -169,7 +169,7 @@ class MessagesView extends StackedView<MessagesViewModel> {
             ElevatedButton.icon(
               onPressed: () {
                 // Navigate to contacts or start new chat
-                // viewModel.startNewChat();
+                viewModel.startNewChat();
               },
               icon: const Icon(Icons.add_comment, size: 20),
               label: const Text("Start New Chat"),

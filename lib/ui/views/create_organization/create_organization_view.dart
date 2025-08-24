@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_dotted_container.dart';
+import 'package:nest/ui/common/app_enums.dart';
 import 'package:nest/ui/common/app_inputdecoration.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
@@ -156,7 +157,8 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                   ),
                   verticalSpaceSmall,
                   InkWell(
-                    onTap: () => viewModel.showImageSourceSheet('banner'),
+                    onTap: () => viewModel.showImageSourceSheet(
+                        'banner', FileType.image),
                     child: DottedBorderContainer(
                       width: double.infinity,
                       child: viewModel.banner.isNotEmpty
@@ -199,7 +201,8 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                   verticalSpaceSmall,
                   Align(
                     child: InkWell(
-                      onTap: () => viewModel.showImageSourceSheet('profile'),
+                      onTap: () => viewModel.showImageSourceSheet(
+                          'profile', FileType.image),
                       child: DottedBorderContainer(
                         width: 84,
                         height: 84,
