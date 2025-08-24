@@ -61,10 +61,10 @@ class BreakdownsWidget extends StatelessWidget {
             )
           else
             ...breakdown.map((item) => _buildBreakdownItem(
-              item.name,
-              '${item.count} (${item.percentage.toStringAsFixed(1)}%)',
-              const Color(0xFFFF6B35),
-            )),
+                  item.name,
+                  '${item.count} (${item.percentage.toStringAsFixed(1)}%)',
+                  const Color(0xFFFF6B35),
+                )),
         ],
       ),
     );
@@ -96,10 +96,10 @@ class BreakdownsWidget extends StatelessWidget {
             )
           else
             ...events.map((event) => _buildBreakdownItem(
-              event.name,
-              '${event.tickets} tickets • ${event.revenue}',
-              const Color(0xFFFF6B35),
-            )),
+                  event.name,
+                  '${event.tickets} tickets • ${event.revenue}',
+                  const Color(0xFFFF6B35),
+                )),
         ],
       ),
     );
@@ -131,4 +131,3 @@ class BreakdownsWidget extends StatelessWidget {
     );
   }
 }
-

@@ -129,6 +129,13 @@ class HostingView extends StackedView<HostingViewModel> {
                                       .navigateToOrganizationAnalytics(),
                                   leadingIcon: analytics,
                                 ),
+                                verticalSpaceSmall,
+                                AppButton(
+                                  buttonColor: kcTertiaryWithOpacityColor,
+                                  labelText: 'Scan Tickets',
+                                  onTap: () => viewModel.navigateToScanTicket(),
+                                  leadingIcon: tickets,
+                                ),
                                 verticalSpaceMedium,
                                 Text(
                                   'Upcoming Events',

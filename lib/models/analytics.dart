@@ -26,6 +26,7 @@ class ChartData {
 
   ChartData(this.label, this.value);
 }
+
 // UI-specific data models
 class TicketTypeBreakdown {
   final String name;

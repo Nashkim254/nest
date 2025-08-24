@@ -5,6 +5,7 @@ import '../app/app.locator.dart';
 import '../models/api_exceptions.dart';
 import '../models/create_event.dart';
 import '../ui/common/app_urls.dart';
+import '../ui/views/ticket_scanning/ticket_scanning_viewmodel.dart';
 
 class EventService {
   final IApiService _apiService = locator<IApiService>();
@@ -124,6 +125,51 @@ class EventService {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<ScanResult> validateTicket({
+    required String qrData,
+    int? eventId,
+  }) async {
+    try {
+      // Parse QR code data
+      final ticketData = qrData.trim();
+
+      // Make API call to validate ticket
+      final response = await _apiService.post(
+          'validateticket endpoint here', // Replace with actual endpoint
+          data: ticketData);
+      if (response.statusCode == 200) {
+        return ScanResult(
+          isValid: true,
+          message: 'Ticket is valid',
+        );
+      } else if (response.statusCode == 404) {
+        return ScanResult(
+          isValid: false,
+          message: 'Ticket not found',
+          errorCode: 'NOT_FOUND',
+        );
+      } else if (response.statusCode == 409) {
+        return ScanResult(
+          isValid: false,
+          message: 'Ticket already used',
+          errorCode: 'ALREADY_USED',
+        );
+      } else {
+        return ScanResult(
+          isValid: false,
+          message: 'Validation failed: ${response.statusCode}',
+          errorCode: 'VALIDATION_ERROR',
+        );
+      }
+    } catch (e) {
+      return ScanResult(
+        isValid: false,
+        message: 'Network error: ${e.toString()}',
+        errorCode: 'NETWORK_ERROR',
+      );
     }
   }
 }

@@ -61,6 +61,7 @@ import 'package:nest/ui/dialogs/payment_successful/payment_successful_dialog.dar
 import 'package:nest/ui/bottom_sheets/comments/comments_sheet.dart';
 import 'package:nest/services/comments_service.dart';
 import 'package:nest/ui/views/analytics/analytics_view.dart';
+import 'package:nest/ui/views/ticket_scanning/ticket_scanning_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -94,6 +95,7 @@ import 'package:nest/ui/views/analytics/analytics_view.dart';
     MaterialRoute(page: CheckoutView),
     MaterialRoute(page: PaymentwebView),
     MaterialRoute(page: AnalyticsView),
+    MaterialRoute(page: TicketScanningView),
 // @stacked-route
   ],
   dependencies: [

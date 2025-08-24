@@ -196,6 +196,11 @@ class HostingViewModel extends BaseViewModel {
   }
 
   navigateToOrganizationAnalytics() {
-    locator<NavigationService>().navigateToAnalyticsView(organizationId: organization!.id!);
+    locator<NavigationService>()
+        .navigateToAnalyticsView(organizationId: organization!.id!);
+  }
+
+  navigateToScanTicket() {
+    locator<NavigationService>().navigateToTicketScanningView();
   }
 }

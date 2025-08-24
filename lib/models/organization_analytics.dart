@@ -29,7 +29,8 @@ class OrganizationAnalytics {
       eventAnalytics: EventAnalytics.fromJson(json['event_analytics']),
       ticketAnalytics: TicketAnalytics.fromJson(json['ticket_analytics']),
       revenueAnalytics: RevenueAnalytics.fromJson(json['revenue_analytics']),
-      guestListAnalytics: GuestListAnalytics.fromJson(json['guest_list_analytics']),
+      guestListAnalytics:
+          GuestListAnalytics.fromJson(json['guest_list_analytics']),
       topEvents: TopEvents.fromJson(json['top_events']),
       ticketTypeDistribution: (json['ticket_type_distribution'] as List)
           .map((x) => TicketTypeDistribution.fromJson(x))
@@ -110,7 +111,8 @@ class TicketAnalytics {
     );
   }
 
-  String get validationRatePercentage => '${(validationRate * 100).toStringAsFixed(1)}%';
+  String get validationRatePercentage =>
+      '${(validationRate * 100).toStringAsFixed(1)}%';
 }
 
 class RevenueAnalytics {
@@ -133,8 +135,10 @@ class RevenueAnalytics {
   }
 
   String get formattedTotalRevenue => 'KES ${totalRevenue.toStringAsFixed(0)}';
-  String get formattedRecentRevenue => 'KES ${recentRevenue.toStringAsFixed(0)}';
-  String get formattedAveragePerTicket => 'KES ${averagePerTicket.toStringAsFixed(0)}';
+  String get formattedRecentRevenue =>
+      'KES ${recentRevenue.toStringAsFixed(0)}';
+  String get formattedAveragePerTicket =>
+      'KES ${averagePerTicket.toStringAsFixed(0)}';
 }
 
 class GuestListAnalytics {
@@ -156,7 +160,8 @@ class GuestListAnalytics {
     );
   }
 
-  String get approvalRatePercentage => '${(approvalRate * 100).toStringAsFixed(1)}%';
+  String get approvalRatePercentage =>
+      '${(approvalRate * 100).toStringAsFixed(1)}%';
 }
 
 class TopEvents {
@@ -254,8 +259,18 @@ class MonthlyTrend {
 
   String get formattedMonth {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return months[monthDate.month - 1];
   }
@@ -274,15 +289,15 @@ class ChartDataPoint {
 
 // Extensions for easier data transformation
 extension MonthlyTrendCharts on List<MonthlyTrend> {
-  List<ChartDataPoint> get revenueChart => map((trend) =>
-      ChartDataPoint(trend.formattedMonth, trend.revenue, date: trend.monthDate)
-  ).toList();
+  List<ChartDataPoint> get revenueChart =>
+      map((trend) => ChartDataPoint(trend.formattedMonth, trend.revenue,
+          date: trend.monthDate)).toList();
 
-  List<ChartDataPoint> get ticketChart => map((trend) =>
-      ChartDataPoint(trend.formattedMonth, trend.ticketCount.toDouble(), date: trend.monthDate)
-  ).toList();
+  List<ChartDataPoint> get ticketChart => map((trend) => ChartDataPoint(
+      trend.formattedMonth, trend.ticketCount.toDouble(),
+      date: trend.monthDate)).toList();
 
-  List<ChartDataPoint> get eventChart => map((trend) =>
-      ChartDataPoint(trend.formattedMonth, trend.eventCount.toDouble(), date: trend.monthDate)
-  ).toList();
+  List<ChartDataPoint> get eventChart => map((trend) => ChartDataPoint(
+      trend.formattedMonth, trend.eventCount.toDouble(),
+      date: trend.monthDate)).toList();
 }

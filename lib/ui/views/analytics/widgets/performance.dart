@@ -51,11 +51,11 @@ class PerformanceTrendsWidget extends StatelessWidget {
   }
 
   Widget _buildChartCard(
-      String title,
-      List<ChartDataPoint> data,
-      Color lineColor,
-      String valueUnit,
-      ) {
+    String title,
+    List<ChartDataPoint> data,
+    Color lineColor,
+    String valueUnit,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -79,14 +79,14 @@ class PerformanceTrendsWidget extends StatelessWidget {
             height: 160,
             child: data.isEmpty
                 ? const Center(
-              child: Text(
-                'No data available',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 14,
-                ),
-              ),
-            )
+                    child: Text(
+                      'No data available',
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 14,
+                      ),
+                    ),
+                  )
                 : _buildLineChart(data, lineColor, valueUnit),
           ),
         ],
@@ -95,10 +95,10 @@ class PerformanceTrendsWidget extends StatelessWidget {
   }
 
   Widget _buildLineChart(
-      List<ChartDataPoint> data,
-      Color lineColor,
-      String valueUnit,
-      ) {
+    List<ChartDataPoint> data,
+    Color lineColor,
+    String valueUnit,
+  ) {
     // Filter out zero values for better visualization
     final nonZeroData = data.where((point) => point.value > 0).toList();
     final hasNonZeroData = nonZeroData.isNotEmpty;
@@ -287,4 +287,3 @@ class PerformanceTrendsWidget extends StatelessWidget {
     return value.toInt().toString();
   }
 }
-
