@@ -62,7 +62,7 @@ class ShareSheet extends StackedView<ShareSheetModel> {
           verticalSpaceLarge,
           _buildShareViaSocials(context, viewModel),
           verticalSpaceMedium,
-          _buildShareOptions(context, viewModel),
+          _buildShareOptions(context, viewModel, completer: completer),
         ],
       ),
     );
@@ -114,7 +114,8 @@ Widget _buildSocialWidget(Map<String, dynamic> social) {
   );
 }
 
-Widget _buildShareOptions(BuildContext context, ShareSheetModel viewModel) {
+Widget _buildShareOptions(BuildContext context, ShareSheetModel viewModel,
+    {Function(SheetResponse)? completer}) {
   return Column(
     children: [
       ListTile(
@@ -131,7 +132,7 @@ Widget _buildShareOptions(BuildContext context, ShareSheetModel viewModel) {
           'Copy Link',
           style: titleTextMedium.copyWith(color: kcWhiteColor),
         ),
-        onTap: () => viewModel.copyLink(),
+        onTap: () => viewModel.copyLink(completer: completer!),
       ),
       ListTile(
         leading: SvgPicture.asset(report),

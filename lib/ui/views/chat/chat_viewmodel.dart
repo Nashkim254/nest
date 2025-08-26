@@ -7,10 +7,8 @@ import 'package:nest/services/message_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_urls.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
-import '../../../models/chat_message.dart';
 import '../../../models/message_models.dart';
 import '../../../services/auth_service.dart';
 import '../../common/app_enums.dart';

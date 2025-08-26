@@ -29,6 +29,22 @@ class UserService with ListenableServiceMixin {
     }
   }
 
+  Future getOtherUserProfile(int id) async {
+    try {
+      final response = await _apiService.get(
+        '${AppUrls.otherUserProfile}/$id',
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future getRecommendedUsers() async {
     try {
       final response = await _apiService.get(
@@ -102,6 +118,23 @@ class UserService with ListenableServiceMixin {
   Future getMyOrganization() async {
     try {
       final response = await _apiService.get(AppUrls.myOrganization);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future searchOrganization({required String q}) async {
+    try {
+      final response =
+          await _apiService.get(AppUrls.searchOrganization, queryParameters: {
+        'q': q,
+      });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;

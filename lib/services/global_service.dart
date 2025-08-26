@@ -11,11 +11,15 @@ import 'package:path/path.dart' as p;
 
 class GlobalService with ListenableServiceMixin {
   GlobalService() {
-    [
-      _selectedHomeTabIndex,
-    ];
+    [_selectedHomeTabIndex, _otherUserId];
   }
   final IApiService _apiService = locator<IApiService>();
+  int? _otherUserId;
+  int get otherUserId => _otherUserId!;
+  set setOtherUserId(int val) {
+    _otherUserId = val;
+    notifyListeners();
+  }
 
   int get selectedHomeTabIndex => _selectedHomeTabIndex;
   int _selectedHomeTabIndex = 0;

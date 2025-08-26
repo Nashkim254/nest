@@ -257,8 +257,8 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                         child: FlutterMap(
                           options: MapOptions(
                             center: LatLng(
-                              viewModel.coordinates!['latitude'],
-                              viewModel.coordinates!['longitude'],
+                              viewModel.coordinates!.latitude,
+                              viewModel.coordinates!.longitude,
                             ),
                             zoom: 16.0,
                           ),
@@ -272,8 +272,8 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                               markers: [
                                 Marker(
                                   point: LatLng(
-                                    viewModel.coordinates!['latitude'],
-                                    viewModel.coordinates!['longitude'],
+                                    viewModel.coordinates!.latitude,
+                                    viewModel.coordinates!.longitude,
                                   ),
                                   width: 40,
                                   height: 40,

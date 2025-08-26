@@ -120,13 +120,13 @@ class AnalyticsView extends StackedView<AnalyticsViewModel> {
                 )
               ],
 
-              const SizedBox(height: 24),
+              verticalSpaceMedium,
 
               // Performance Trends
               PerformanceTrendsWidget(
                 viewModel: viewModel,
               ),
-              const SizedBox(height: 24),
+              verticalSpaceMedium,
 
               // Breakdowns
               BreakdownsWidget(

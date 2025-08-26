@@ -22,7 +22,7 @@ Map<String, dynamic> _$UserPreviewToJson(UserPreview instance) =>
     };
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
-      id: (json['id'] as num?)?.toInt() ?? 0,
+      id: (json['ID'] as num?)?.toInt() ?? 0,
       content: json['content'] as String? ?? '',
       imageUrls: (json['image_urls'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -49,7 +49,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
-      'id': instance.id,
+      'ID': instance.id,
       'content': instance.content,
       'image_urls': instance.imageUrls,
       'hashtags': instance.hashtags,

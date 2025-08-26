@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:nest/abstractClasses/abstract_class.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/models/api_response.dart';
@@ -22,6 +23,7 @@ class CommentsService {
   getMoreComments(int postId, {required int offset}) {}
 
   Future postComment(int postId, String commentText) async {
+    Logger().i(postId);
     try {
       final response = await apiService.post(
           '${AppUrls.social}/posts/$postId/comments',

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/services/event_service.dart';
 import 'package:nest/utils/extensions.dart';
@@ -379,7 +380,7 @@ class CreateEventViewModel extends ReactiveViewModel {
     throw FormatException('Invalid time format: $timeStr');
   }
 
-  Map? coordinates = {};
+  Position? coordinates;
   getCurrentLocation() async {
     setBusy(true);
     try {
@@ -424,8 +425,8 @@ class CreateEventViewModel extends ReactiveViewModel {
         ticketPricing: collectTicketPricingData()!,
         guestListEnabled: isRsvP ? false : showGuestList,
         guestListLimit: int.parse(eventGuestListController.text),
-        longitude: coordinates!['longitude'] ?? 0.0,
-        latitude: coordinates!['latitude'] ?? 0.0,
+        longitude: coordinates!.longitude ?? 0.0,
+        latitude: coordinates!.latitude ?? 0.0,
         password: eventPasswordController.text,
         address: eventLocationController.text,
       );

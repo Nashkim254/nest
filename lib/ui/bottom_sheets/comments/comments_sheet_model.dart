@@ -11,20 +11,33 @@ import '../../../services/comments_service.dart';
 class CommentsSheetModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _commentsService = locator<CommentsService>();
+  final _snackbarService = locator<SnackbarService>();
 
   final TextEditingController commentController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   Logger logger = Logger();
+
   List<Comment> _comments = [];
   List<Comment> get comments => _comments;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  bool _isLoadingMore = false;
+  bool get isLoadingMore => _isLoadingMore;
+
+  bool _hasMoreComments = true;
+  bool get hasMoreComments => _hasMoreComments;
+
   bool _canSendComment = false;
   bool get canSendComment => _canSendComment;
 
+  bool _isSendingComment = false;
+  bool get isSendingComment => _isSendingComment;
+
   int? _postId;
+  int _page = 1;
+  final int _pageSize = 20;
 
   @override
   void dispose() {
@@ -34,8 +47,10 @@ class CommentsSheetModel extends BaseViewModel {
   }
 
   Future<void> initialize(int postId) async {
+    logger.wtf(postId);
+    logger.wtf(postId.runtimeType);
     _postId = postId;
-    await _loadComments();
+    await _loadComments(isInitial: true);
     _setupScrollListener();
   }
 
@@ -43,53 +58,96 @@ class CommentsSheetModel extends BaseViewModel {
     scrollController.addListener(() {
       // Auto-load more comments when near the bottom
       if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent * 0.8) {
+              scrollController.position.maxScrollExtent * 0.8 &&
+          !_isLoadingMore &&
+          _hasMoreComments &&
+          !_isLoading) {
         _loadMoreComments();
       }
     });
   }
 
-  Future<void> _loadComments() async {
+  Future<void> _loadComments(
+      {bool isInitial = false, bool isRefresh = false}) async {
     if (_postId == null) return;
 
-    _setLoading(true);
+    if (isInitial || isRefresh) {
+      _setLoading(true);
+      _page = 1;
+      _hasMoreComments = true;
+      if (isRefresh) _comments.clear();
+    }
+
     try {
-      final response = await _commentsService.getComments(_postId!);
+      final response = await _commentsService.getComments(
+        _postId!,
+      );
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (kDebugMode) {
-          debugPrint("Loaded ${response.data}", wrapWidth: 1024);
+          debugPrint("Loaded comments: ${response.data}", wrapWidth: 1024);
         }
 
         final List<dynamic> data = response.data['comments'] ?? [];
-        _comments = data.map((json) => Comment.fromJson(json)).toList();
-        logger.i("Loaded ${_comments.length} comments");
+        final newComments = data.map((json) => Comment.fromJson(json)).toList();
+
+        if (isInitial || isRefresh) {
+          _comments = newComments;
+        } else {
+          _comments.addAll(newComments);
+        }
+
+        // Check if there are more comments
+        _hasMoreComments = newComments.length == _pageSize;
+
+        logger.i(
+            "Loaded ${newComments.length} comments, total: ${_comments.length}");
       } else {
-        throw Exception('Failed to load comments');
+        throw Exception(response.message ?? 'Failed to load comments');
       }
-      rebuildUi();
     } catch (error) {
-      // Handle error - could show snackbar or error state
-      setError(error);
+      logger.e('Error loading comments: $error');
+      if (isInitial) {
+        setError(error);
+      } else {
+        _showErrorMessage('Failed to load comments');
+      }
     } finally {
-      _setLoading(false);
+      if (isInitial || isRefresh) {
+        _setLoading(false);
+      }
     }
   }
 
   Future<void> _loadMoreComments() async {
-    if (_postId == null || _isLoading) return;
+    if (_postId == null || _isLoadingMore || !_hasMoreComments) return;
+
+    _setLoadingMore(true);
+    _page++;
 
     try {
-      final moreComments = await _commentsService.getMoreComments(
+      final response = await _commentsService.getComments(
         _postId!,
-        offset: _comments.length,
       );
 
-      if (moreComments.isNotEmpty) {
-        _comments.addAll(moreComments);
-        rebuildUi();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data['comments'] ?? [];
+        final newComments = data.map((json) => Comment.fromJson(json)).toList();
+
+        _comments.addAll(newComments);
+        _hasMoreComments = newComments.length == _pageSize;
+
+        logger.i("Loaded ${newComments.length} more comments");
+      } else {
+        _page--; // Revert page increment on failure
+        throw Exception('Failed to load more comments');
       }
     } catch (error) {
-      // Handle pagination error silently or show toast
+      _page--; // Revert page increment on error
+      logger.e('Error loading more comments: $error');
+      _showErrorMessage('Failed to load more comments');
+    } finally {
+      _setLoadingMore(false);
     }
   }
 
@@ -97,46 +155,60 @@ class CommentsSheetModel extends BaseViewModel {
     final hasText = commentController.text.trim().isNotEmpty;
     if (_canSendComment != hasText) {
       _canSendComment = hasText;
-      rebuildUi();
+      notifyListeners();
     }
   }
 
   Future<void> sendComment() async {
-    if (!_canSendComment || _postId == null) return;
+    if (!_canSendComment || _postId == null || _isSendingComment) return;
 
     final commentText = commentController.text.trim();
     if (commentText.isEmpty) return;
+
+    _setSendingComment(true);
 
     try {
       // Clear input immediately for better UX
       commentController.clear();
       _canSendComment = false;
-      rebuildUi();
+      notifyListeners();
 
       // Send comment
-      final newComment =
+      final response =
           await _commentsService.postComment(_postId!, commentText);
 
-      // Add to local list
-      _comments.insert(0, newComment);
-      rebuildUi();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.w(response.data);
+        final newComment = Comment.fromJson(response.data);
 
-      // Scroll to top to show new comment
-      if (scrollController.hasClients) {
-        scrollController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        // Add to local list at the beginning (newest first)
+        _comments.insert(0, newComment);
+        notifyListeners();
+
+        // Scroll to top to show new comment
+        if (scrollController.hasClients) {
+          scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+
+        logger.i('Comment posted successfully');
+      } else {
+        throw Exception(response.message ?? 'Failed to post comment');
       }
-    } catch (error) {
+    } catch (error, s) {
+      logger.e('Error posting comment: $s');
+
       // Restore comment text on error
       commentController.text = commentText;
       _canSendComment = true;
-      rebuildUi();
+      notifyListeners();
 
-      // Show error to user
-      setError(error);
+      _showErrorMessage('Failed to post comment. Please try again.');
+    } finally {
+      _setSendingComment(false);
     }
   }
 
@@ -145,45 +217,98 @@ class CommentsSheetModel extends BaseViewModel {
       // Optimistically update UI
       final commentIndex = _comments.indexWhere((c) => c.id == commentId);
       if (commentIndex != -1) {
-        _comments[commentIndex] = _comments[commentIndex].copyWith(
-          isLiked: !_comments[commentIndex].isLiked,
-          likeCount: _comments[commentIndex].isLiked
-              ? _comments[commentIndex].likeCount - 1
-              : _comments[commentIndex].likeCount + 1,
+        final currentComment = _comments[commentIndex];
+        _comments[commentIndex] = currentComment.copyWith(
+          isLiked: !currentComment.isLiked,
+          likeCount: currentComment.isLiked
+              ? currentComment.likeCount - 1
+              : currentComment.likeCount + 1,
         );
-        rebuildUi();
+        notifyListeners();
       }
 
       // Send request to server
-      await _commentsService.toggleLikeComment(commentId);
+      final response = await _commentsService.toggleLikeComment(commentId);
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to toggle like');
+      }
+
+      logger.i('Comment like toggled successfully');
     } catch (error) {
+      logger.e('Error toggling comment like: $error');
+
       // Revert optimistic update on error
       final commentIndex = _comments.indexWhere((c) => c.id == commentId);
       if (commentIndex != -1) {
-        _comments[commentIndex] = _comments[commentIndex].copyWith(
-          isLiked: !_comments[commentIndex].isLiked,
-          likeCount: _comments[commentIndex].isLiked
-              ? _comments[commentIndex].likeCount - 1
-              : _comments[commentIndex].likeCount + 1,
+        final currentComment = _comments[commentIndex];
+        _comments[commentIndex] = currentComment.copyWith(
+          isLiked: !currentComment.isLiked,
+          likeCount: currentComment.isLiked
+              ? currentComment.likeCount - 1
+              : currentComment.likeCount + 1,
         );
-        rebuildUi();
+        notifyListeners();
       }
 
-      // Could show error toast here
-      setError(error);
+      _showErrorMessage('Failed to update like');
     }
   }
 
   Future<void> refreshComments() async {
-    await _loadComments();
+    await _loadComments(isRefresh: true);
   }
 
   void closeBottomSheet() {
-    _bottomSheetService.completeSheet(SheetResponse());
+    _bottomSheetService.completeSheet(SheetResponse(confirmed: true));
   }
 
   void _setLoading(bool loading) {
     _isLoading = loading;
-    rebuildUi();
+    notifyListeners();
   }
+
+  void _setLoadingMore(bool loading) {
+    _isLoadingMore = loading;
+    notifyListeners();
+  }
+
+  void _setSendingComment(bool sending) {
+    _isSendingComment = sending;
+    notifyListeners();
+  }
+
+  void _showErrorMessage(String message) {
+    _snackbarService.showSnackbar(
+      message: message,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  // Method to update a specific comment (useful for real-time updates)
+  void updateComment(Comment updatedComment) {
+    final index = _comments.indexWhere((c) => c.id == updatedComment.id);
+    if (index != -1) {
+      _comments[index] = updatedComment;
+      notifyListeners();
+    }
+  }
+
+  // Method to delete a comment
+  // Future<void> deleteComment(int commentId) async {
+  //   try {
+  //     final response = await _commentsService.deleteComment(commentId);
+
+  //     if (response.statusCode == 200 || response.statusCode == 204) {
+  //       _comments.removeWhere((c) => c.id == commentId);
+  //       notifyListeners();
+  //       logger.i('Comment deleted successfully');
+  //     } else {
+  //       throw Exception('Failed to delete comment');
+  //     }
+  //   } catch (error) {
+  //     logger.e('Error deleting comment: $error');
+  //     _showErrorMessage('Failed to delete comment');
+  //   }
+  // }
 }

@@ -60,10 +60,9 @@ class SocialService {
     }
   }
 
-  Future getUserPosts({required int page, required int size}) async {
+  Future getUserPosts(
+      {required int page, required int size, required int id}) async {
     try {
-      int id = locator<SharedPreferencesService>().getUserInfo()!['id'] ??
-          locator<SharedPreferencesService>().getUserInfo()!['ID'];
       final response = await _apiService
           .get('${AppUrls.getUserPostsUrl}/$id', queryParameters: {
         'page': page,

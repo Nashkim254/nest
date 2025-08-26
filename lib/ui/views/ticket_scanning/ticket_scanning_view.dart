@@ -9,10 +9,10 @@ class TicketScanningView extends StackedView<TicketScanningViewModel> {
 
   @override
   Widget builder(
-      BuildContext context,
-      TicketScanningViewModel viewModel,
-      Widget? child,
-      ) {
+    BuildContext context,
+    TicketScanningViewModel viewModel,
+    Widget? child,
+  ) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -65,8 +65,7 @@ class TicketScanningView extends StackedView<TicketScanningViewModel> {
             _buildScanResultOverlay(context, viewModel),
 
           // Loading Overlay
-          if (viewModel.isValidating)
-            _buildLoadingOverlay(),
+          if (viewModel.isValidating) _buildLoadingOverlay(),
         ],
       ),
     );
@@ -131,7 +130,8 @@ class TicketScanningView extends StackedView<TicketScanningViewModel> {
     );
   }
 
-  Widget _buildBottomActions(BuildContext context, TicketScanningViewModel viewModel) {
+  Widget _buildBottomActions(
+      BuildContext context, TicketScanningViewModel viewModel) {
     return Positioned(
       bottom: 40,
       left: 20,
@@ -224,7 +224,8 @@ class TicketScanningView extends StackedView<TicketScanningViewModel> {
     );
   }
 
-  Widget _buildScanResultOverlay(BuildContext context, TicketScanningViewModel viewModel) {
+  Widget _buildScanResultOverlay(
+      BuildContext context, TicketScanningViewModel viewModel) {
     return Container(
       color: Colors.black.withOpacity(0.8),
       child: Center(
@@ -281,7 +282,8 @@ class TicketScanningView extends StackedView<TicketScanningViewModel> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFF6B35),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -402,7 +404,8 @@ class TicketScanningView extends StackedView<TicketScanningViewModel> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFFF6B35),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -495,8 +498,8 @@ class QrScannerOverlayShape extends ShapeBorder {
     _drawCornerBracket(canvas, paint, cutOutRect.bottomRight, false, false);
   }
 
-  void _drawCornerBracket(Canvas canvas, Paint paint, Offset corner,
-      bool isLeft, bool isTop) {
+  void _drawCornerBracket(
+      Canvas canvas, Paint paint, Offset corner, bool isLeft, bool isTop) {
     final path = Path();
 
     if (isLeft && isTop) {
@@ -538,10 +541,10 @@ class QrScannerOverlayShape extends ShapeBorder {
 
   @override
   ShapeBorder scale(double t) => QrScannerOverlayShape(
-    borderColor: borderColor,
-    borderWidth: borderWidth,
-    borderRadius: borderRadius,
-    borderLength: borderLength,
-    cutOutSize: cutOutSize,
-  );
+        borderColor: borderColor,
+        borderWidth: borderWidth,
+        borderRadius: borderRadius,
+        borderLength: borderLength,
+        cutOutSize: cutOutSize,
+      );
 }

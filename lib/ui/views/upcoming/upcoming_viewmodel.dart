@@ -156,6 +156,8 @@ class UpcomingViewModel extends BaseViewModel {
         Organization organization =
             Organization.fromJson(response.data['organization']);
         myOrganizations.add(organization);
+        logger.i(
+            'Organizations loaded successfully: ${myOrganizations.first.toJson()}');
         notifyListeners();
       } else if (response.statusCode == 404) {
         hasOrganizations = false;

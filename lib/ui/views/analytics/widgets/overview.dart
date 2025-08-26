@@ -21,9 +21,10 @@ class OverviewWidget extends StatelessWidget {
       width: 155,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-          color: kcDarkGreyColor,
-          borderRadius: BorderRadius.circular(12.0),
-          border: Border.all(color: kcContainerBorderColor)),
+        color: kcDarkGreyColor,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: kcContainerBorderColor),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [

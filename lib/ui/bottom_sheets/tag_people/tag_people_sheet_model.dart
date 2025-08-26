@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:nest/models/user_serach_ressult.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -117,51 +118,5 @@ class TagPeopleSheetModel extends BaseViewModel {
       setBusy(false);
     }
     return userList;
-  }
-}
-
-class UserSearchResult {
-  final int id;
-  final String firstName;
-  final String lastName;
-  final String role;
-  final String profilePicture;
-  final bool isPrivate;
-  final double score;
-
-  UserSearchResult({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.role,
-    required this.profilePicture,
-    required this.isPrivate,
-    required this.score,
-  });
-
-  factory UserSearchResult.fromJson(Map<String, dynamic> json) {
-    return UserSearchResult(
-      id: json['id'],
-      firstName: json['first_name'],
-      role: json['role'] ?? 'user',
-      lastName: json['last_name'],
-      profilePicture: json['profile_picture'] ?? '',
-      isPrivate: json['is_private'],
-      score: (json['score'] != null)
-          ? (json['score'] as num).toDouble()
-          : 0.0, // Handle null and ensure double type
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'first_name': firstName,
-      'last_name': lastName,
-      'role': role,
-      'profile_picture': profilePicture,
-      'is_private': isPrivate,
-      'score': score,
-    };
   }
 }

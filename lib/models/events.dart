@@ -141,6 +141,35 @@ class Event {
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
       };
+  String get formattedDate {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    final weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    final month = months[startTime.month - 1];
+    final day = startTime.day;
+    final year = startTime.year;
+    final weekday = weekdays[startTime.weekday - 1];
+    final hour = startTime.hour == 0
+        ? 12
+        : (startTime.hour > 12 ? startTime.hour - 12 : startTime.hour);
+    final minute = startTime.minute.toString().padLeft(2, '0');
+    final period = startTime.hour >= 12 ? 'PM' : 'AM';
+
+    return '$weekday, $month $day, $year - $hour:$minute $period';
+  }
 }
 
 class TicketPricingPreview {

@@ -2,6 +2,7 @@ import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/models/profile.dart';
+import 'package:nest/models/user_serach_ressult.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/services/social_service.dart';
 import 'package:nest/services/user_service.dart';
@@ -12,7 +13,9 @@ import '../../../models/post_models.dart';
 import '../../../services/global_service.dart';
 
 class ProfileViewModel extends ReactiveViewModel {
-  bool get isUser => true;
+  bool get isUser => !isOtherUser;
+  bool isOtherUser = false;
+
   final globalService = locator<GlobalService>();
   final userService = locator<UserService>();
   final socialService = locator<SocialService>();
@@ -27,20 +30,31 @@ class ProfileViewModel extends ReactiveViewModel {
   }
 
   void handleEventTap(Post selected) {
-    final reorderedList = [
-      selected,
-      ...posts.where((e) => e != selected),
-    ];
+    // final reorderedList = [
+    //   selected,
+    //   ...posts.where((e) => e != selected),
+    // ];
     locator<NavigationService>().navigateTo(
       Routes.eventActivityView,
-      arguments: EventActivityViewArguments(
-        posts: reorderedList,
-      ),
     );
   }
 
+  refresh() async {
+    if (isUser) {
+      await getUserProfile(true);
+    } else {
+      await getOtherUserProfile();
+    }
+  }
+
   void goToChatView() {
-    globalService.setIndex = 2; // Assuming index 2 is for messages
+    locator<NavigationService>().navigateTo(
+      Routes.chatView,
+      arguments: ChatViewArguments(
+        chat: null,
+        user: otherUser,
+      ),
+    );
   }
 
   cretePost() async {
@@ -57,7 +71,12 @@ class ProfileViewModel extends ReactiveViewModel {
     notifyListeners();
   }
 
-  init() async {
+  init(bool isOtherUser) async {
+    this.isOtherUser = isOtherUser;
+    if (isOtherUser) {
+      await getOtherUserProfile();
+      return;
+    }
     await getUserProfile(false);
     await getUserPosts();
   }
@@ -94,13 +113,46 @@ class ProfileViewModel extends ReactiveViewModel {
     }
   }
 
+  UserSearchResult? otherUser;
+  Future getOtherUserProfile() async {
+    setBusy(true);
+    try {
+      final response =
+          await userService.getOtherUserProfile(globalService.otherUserId);
+      if (response.statusCode == 200 && response.data != null) {
+        profile = Profile.fromJson(response.data);
+        otherUser = UserSearchResult.fromJson(response.data);
+        otherUser = otherUser!.copyWith(firstName: response.data['name']);
+        logger.i(
+            'Other User profile loaded successfully: ${otherUser!.toJson()}');
+      } else {
+        throw Exception(response.message ?? 'Failed to load user profile');
+      }
+    } catch (e, s) {
+      logger.i('error: $e');
+      logger.e('error: $s');
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to load user profile: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
   int page = 1;
   int size = 10;
   List<Post> posts = [];
   Future getUserPosts() async {
     setBusy(true);
     try {
-      final response = await socialService.getUserPosts(page: page, size: size);
+      int id = isOtherUser
+          ? globalService.otherUserId
+          : locator<SharedPreferencesService>().getUserInfo()!['id'];
+
+      final response =
+          await socialService.getUserPosts(page: page, size: size, id: id);
       if (response.statusCode == 200 && response.data != null) {
         final List<dynamic> postsJson = response.data['posts'];
         logger.i('User posts loaded successfully: ${postsJson.length}');
@@ -141,6 +193,10 @@ class ProfileViewModel extends ReactiveViewModel {
       final response =
           await userService.followUnfollowUser(id: id, isFollow: isFollow);
       if (response.statusCode == 200 && response.data != null) {
+        locator<SnackbarService>().showSnackbar(
+          message: isFollow ? 'User followed' : 'User unfollowed',
+          duration: const Duration(seconds: 2),
+        );
         logger.i('User followed/unfollowed successfully: ${response.data}');
       } else {
         throw Exception(response.message ?? 'Failed to followed/unfollowed');

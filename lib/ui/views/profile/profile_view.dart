@@ -13,11 +13,11 @@ import '../../common/ui_helpers.dart';
 import 'profile_viewmodel.dart';
 
 class ProfileView extends StackedView<ProfileViewModel> {
-  const ProfileView({Key? key}) : super(key: key);
-
+  const ProfileView({Key? key, required this.isOtherUser}) : super(key: key);
+  final bool isOtherUser;
   @override
   void onViewModelReady(ProfileViewModel viewModel) {
-    viewModel.init();
+    viewModel.init(isOtherUser);
     super.onViewModelReady(viewModel);
   }
 
@@ -29,9 +29,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
   ) {
     return SafeArea(
       child: RefreshIndicator(
-        onRefresh: () async {
-          await viewModel.getUserProfile(true);
-        },
+        onRefresh: () async {},
         child: Scaffold(
           backgroundColor: kcDarkColor,
           appBar: AppBar(
@@ -187,6 +185,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   SizedBox(
                     width: 160,
                     child: AppButton(
+                      isBusy: viewModel.isBusy,
                       labelText: 'Follow',
                       onTap: () => viewModel.followUnfollowUser(
                         viewModel.profile!.id,

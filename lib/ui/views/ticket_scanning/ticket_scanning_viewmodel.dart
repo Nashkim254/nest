@@ -165,11 +165,13 @@ class TicketScanningViewModel extends BaseViewModel {
       }
 
       // Add to history
-      _scanHistory.insert(0, ScanHistoryItem(
-        qrData: qrData,
-        result: result,
-        timestamp: DateTime.now(),
-      ));
+      _scanHistory.insert(
+          0,
+          ScanHistoryItem(
+            qrData: qrData,
+            result: result,
+            timestamp: DateTime.now(),
+          ));
 
       // Store result and show overlay
       _lastScanResult = result;
@@ -183,7 +185,6 @@ class TicketScanningViewModel extends BaseViewModel {
       }
 
       notifyListeners();
-
     } catch (e) {
       _showError('Failed to validate ticket: ${e.toString()}');
     } finally {
@@ -265,12 +266,14 @@ class TicketScanningViewModel extends BaseViewModel {
         _validCount++;
       }
 
-      _scanHistory.insert(0, ScanHistoryItem(
-        qrData: ticketData,
-        result: result,
-        timestamp: DateTime.now(),
-        isManual: true,
-      ));
+      _scanHistory.insert(
+          0,
+          ScanHistoryItem(
+            qrData: ticketData,
+            result: result,
+            timestamp: DateTime.now(),
+            isManual: true,
+          ));
 
       _lastScanResult = result;
       _showScanResult = true;

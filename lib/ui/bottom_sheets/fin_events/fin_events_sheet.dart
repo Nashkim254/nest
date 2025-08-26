@@ -17,6 +17,11 @@ class FinEventsSheet extends StackedView<FinEventsSheetModel> {
     required this.completer,
     required this.request,
   }) : super(key: key);
+  @override
+  onViewModelReady(FinEventsSheetModel viewModel) {
+    viewModel.initialize(completer!);
+    super.onViewModelReady(viewModel);
+  }
 
   @override
   Widget builder(
@@ -64,7 +69,7 @@ class FinEventsSheet extends StackedView<FinEventsSheetModel> {
               color: kcContainerBorderColor,
             ),
             verticalSpaceMedium,
-            BottomActionButtons(),
+            const BottomActionButtons(),
           ],
         ),
       ),

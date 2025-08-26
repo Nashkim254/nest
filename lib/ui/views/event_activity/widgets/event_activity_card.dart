@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
-import 'package:nest/models/event_activity.dart';
 import 'package:nest/models/post_models.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/app_strings.dart';
@@ -57,14 +55,12 @@ class EventActivityCard extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    formatter.format(post.createdAt ?? DateTime.now()),
+                    formatter.format(post.safeUpdatedAt),
                     style: titleTextMedium.copyWith(color: Colors.grey),
                   ),
                 ),
                 if (post.user!.id ==
-                        locator<SharedPreferencesService>()
-                            .getUserInfo()!['id'] ??
-                    locator<SharedPreferencesService>().getUserInfo()!['ID'])
+                    locator<SharedPreferencesService>().getUserInfo()!['id'])
                   Expanded(
                     flex: 2,
                     child: TextButton(
@@ -86,30 +82,132 @@ class EventActivityCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               children: [
-                InkWell(
+                // Like button with animation
+                GestureDetector(
                   onTap: () => onLike(post),
-                  child: SvgPicture.asset(like,
-                      color: post.isLiked ? kcPrimaryColor : kcWhiteColor),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                          child: SvgPicture.asset(
+                            like,
+                            key: ValueKey(post.isLiked),
+                            color: post.isLiked ? kcPrimaryColor : kcWhiteColor,
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                        if (post.likeCount > 0) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '${post.likeCount}',
+                            style: bodyTextMedium.copyWith(
+                              color:
+                                  post.isLiked ? kcPrimaryColor : kcWhiteColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
                 horizontalSpaceMedium,
-                InkWell(
+                GestureDetector(
                   onTap: () => onComment(post),
-                  child: SvgPicture.asset(comment),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                          child: SvgPicture.asset(
+                            comment,
+                            color: kcWhiteColor,
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                        if (post.commentCount > 0) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '${post.commentCount}',
+                            style: bodyTextMedium.copyWith(
+                              color: kcWhiteColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
                 horizontalSpaceMedium,
-                InkWell(
+                GestureDetector(
                   onTap: () => onShare(post),
-                  child: SvgPicture.asset(send),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                          child: SvgPicture.asset(
+                            send,
+                            color: kcWhiteColor,
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                        if (post.shareCount > 0) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '${post.shareCount}',
+                            style: bodyTextMedium.copyWith(
+                              color: kcWhiteColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
 
-          // Liked by
+          // Also update the "Liked by" section for better formatting:
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              'Liked by  ${post.likeCount} people',
+              post.likeCount == 0
+                  ? 'Be the first to like this'
+                  : post.likeCount == 1
+                      ? 'Liked by 1 person'
+                      : 'Liked by ${post.likeCount} people',
               style: bodyTextMedium.copyWith(
                 color: kcFollowColor,
                 fontSize: 14,
@@ -127,10 +225,10 @@ class EventActivityCard extends StatelessWidget {
               text: TextSpan(
                 style: titleTextMedium.copyWith(color: kcWhiteColor),
                 children: [
-                  TextSpan(
+                  const TextSpan(
                     //pick few characters of the content
-                    text: '${post.content} ',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    text: '',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(text: post.content),
                   if (post.hashtags.isNotEmpty) ...[

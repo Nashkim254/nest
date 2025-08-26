@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet_model.dart';
+import 'package:nest/models/user_serach_ressult.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/ui/views/chat/widgets/chat_bubble.dart';
 import 'package:stacked/stacked.dart';

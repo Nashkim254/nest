@@ -1,6 +1,7 @@
 // widgets/performance_trends_widget.dart
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:nest/ui/common/app_colors.dart';
 import '../../../../models/organization_analytics.dart';
 import '../analytics_viewmodel.dart';
 
@@ -60,8 +61,9 @@ class PerformanceTrendsWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
-        borderRadius: BorderRadius.circular(12),
+        color: kcDarkGreyColor,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: kcContainerBorderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

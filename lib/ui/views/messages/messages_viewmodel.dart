@@ -1,14 +1,13 @@
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.bottomsheets.dart';
+import 'package:nest/models/user_serach_ressult.dart';
 import 'package:nest/services/message_service.dart';
-import 'package:nest/ui/bottom_sheets/tag_people/tag_people_sheet_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
 import '../../../models/message_models.dart';
-import '../../../models/people_model.dart';
 
 class MessagesViewModel extends BaseViewModel {
   final MessageService _messagingService = locator<MessageService>();

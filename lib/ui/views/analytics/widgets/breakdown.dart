@@ -1,5 +1,6 @@
 // widgets/breakdowns_widget.dart
 import 'package:flutter/material.dart';
+import 'package:nest/ui/common/app_colors.dart';
 
 import '../../../../models/analytics.dart';
 import '../analytics_viewmodel.dart';
@@ -39,8 +40,9 @@ class BreakdownsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
-        borderRadius: BorderRadius.circular(12),
+        color: kcDarkGreyColor,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: kcContainerBorderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,8 +76,9 @@ class BreakdownsWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
-        borderRadius: BorderRadius.circular(12),
+        color: kcDarkGreyColor,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: kcContainerBorderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

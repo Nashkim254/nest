@@ -164,6 +164,8 @@ class HostingViewModel extends BaseViewModel {
               }
             })
             .whereType<Event>() // Only keep Event objects, filter out nulls
+            .toList()
+            .take(5)
             .toList();
         logger.w('Upcoming Events: $upcomingEvents');
 

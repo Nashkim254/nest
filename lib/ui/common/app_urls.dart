@@ -14,6 +14,7 @@ class AppUrls {
   static final String reQuestPasswordReset = '$baseAuthUrl/reset-password';
   static final String resetPassword = '$baseAuthUrl/reset-password/confirm';
   static final String userProfile = '$baseUrl/users/me';
+  static final String otherUserProfile = '$baseUrl/users';
   static final String recommendedUsers = '$baseUrl/users/recommendations';
   static final String searchUsers = '$baseUrl/users/search';
   static final String followUser = '$baseUrl/users';
@@ -29,6 +30,7 @@ class AppUrls {
   //organizations
   static final String organizations = '$baseUrl/organizations';
   static final String myOrganization = '$baseUrl/organizations/me';
+  static final String searchOrganization = '$baseUrl/organizations/search';
   static final String updateOrganization = '$baseUrl/organizations/update';
 //events
   static final String events = '$baseUrl/events';
@@ -38,6 +40,7 @@ class AppUrls {
   static final String deleteEvent = '$baseUrl/events';
   static final String myEventsUrl = '$baseUrl/events/my';
   static final String searchEventsUrl = '$baseUrl/events/search';
+  static final String getEventsNearbyUrl = '$baseUrl/events/nearby';
 
   //websockets
   static String websocketUrl = Platform.isAndroid

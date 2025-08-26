@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:stacked/stacked.dart';
@@ -12,7 +13,7 @@ import '../../../services/location_service.dart';
 
 class ViewEventViewModel extends BaseViewModel {
   final locationService = locator<LocationService>();
-  Map? coordinates = {'latitude': 0.0, 'longitude': 0.0};
+  Position? coordinates;
   getCurrentLocation() async {
     setBusy(true);
     try {

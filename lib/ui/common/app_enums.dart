@@ -56,33 +56,6 @@ enum HostingSelector {
   final String displayName;
 }
 
-enum EventStatus {
-  live(
-    'ACTIVE',
-    kcTertiaryColor,
-  ),
-  upcoming(
-    'UPCOMING',
-    kcPrimaryColor,
-  ),
-  ended(
-    'ENDED',
-    kcRedColor,
-  ),
-  soldOut(
-    'SOLD OUT',
-    kcRedColor,
-  ),
-  cancelled(
-    'CANCELLED',
-    kcRedColor,
-  );
-
-  const EventStatus(this.label, this.color);
-  final String label;
-  final Color color;
-}
-
 enum EventMode {
   rsvp('RSVP Only'),
   paid('Paid Tickets');
@@ -110,3 +83,44 @@ enum PaymentMethodType {
 }
 
 enum FileType { image, video, audio, document, other }
+
+enum EventStatus {
+  live,
+  draft,
+  past,
+  cancelled;
+
+  Color get color {
+    switch (this) {
+      case EventStatus.live:
+        return kcTertiaryColor;
+      case EventStatus.draft:
+        return kcPrimaryColor;
+      case EventStatus.past:
+        return kcGrey3Color;
+      case EventStatus.cancelled:
+        return kcSecondaryColor;
+    }
+  }
+
+  String get displayName {
+    return name.toUpperCase();
+  }
+}
+
+enum EventFilter {
+  all,
+  upcoming,
+  past;
+
+  String get displayName {
+    switch (this) {
+      case EventFilter.all:
+        return 'All';
+      case EventFilter.upcoming:
+        return 'Upcoming';
+      case EventFilter.past:
+        return 'Past';
+    }
+  }
+}

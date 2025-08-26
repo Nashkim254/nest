@@ -177,7 +177,7 @@ class EventCardStatusWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        status.label,
+        Utilities.statusText(status),
         style: const TextStyle(
           color: Colors.white,
           fontSize: 12,

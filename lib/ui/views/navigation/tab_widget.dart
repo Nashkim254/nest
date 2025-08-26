@@ -50,7 +50,7 @@ List<PageItem> tabPages({
         ),
       ),
       PageItem(
-        page: const ProfileView(),
+        page: const ProfileView(isOtherUser: false),
         bottomNavigationBarItem: customBottomNavigationBarItem(
           assetUrl: profile,
           label: "Profile",

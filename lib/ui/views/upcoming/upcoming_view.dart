@@ -79,7 +79,7 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                             : kcPrimaryColor,
                         height: 30,
                         labelText: 'View all',
-                        onTap: !viewModel.hasOrganizations
+                        onTap: viewModel.hasOrganizations
                             ? () => viewModel.viewAllPeopleAndOrgs()
                             : () {},
                       ),
