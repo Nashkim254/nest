@@ -53,6 +53,8 @@ class FinEventsSheet extends StackedView<FinEventsSheetModel> {
             verticalSpaceSmall,
             TextFormField(
               controller: viewModel.searchController,
+              readOnly: true,
+              onTap: () => viewModel.onSearchTapped(),
               decoration: AppInputDecoration.standard(
                 hintText: 'Search events',
                 prefixIcon: const Icon(
@@ -60,7 +62,6 @@ class FinEventsSheet extends StackedView<FinEventsSheetModel> {
                   color: kcGreyColor,
                 ),
               ),
-              onChanged: viewModel.onSearchChanged,
             ),
             verticalSpaceSmall,
             const FilterView(),

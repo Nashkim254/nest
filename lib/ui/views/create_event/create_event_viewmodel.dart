@@ -31,6 +31,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   TextEditingController websiteController = TextEditingController();
   TextEditingController igController = TextEditingController();
   TextEditingController sponsorController = TextEditingController();
+  TextEditingController termsController = TextEditingController();
   final globalService = locator<GlobalService>();
   final eventService = locator<EventService>();
   final locationService = locator<LocationService>();
@@ -50,6 +51,11 @@ class CreateEventViewModel extends ReactiveViewModel {
   bool showGuestList = true;
   bool showOnExplorePage = true;
   bool passwordProtected = true;
+  bool isTermsOpen = false;
+  toggleTermsOpen() {
+    isTermsOpen = !isTermsOpen;
+    notifyListeners();
+  }
   Logger logger = Logger();
   final int _totalPages = 3;
   int get totalPages => _totalPages;
@@ -125,10 +131,13 @@ class CreateEventViewModel extends ReactiveViewModel {
         if (type == 'flyer') {
           flyerImage = selectedImages.first;
           uploadFlyerPictureUrl = response.data['url'];
-          await globalService.uploadFile(
+          final result = await globalService.uploadFile(
             response.data['upload_url'],
             flyerImage!,
           );
+          if (result.statusCode == 200 || result.statusCode == 201) {
+            fileService.clearSelectedImages();
+          }
         } else if (type == 'performer') {
           performerImage = selectedImages.first;
           performerPictureUrl = response.data['url'];
@@ -424,7 +433,7 @@ class CreateEventViewModel extends ReactiveViewModel {
         isPrivate: isPrivate,
         ticketPricing: collectTicketPricingData()!,
         guestListEnabled: isRsvP ? false : showGuestList,
-        guestListLimit: int.parse(eventGuestListController.text),
+        guestListLimit:isRsvP ? 0 : int.parse(eventGuestListController.text),
         longitude: coordinates!.longitude ?? 0.0,
         latitude: coordinates!.latitude ?? 0.0,
         password: eventPasswordController.text,

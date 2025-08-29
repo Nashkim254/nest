@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   desktop_webview_window
+  emoji_picker_flutter
   file_selector_windows
   geolocator_windows
   permission_handler_windows

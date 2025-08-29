@@ -20,8 +20,13 @@ class FinEventsSheetModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void onSearchChanged(String value) {
-    searchQuery = value;
+  void onSearchTapped() {
+    _completer!.call(
+      SheetResponse(
+        confirmed: false,
+      ),
+    );
+    locator<NavigationService>().navigateToExploreEventsView();
   }
 
   void initialize(Function(SheetResponse) completer) {

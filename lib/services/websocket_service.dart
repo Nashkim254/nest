@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/rendering.dart';
 import 'package:logger/logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -60,10 +61,11 @@ class WebsocketService {
     _updateConnectionStatus(WebSocketConnectionStatus.connecting);
 
     try {
-      final uri = Uri.parse(_serverUrl!);
+      _logger.e(_serverUrl);
+      final uri = Uri.parse('$_serverUrl?token=$_authToken');
+
       _channel = WebSocketChannel.connect(
         uri,
-        protocols: ['Bearer $_authToken'],
       );
 
       // Listen to the channel
@@ -86,37 +88,45 @@ class WebsocketService {
   }
 
   void _onMessage(dynamic data) {
+    final jsonData = jsonDecode(data);
     try {
-      final jsonData = jsonDecode(data);
       final wsMessage = WebSocketMessage.fromJson(jsonData);
 
       _logger.d('Received WebSocket message: ${wsMessage.type}');
 
       switch (wsMessage.type) {
         case 'new_message':
-          final payload = MessagePayload.fromJson(wsMessage.payload);
+
+          final payload = MessagePayload.fromJson(wsMessage.payload!);
+          _logger.d('Received WebSocket message: ${payload}');
+
           _messageController.add(payload);
           break;
 
         case 'typing':
-          final payload = TypingPayload.fromJson(wsMessage.payload);
+          final payload = TypingPayload.fromJson(wsMessage.payload!);
           _typingController.add(payload);
           break;
 
         case 'online_status':
-          final payload = OnlineStatusPayload.fromJson(wsMessage.payload);
+          final payload = OnlineStatusPayload.fromJson(wsMessage.payload!);
           _onlineStatusController.add(payload);
           break;
 
         case 'pong':
           _logger.d('Received pong');
           break;
+        case 'ping':
+          _logger.d('send ping');
+          break;
 
         default:
           _logger.w('Unknown message type: ${wsMessage.type}');
       }
-    } catch (e) {
+    } catch (e, s) {
+      _logger.e('Error processing message: $s');
       _logger.e('Error processing message: $e');
+      debugPrint('Error processing message: $jsonData', wrapWidth: 1024);
     }
   }
 
@@ -186,7 +196,7 @@ class WebsocketService {
     required int? receiverId,
     required String content,
     String messageType = 'text',
-    String? conversationId,
+    int? conversationId,
   }) async {
     if (_currentStatus != WebSocketConnectionStatus.connected) {
       _logger.w('Cannot send message: WebSocket not connected');
@@ -214,7 +224,7 @@ class WebsocketService {
   }
 
   Future<bool> sendTypingIndicator({
-    required String conversationId,
+    required int conversationId,
     required bool isTyping,
   }) async {
     if (_currentStatus != WebSocketConnectionStatus.connected) {
@@ -240,7 +250,7 @@ class WebsocketService {
 
   Future<bool> markMessageAsRead({
     required int messageId,
-    required String conversationId,
+    required int conversationId,
   }) async {
     if (_currentStatus != WebSocketConnectionStatus.connected) {
       return false;

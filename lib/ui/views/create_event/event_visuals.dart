@@ -627,8 +627,20 @@ class EventVisuals extends StatelessWidget {
 
                     _buildNavigationTile(
                       title: 'Terms of Service',
-                      onTap: () {},
+                      onTap: () => viewModel.toggleTermsOpen(),
                     ),
+                    verticalSpaceSmall,
+                    if (viewModel.isTermsOpen)
+                      TextFormField(
+                        style: titleTextMedium.copyWith(color: kcWhiteColor),
+                        controller: viewModel.termsController,
+                        decoration: AppInputDecoration.standard(
+                          hintText: 'Enter terms of service here',
+                          fillColor: kcDarkGreyColor,
+                          filled: true,
+                        ),
+                        onChanged: (value) {},
+                      ),
                     verticalSpaceSmall,
                     Text(
                       'Displays the list of attendees who have opted'

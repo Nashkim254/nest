@@ -53,6 +53,7 @@ class AppUrls {
 
   //messaging
   static final String conversations = '$baseUrl/messaging/conversations';
+  static final String conversationMessages = '$baseUrl/messaging/conversations';
   static final String sendMessage = '$baseUrl/messaging/messages';
   static final String createGroupConvo =
       '$baseUrl/messaging/conversations/group';

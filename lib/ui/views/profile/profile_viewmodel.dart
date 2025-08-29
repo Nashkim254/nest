@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
+import 'package:nest/models/message_models.dart';
 import 'package:nest/models/profile.dart';
 import 'package:nest/models/user_serach_ressult.dart';
 import 'package:nest/services/shared_preferences_service.dart';
@@ -48,13 +49,7 @@ class ProfileViewModel extends ReactiveViewModel {
   }
 
   void goToChatView() {
-    locator<NavigationService>().navigateTo(
-      Routes.chatView,
-      arguments: ChatViewArguments(
-        chat: null,
-        user: otherUser,
-      ),
-    );
+    locator<NavigationService>().navigateToMessagesView();
   }
 
   cretePost() async {

@@ -13,6 +13,7 @@ import 'explore_events_viewmodel.dart';
 
 class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
   const ExploreEventsView({Key? key}) : super(key: key);
+
   @override
   void onViewModelReady(ExploreEventsViewModel viewModel) {
     viewModel.init();
@@ -66,9 +67,12 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
           onRefresh: () => viewModel.onRefresh(),
           child: NotificationListener<ScrollNotification>(
             onNotification: (scrollInfo) {
+              // Improved scroll detection for load more
               if (!viewModel.isBusy &&
-                  scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent) {
+                  !viewModel.isLoadingMore &&
+                  viewModel.hasMoreData &&
+                  scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent - 200) {
                 viewModel.onLoadMore();
               }
               return false;
@@ -87,6 +91,7 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                       color: kcWhiteColor,
                     ),
                     controller: viewModel.searchController,
+                    focusNode: viewModel.searchFocusNode,
                     decoration: AppInputDecoration.search(
                       prefixIcon: const Icon(
                         Icons.search,
@@ -117,12 +122,13 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                               )
                             : ListView.builder(
                                 scrollDirection: Axis.vertical,
-                                itemCount: viewModel.upcomingEvents.length + 1,
+                                itemCount: viewModel.upcomingEvents.length +
+                                    (viewModel.hasMoreData ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (index ==
                                       viewModel.upcomingEvents.length) {
-                                    // bottom loader (for pagination / load more)
-                                    return viewModel.isBusy
+                                    // Bottom loader (for pagination / load more)
+                                    return viewModel.isLoadingMore
                                         ? const Padding(
                                             padding: EdgeInsets.all(16.0),
                                             child: Center(

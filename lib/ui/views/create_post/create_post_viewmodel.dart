@@ -106,11 +106,13 @@ class CreatePostViewModel extends ReactiveViewModel {
           uploadImageUrls.add(response.data['url']);
 
           // Upload the actual file
-          await globalService.uploadFile(
+          final result = await globalService.uploadFile(
             response.data['upload_url'],
             currentImage,
           );
-
+          if (result.statusCode == 200 || result.statusCode == 201) {
+            fileService.clearSelectedImages();
+          }
           logger.i(
               'Successfully uploaded image ${i + 1}: ${response.data['url']}');
 

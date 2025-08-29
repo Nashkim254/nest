@@ -82,10 +82,13 @@ class EditProfileViewModel extends ReactiveViewModel {
       if (response.statusCode == 200 && response.data != null) {
         uploadProfilePictureUrl = response.data['url'];
         profilePicture = response.data['url'];
-        await globalService.uploadFile(
+        final result = await globalService.uploadFile(
           response.data['upload_url'],
           selectedImages.first,
         );
+        if (result.statusCode == 200 || result.statusCode == 201) {
+          fileService.clearSelectedImages();
+        }
         logger.i('upload url: ${response.data}');
       } else {
         throw Exception(response.message ?? 'Failed to load upload url:');
@@ -187,7 +190,7 @@ class EditProfileViewModel extends ReactiveViewModel {
       logger.wtf('Updating user profile with: ${profileUpdateInput.toJson()}');
       final response = await userService.editUserProfile(
           profileUpdateInput: profileUpdateInput);
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('User profile updated successfully: ${response.data}');
         locator<NavigationService>().back(result: true);
       } else {

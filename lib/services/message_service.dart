@@ -1,4 +1,5 @@
 import 'package:nest/abstractClasses/abstract_class.dart';
+import 'package:nest/models/send_message_request.dart';
 import 'package:nest/services/websocket_service.dart';
 import 'package:nest/ui/common/app_urls.dart';
 import 'package:stacked/stacked.dart';
@@ -11,9 +12,9 @@ class MessageService with ListenableServiceMixin {
   final WebsocketService _webSocketService = WebsocketService();
   final apiService = locator<IApiService>();
   // In-memory storage for conversations and messages
-  final Map<String, List<Message>> _conversationMessages = {};
-  final Map<String, Conversation> _conversations = {};
-  final Map<String, Set<int>> _typingUsers = {};
+  final Map<int, List<Message>> _conversationMessages = {};
+  final Map<int, Conversation> _conversations = {};
+  final Map<int, Set<int>> _typingUsers = {};
   final Map<int, bool> _onlineUsers = {};
 
   StreamSubscription? _messageSubscription;
@@ -25,23 +26,23 @@ class MessageService with ListenableServiceMixin {
       ReactiveValue<WebSocketConnectionStatus>(
           WebSocketConnectionStatus.disconnected);
 
-  ReactiveValue<Map<String, List<Message>>> _messages =
-      ReactiveValue<Map<String, List<Message>>>({});
+  ReactiveValue<Map<int, List<Message>>> _messages =
+      ReactiveValue<Map<int, List<Message>>>({});
 
   ReactiveValue<Map<String, Set<int>>> _typing =
       ReactiveValue<Map<String, Set<int>>>({});
 
   // Getters
   WebSocketConnectionStatus get connectionStatus => _connectionStatus.value;
-  Map<String, List<Message>> get messages => _messages.value;
+  Map<int, List<Message>> get messages => _messages.value;
   Map<String, Set<int>> get typingUsers => _typing.value;
   Map<int, bool> get onlineUsers => _onlineUsers;
 
-  List<Message> getConversationMessages(String conversationId) {
+  List<Message> getConversationMessages(int conversationId) {
     return _conversationMessages[conversationId] ?? [];
   }
 
-  Set<int> getTypingUsers(String conversationId) {
+  Set<int> getTypingUsers(int conversationId) {
     return _typingUsers[conversationId] ?? {};
   }
 
@@ -126,18 +127,18 @@ class MessageService with ListenableServiceMixin {
     required int? receiverId,
     required String content,
     String messageType = 'text',
-    String? conversationId,
+    int? conversationId,
   }) async {
     return await _webSocketService.sendMessage(
       receiverId: receiverId,
       content: content,
       messageType: messageType,
-      conversationId: conversationId,
+      conversationId: conversationId!,
     );
   }
 
   Future<bool> sendTypingIndicator({
-    required String conversationId,
+    required int conversationId,
     required bool isTyping,
   }) async {
     return await _webSocketService.sendTypingIndicator(
@@ -148,7 +149,7 @@ class MessageService with ListenableServiceMixin {
 
   Future<bool> markMessageAsRead({
     required int messageId,
-    required String conversationId,
+    required int conversationId,
   }) async {
     return await _webSocketService.markMessageAsRead(
       messageId: messageId,
@@ -157,7 +158,7 @@ class MessageService with ListenableServiceMixin {
   }
 
   // Local message management
-  void addLocalMessage(String conversationId, Message message) {
+  void addLocalMessage(int conversationId, Message message) {
     if (!_conversationMessages.containsKey(conversationId)) {
       _conversationMessages[conversationId] = [];
     }
@@ -167,7 +168,13 @@ class MessageService with ListenableServiceMixin {
     notifyListeners();
   }
 
-  void clearConversationMessages(String conversationId) {
+  void setConversationMessages(int conversationId, List<Message> messages) {
+    _conversationMessages[conversationId] = List.from(messages);
+    _messages.value = Map.from(_conversationMessages);
+    notifyListeners();
+  }
+
+  void clearConversationMessages(int conversationId) {
     _conversationMessages[conversationId]?.clear();
     _messages.value = Map.from(_conversationMessages);
     notifyListeners();
@@ -190,8 +197,19 @@ class MessageService with ListenableServiceMixin {
     }
   }
 
-  Future sendMessageApi() async {
-    final response = await apiService.post(AppUrls.sendMessage);
+  Future fetchConversationMessages(int id) async {
+    final response =
+        await apiService.get('${AppUrls.conversationMessages}/$id/messages');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return response;
+    } else {
+      throw Exception('Failed to load conversations: ${response.message}');
+    }
+  }
+
+  Future sendMessageApi(SendMessageRequest payload) async {
+    final response =
+        await apiService.post(AppUrls.sendMessage, data: payload.toJson());
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response;
     } else {

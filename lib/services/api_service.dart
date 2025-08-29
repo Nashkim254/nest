@@ -14,8 +14,8 @@ class ApiService implements IApiService {
   final String baseUrl = AppUrls.baseUrl;
   final prefsService = locator<SharedPreferencesService>();
   ApiService({
-    int connectTimeout = 30000,
-    int receiveTimeout = 30000,
+    int connectTimeout = 800000,
+    int receiveTimeout = 800000,
   }) {
     _dio = Dio(
       BaseOptions(

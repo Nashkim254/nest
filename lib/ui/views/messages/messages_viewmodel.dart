@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.bottomsheets.dart';
 import 'package:nest/models/user_serach_ressult.dart';
@@ -8,10 +9,13 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
 import '../../../models/message_models.dart';
+import '../../../services/shared_preferences_service.dart';
 
 class MessagesViewModel extends BaseViewModel {
   final MessageService _messagingService = locator<MessageService>();
   final bottomSheet = locator<BottomSheetService>();
+  int currentUserId = locator<SharedPreferencesService>().getUserInfo()!['id'];
+  bool isSender  = true;
   goToChatDetail(Conversation chat) {
     locator<NavigationService>()
         .navigateTo(Routes.chatView, arguments: ChatViewArguments(chat: chat));
@@ -28,10 +32,9 @@ class MessagesViewModel extends BaseViewModel {
     try {
       final response = await _messagingService.fetchConversations();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        logger.i('Conversations fetched successfully: ${response.data}');
+        debugPrint('Conversations fetched successfully: ${response.data}', wrapWidth: 1024);
         final conversationsList = response.data['conversations'] ?? [];
 
-        logger.i(conversations);
         final parsedConversations = conversationsList
             .map<Conversation?>((e) {
               try {

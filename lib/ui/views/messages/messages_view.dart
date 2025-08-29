@@ -107,7 +107,7 @@ class MessagesView extends StackedView<MessagesViewModel> {
                   chat: viewModel.conversations[index],
                   onTap: () => viewModel.goToChatDetail(
                     viewModel.conversations[index],
-                  ),
+                  ), currentUserId: viewModel.currentUserId,
                 );
               },
               separatorBuilder: (context, index) => spacedDivider,

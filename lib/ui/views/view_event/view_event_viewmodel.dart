@@ -30,6 +30,9 @@ class ViewEventViewModel extends BaseViewModel {
   }
 
   init(Event event) async {
+    isPasswordProtected =
+        event.ticketPricing.every((t) => t.isPasswordProtected == true);
+
     await getCurrentLocation();
     await getSingleEvent(event.id);
   }
@@ -87,27 +90,34 @@ class ViewEventViewModel extends BaseViewModel {
   final dialogService = locator<DialogService>();
   final bottomSheetService = locator<BottomSheetService>();
   passwordProtected() async {
-    final response = await dialogService.showCustomDialog(
-      variant: DialogType.passwordProtected,
-      title: 'Type the event password to have purchase the ticket',
-      description:
-          'This event is password protected. Please enter the password to continue.',
-      barrierDismissible: true,
-    );
-    if (response!.confirmed) {
-      logger.i(response.data);
-      final password = response.data['password'];
-
-      await validateTicketPassword(
-        password,
-        event!.id,
-        event!.ticketPricing.first.id,
+    if(isPasswordProtected) {
+      final response = await dialogService.showCustomDialog(
+        variant: DialogType.passwordProtected,
+        title: 'Type the event password to have purchase the ticket',
+        description:
+        'This event is password protected. Please enter the password to continue.',
+        barrierDismissible: true,
       );
-      notifyListeners();
-    } else {
-      locator<SnackbarService>().showSnackbar(
-        message: 'You cancelled the password entry.',
-        duration: const Duration(seconds: 3),
+      if (response!.confirmed) {
+        logger.i(response.data);
+        final password = response.data['password'];
+
+        await validateTicketPassword(
+          password,
+          event!.id,
+          event!.ticketPricing.first.id,
+        );
+        notifyListeners();
+      } else {
+        locator<SnackbarService>().showSnackbar(
+          message: 'You cancelled the password entry.',
+          duration: const Duration(seconds: 3),
+        );
+      }
+    }else{
+      final result = await bottomSheetService.showCustomSheet(
+        variant: BottomSheetType.tickets,
+        data: event!.ticketPricing,
       );
     }
   }

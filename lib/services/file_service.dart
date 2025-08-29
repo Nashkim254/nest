@@ -17,6 +17,10 @@ class FileService with ListenableServiceMixin {
   final ImageService _imageService = locator<ImageService>();
   final List<File> _selectedImages = [];
   List<File> get selectedImages => _selectedImages;
+  clearSelectedImages() {
+    _selectedImages.clear();
+    notifyListeners();
+  }
   Future<void> pickImageFromCamera(FileType fileType) async {
     try {
       bool hasPermission = await _imageService.requestPermissions();

@@ -6,43 +6,58 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
-import '../../../models/event_data.dart';
 import '../../../services/event_service.dart';
-import '../../common/app_enums.dart';
-import '../../common/app_strings.dart';
 
 class ExploreEventsViewModel extends BaseViewModel {
-  // This ViewModel can be extended with properties and methods
-  // specific to the Explore Events view, such as fetching events,
-  // filtering, or handling user interactions.
   final searchController = TextEditingController();
-  // Example property
   String _searchQuery = '';
+  final searchFocusNode = FocusNode();
 
-  // Example getter for search query
   String get searchQuery => _searchQuery;
 
-  // Example setter for search query
   set searchQuery(String value) {
     _searchQuery = value;
-    notifyListeners(); // Notify listeners about the change
+    notifyListeners();
   }
 
-  // Example method to initialize data or fetch events
+  int page = 1;
+  int size = 10;
+  List<Event> upcomingEvents = [];
+
+  // Add these new properties
+  bool _isLoadingMore = false;
+  bool _hasMoreData = true;
+
+  bool get isLoadingMore => _isLoadingMore;
+  bool get hasMoreData => _hasMoreData;
+
+  final eventService = locator<EventService>();
+  final navigationService = locator<NavigationService>();
+  Logger logger = Logger();
+
   void init() async {
     logger.w('Events back');
+    page = 1;
+    _hasMoreData = true;
     await getUpcomingEvents();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      searchFocusNode.requestFocus();
+    });
   }
 
   onSearchChanged(String value) {
     searchQuery = value;
     if (searchQuery.isEmpty) {
-      init(); // Notify listeners to update UI
+      page = 1;
+      _hasMoreData = true;
+      init();
       return;
     }
-    //debounce the search to avoid too many requests
+
     Future.delayed(const Duration(milliseconds: 500), () {
       if (searchQuery.isNotEmpty) {
+        page = 1;
+        _hasMoreData = true;
         searchEvent();
       } else {
         getUpcomingEvents();
@@ -50,16 +65,17 @@ class ExploreEventsViewModel extends BaseViewModel {
     });
   }
 
-  int page = 1;
-  int size = 10;
-  List<Event> upcomingEvents = [];
-  final eventService = locator<EventService>();
-  final navigationService = locator<NavigationService>();
-  Logger logger = Logger();
   Future getUpcomingEvents({bool isLoadMore = false}) async {
     logger.w(
         'Fetching upcoming events, page: $page, size: $size, isLoadMore: $isLoadMore');
-    setBusy(true);
+
+    if (isLoadMore) {
+      _isLoadingMore = true;
+      notifyListeners();
+    } else {
+      setBusy(true);
+    }
+
     try {
       final response = await eventService.getMyEvents(page: page, size: size);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -76,6 +92,11 @@ class ExploreEventsViewModel extends BaseViewModel {
             })
             .whereType<Event>()
             .toList();
+
+        // Check if we have more data
+        if (parsedEvents.length < size) {
+          _hasMoreData = false;
+        }
 
         if (isLoadMore) {
           upcomingEvents.addAll(parsedEvents);
@@ -97,7 +118,12 @@ class ExploreEventsViewModel extends BaseViewModel {
         duration: const Duration(seconds: 3),
       );
     } finally {
-      setBusy(false);
+      if (isLoadMore) {
+        _isLoadingMore = false;
+      } else {
+        setBusy(false);
+      }
+      notifyListeners();
     }
   }
 
@@ -124,6 +150,11 @@ class ExploreEventsViewModel extends BaseViewModel {
             .whereType<Event>()
             .toList();
 
+        // Check if we have more data for search results too
+        if (parsedEvents.length < size) {
+          _hasMoreData = false;
+        }
+
         upcomingEvents = parsedEvents;
         notifyListeners();
       } else {
@@ -145,10 +176,16 @@ class ExploreEventsViewModel extends BaseViewModel {
 
   Future<void> onRefresh() async {
     page = 1;
+    _hasMoreData = true;
     await getUpcomingEvents();
   }
 
   Future<void> onLoadMore() async {
+    // Prevent multiple simultaneous load more calls
+    if (_isLoadingMore || !_hasMoreData) {
+      return;
+    }
+
     page++;
     await getUpcomingEvents(isLoadMore: true);
   }
@@ -159,5 +196,12 @@ class ExploreEventsViewModel extends BaseViewModel {
 
   navigateToViewEvent(Event event) {
     locator<NavigationService>().navigateToViewEventView(event: event);
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    searchFocusNode.dispose();
+    super.dispose();
   }
 }
