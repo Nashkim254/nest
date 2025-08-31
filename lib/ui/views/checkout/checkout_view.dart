@@ -7,12 +7,14 @@ import 'package:stacked/stacked.dart';
 
 import '../../../models/confirmation_method.dart';
 import '../../../models/payment_method.dart';
+import '../../../models/ticket_item.dart';
 import '../../common/app_enums.dart';
 import 'checkout_viewmodel.dart';
 
 class CheckoutView extends StackedView<CheckoutViewModel> {
   const CheckoutView({Key? key, required this.ticketInfo}) : super(key: key);
   final Map<dynamic, dynamic> ticketInfo;
+
   @override
   void onViewModelReady(CheckoutViewModel viewModel) {
     viewModel.init(ticketInfo);
@@ -53,9 +55,13 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             spacedDivider,
-            // Ticket Section
-            _buildTicketSection(viewModel),
+            // Tickets Section (updated for multiple tickets)
+            _buildTicketsSection(viewModel),
             const SizedBox(height: 32),
+
+            // Password Requirements Notice
+            if (viewModel.requiresPassword || viewModel.isMixedProtection)
+              _buildPasswordNotice(viewModel),
 
             // Agreement Checkboxes
             _buildAgreementSection(viewModel),
@@ -81,99 +87,269 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
     );
   }
 
-  Widget _buildTicketSection(CheckoutViewModel viewModel) {
+  Widget _buildTicketsSection(CheckoutViewModel viewModel) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Your Ticket',
-          style: TextStyle(
+        Text(
+          viewModel.isMultipleTickets ? 'Your Tickets' : 'Your Ticket',
+          style: const TextStyle(
             color: kcWhiteColor,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: kcDarkGreyColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ...viewModel.tickets.asMap().entries.map((entry) {
+          final index = entry.key;
+          final ticket = entry.value;
+          return _buildTicketCard(viewModel, ticket, index);
+        }),
+      ],
+    );
+  }
+
+  Widget _buildTicketCard(
+      CheckoutViewModel viewModel, TicketItem ticket, int index) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: kcDarkGreyColor,
+        borderRadius: BorderRadius.circular(12),
+        border: ticket.passwordRequired
+            ? Border.all(color: kcPrimaryColor.withOpacity(0.5), width: 1)
+            : null,
+      ),
+      child: Column(
+        children: [
+          Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    viewModel.ticket.name,
-                    style: const TextStyle(
-                      color: kcWhiteColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          ticket.name,
+                          style: const TextStyle(
+                            color: kcWhiteColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (ticket.passwordRequired) ...[
+                          horizontalSpaceTiny,
+                          Icon(
+                            Icons.lock,
+                            size: 14,
+                            color: kcPrimaryColor,
+                          ),
+                        ],
+                      ],
                     ),
-                  ),
-                  Text(
-                    '\$${viewModel.ticket.price.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
+                    const SizedBox(height: 2),
+                    Text(
+                      ticket.formattedPrice,
+                      style: TextStyle(
+                        color: ticket.isFree ? Colors.green : Colors.grey,
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: viewModel.decrementQuantity,
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF3A3A3A),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.remove,
-                        color: kcWhiteColor,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      '${viewModel.ticket.quantity}',
-                      style: const TextStyle(
-                        color: kcWhiteColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+              if (viewModel.isMultipleTickets)
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => viewModel.decrementTicketQuantity(index),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF3A3A3A),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.remove,
+                          color: kcWhiteColor,
+                          size: 16,
+                        ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: viewModel.incrementQuantity,
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF3A3A3A),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        color: kcWhiteColor,
-                        size: 16,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        '${ticket.quantity}',
+                        style: const TextStyle(
+                          color: kcWhiteColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    GestureDetector(
+                      onTap: () => viewModel.incrementTicketQuantity(index),
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF3A3A3A),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: kcWhiteColor,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                    if (viewModel.tickets.length > 1) ...[
+                      horizontalSpaceSmall,
+                      GestureDetector(
+                        onTap: () => viewModel.removeTicket(index),
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.red, width: 1),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                )
+              else
+                // Legacy single ticket quantity controls
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: viewModel.decrementQuantity,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF3A3A3A),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.remove,
+                          color: kcWhiteColor,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        '${ticket.quantity}',
+                        style: const TextStyle(
+                          color: kcWhiteColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: viewModel.incrementQuantity,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF3A3A3A),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add,
+                          color: kcWhiteColor,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
-        ),
-      ],
+          if (viewModel.isMultipleTickets) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Subtotal',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  ticket.formattedTotal,
+                  style: const TextStyle(
+                    color: kcWhiteColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordNotice(CheckoutViewModel viewModel) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: kcPrimaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: kcPrimaryColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.lock,
+            size: 20,
+            color: kcPrimaryColor,
+          ),
+          horizontalSpaceSmall,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Password Verification Required',
+                  style: TextStyle(
+                    color: kcWhiteColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  viewModel.isMixedProtection
+                      ? 'Some of your selected tickets require password verification'
+                      : 'All selected tickets require password verification',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -231,11 +407,47 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
           ),
         ),
         const SizedBox(height: 16),
+
+        // Show individual ticket breakdown for multiple tickets
+        if (viewModel.isMultipleTickets) ...[
+          ...viewModel.tickets.map((ticket) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${ticket.name} x${ticket.quantity}',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      ticket.formattedTotal,
+                      style: const TextStyle(
+                        color: kcWhiteColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          const SizedBox(height: 8),
+          Container(
+            height: 1,
+            color: const Color(0xFF3A3A3A),
+          ),
+          const SizedBox(height: 8),
+        ],
+
         _buildSummaryRow(
-            'Subtotal', '\$${viewModel.subtotal.toStringAsFixed(2)}'),
+            'Subtotal', 'KSH ${viewModel.subtotal.toStringAsFixed(0)}'),
         const SizedBox(height: 8),
         _buildSummaryRow(
-            'Service Fee', '\$${viewModel.serviceFee.toStringAsFixed(2)}'),
+            'Service Fee', 'KSH ${viewModel.serviceFee.toStringAsFixed(0)}'),
         const SizedBox(height: 16),
         Container(
           height: 1,
@@ -244,9 +456,19 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
         const SizedBox(height: 16),
         _buildSummaryRow(
           'Total',
-          '\$${viewModel.total.toStringAsFixed(2)}',
+          'KSH ${viewModel.total.toStringAsFixed(0)}',
           isTotal: true,
         ),
+        if (viewModel.isMultipleTickets) ...[
+          const SizedBox(height: 8),
+          Text(
+            '${viewModel.totalQuantity} tickets total',
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -444,9 +666,11 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
                   strokeWidth: 2,
                 ),
               )
-            : const Text(
-                'Confirm & Get Ticket',
-                style: TextStyle(
+            : Text(
+                viewModel.isMultipleTickets
+                    ? 'Confirm & Get Tickets - KSH ${viewModel.total.toStringAsFixed(0)}'
+                    : 'Confirm & Get Ticket',
+                style: const TextStyle(
                   color: kcWhiteColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

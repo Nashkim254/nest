@@ -96,7 +96,6 @@ class WebsocketService {
 
       switch (wsMessage.type) {
         case 'new_message':
-
           final payload = MessagePayload.fromJson(wsMessage.payload!);
           _logger.d('Received WebSocket message: ${payload}');
 

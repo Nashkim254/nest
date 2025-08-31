@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/services/event_service.dart';
@@ -16,6 +18,7 @@ import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.locator.dart';
 import '../../../models/create_event.dart';
 import '../../../models/page_item.dart';
+import '../../../models/places.dart';
 import '../../../models/ticket_tier.dart';
 import '../../../services/file_service.dart';
 import '../../../services/global_service.dart';
@@ -56,6 +59,7 @@ class CreateEventViewModel extends ReactiveViewModel {
     isTermsOpen = !isTermsOpen;
     notifyListeners();
   }
+
   Logger logger = Logger();
   final int _totalPages = 3;
   int get totalPages => _totalPages;
@@ -285,35 +289,19 @@ class CreateEventViewModel extends ReactiveViewModel {
 
   selectThemeColorByIndex(int index) {
     selectedThemeIndex = index;
+    hexColor = selectedThemeColor.toHex();
     notifyListeners();
   }
 
-  List<DJ> performers = [
-    DJ(
-        id: '1',
-        name: 'DJ Neon',
-        imageUrl: avatar,
-        web: 'https://djneon.com',
-        ig: '@djneon',
-        time: '10:00 PM – 11:30 PM'),
-    DJ(
-        id: '2',
-        name: 'DJ Groove',
-        imageUrl: avatar,
-        web: 'https://djgroove.com',
-        ig: '@djgroove',
-        time: '11:30 PM – 1:00 AM'),
-    // Add more sample DJs as needed
-  ];
 
   removePerformer(int index) {
-    performers.removeAt(index);
     notifyListeners();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _debounceTimer?.cancel();
     clearTicketTiers();
     super.dispose();
   }
@@ -404,6 +392,7 @@ class CreateEventViewModel extends ReactiveViewModel {
     }
   }
 
+  String hexColor = '';
   Future createEvent() async {
     setBusy(true);
     if (!isEventDetailsFormValid &&
@@ -428,14 +417,14 @@ class CreateEventViewModel extends ReactiveViewModel {
         startTime: startTime,
         location: eventLocationController.text,
         flyerUrl: uploadFlyerPictureUrl,
-        theme: selectedThemeColor.toHex(),
+        theme: hexColor,
         genres: [],
         isPrivate: isPrivate,
         ticketPricing: collectTicketPricingData()!,
         guestListEnabled: isRsvP ? false : showGuestList,
-        guestListLimit:isRsvP ? 0 : int.parse(eventGuestListController.text),
-        longitude: coordinates!.longitude ?? 0.0,
-        latitude: coordinates!.latitude ?? 0.0,
+        guestListLimit: isRsvP ? 0 : int.parse(eventGuestListController.text),
+        longitude: selectedPlaceCoordinates!.longitude ?? 0.0,
+        latitude: selectedPlaceCoordinates!.latitude ?? 0.0,
         password: eventPasswordController.text,
         address: eventLocationController.text,
       );
@@ -659,5 +648,153 @@ class CreateEventViewModel extends ReactiveViewModel {
             '$formattedStart – $formattedEnd'; // e.g., 10:00 PM – 11:30 PM
       }
     }
+  }
+
+  Color pickerColor = kcPrimaryColor;
+  Color currentColor = kcPrimaryColor;
+
+  void changeColor(Color color) {
+    pickerColor = color;
+    notifyListeners();
+  }
+
+  pickColor(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: kcDarkColor,
+          title: const Text(
+            'Pick a color!',
+            style: TextStyle(color: kcWhiteColor),
+          ),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: pickerColor,
+              onColorChanged: changeColor,
+              labelTypes: [],
+              pickerAreaHeightPercent: 0.7,
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text(
+                'Done',
+                style: TextStyle(color: kcPrimaryColor),
+              ),
+              onPressed: () {
+                currentColor = pickerColor;
+                hexColor = currentColor.toHex();
+                notifyListeners();
+
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  final _placesService = locator<LocationService>();
+  final _snackbarService = locator<SnackbarService>();
+
+  List<PlaceModel> _searchResults = [];
+  List<PlaceModel> get searchResults => _searchResults;
+
+  PlaceCoordinates? _selectedPlaceCoordinates;
+  PlaceCoordinates? get selectedPlaceCoordinates => _selectedPlaceCoordinates;
+
+  String _searchQuery = '';
+  String get searchQuery => _searchQuery;
+
+  bool _isSearching = false;
+  bool get isSearching => _isSearching;
+
+  bool _isLoadingCoordinates = false;
+  bool get isLoadingCoordinates => _isLoadingCoordinates;
+
+  Timer? _debounceTimer;
+
+  void updateSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners();
+
+    // Cancel previous timer
+    _debounceTimer?.cancel();
+
+    // Start new timer for debounced search
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (query.isNotEmpty) {
+        searchPlaces(query);
+      } else {
+        clearSearchResults();
+      }
+    });
+  }
+
+  Future<void> searchPlaces(String query) async {
+    if (query.isEmpty) {
+      clearSearchResults();
+      return;
+    }
+
+    _isSearching = true;
+    notifyListeners();
+
+    try {
+      _searchResults = await _placesService.searchPlaces(query);
+      notifyListeners();
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: 'Failed to search places: ${e.toString()}',
+        duration: const Duration(seconds: 3),
+      );
+      _searchResults = [];
+    } finally {
+      _isSearching = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> selectPlace(PlaceModel place) async {
+    _isLoadingCoordinates = true;
+    notifyListeners();
+
+    try {
+      _selectedPlaceCoordinates =
+          await _placesService.getPlaceCoordinates(place.placeId);
+
+      // Clear search results after selection
+      clearSearchResults();
+      eventLocationController.text = place.description;
+
+      _snackbarService.showSnackbar(
+        message: 'Selected: ${place.description}',
+        duration: const Duration(seconds: 2),
+      );
+
+      notifyListeners();
+    } catch (e) {
+      _snackbarService.showSnackbar(
+        message: 'Failed to get coordinates: ${e.toString()}',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      _isLoadingCoordinates = false;
+      notifyListeners();
+    }
+  }
+
+  void clearSearchResults() {
+    _searchResults = [];
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedPlaceCoordinates = null;
+    _searchQuery = '';
+    clearSearchResults();
+    notifyListeners();
   }
 }

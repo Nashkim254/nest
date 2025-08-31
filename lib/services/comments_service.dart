@@ -9,7 +9,7 @@ class CommentsService {
   getComments(int postId) async {
     try {
       final response =
-          await apiService.get('${AppUrls.social}/user/posts/$postId');
+          await apiService.get('${AppUrls.social}/posts/$postId/comments');
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {

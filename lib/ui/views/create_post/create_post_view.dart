@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_dotted_container.dart';
 import 'package:nest/ui/common/app_enums.dart';
+import 'package:nest/ui/views/create_post/video_thumbnail.dart';
 import 'package:stacked/stacked.dart';
 
 import '../../common/app_colors.dart';
@@ -116,6 +119,11 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: viewModel.selectedImages.length,
                                   itemBuilder: (context, index) {
+                                    final file =
+                                        viewModel.selectedImages[index];
+                                    final isVideo =
+                                        viewModel.isVideoByExtension(file);
+
                                     return Stack(
                                       children: [
                                         Container(
@@ -131,12 +139,15 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                                                 const BorderRadius.all(
                                               Radius.circular(8),
                                             ),
-                                            child: Image.file(
-                                              viewModel.selectedImages[index],
-                                              fit: BoxFit.cover,
-                                              width: double.infinity,
-                                              height: double.infinity,
-                                            ),
+                                            child: isVideo
+                                                ? VideoThumbnailWidget(
+                                                    videoFile: file)
+                                                : Image.file(
+                                                    file,
+                                                    fit: BoxFit.cover,
+                                                    width: double.infinity,
+                                                    height: double.infinity,
+                                                  ),
                                           ),
                                         ),
                                         Positioned(

@@ -29,12 +29,22 @@ class ViewEventViewModel extends BaseViewModel {
     }
   }
 
-  init(Event event) async {
-    isPasswordProtected =
-        event.ticketPricing.every((t) => t.isPasswordProtected == true);
+  setIsPasswordRequired() {
+    if (event!.ticketPricing.any((t) => t.isPasswordProtected == false)) {
+      isPasswordProtected =
+          false; // At least one ticket is open, handle individually later
+    } else {
+      isPasswordProtected =
+          true; // All tickets require password, can handle globally
+    }
+  }
 
+  init(Event event) async {
+    logger.wtf('$isPasswordProtected');
     await getCurrentLocation();
-    await getSingleEvent(event.id);
+    await getSingleEvent(event.id).then(
+      (_) => setIsPasswordRequired(),
+    );
   }
 
   int page = 1;
@@ -76,12 +86,12 @@ class ViewEventViewModel extends BaseViewModel {
   bool isPasswordProtected = true;
 
   String getButtonTitle() {
-    if (event!.ticketPricing.first.type == 'rsvp') {
+    if (isPasswordProtected) {
+      return 'Enter Password';
+    } else if (event!.ticketPricing.first.type == 'rsvp') {
       return 'RSVP';
     } else if (event!.ticketPricing.first.type == 'paid') {
       return 'Buy Ticket';
-    } else if (event!.ticketPricing.first.isPasswordProtected) {
-      return 'Enter Password';
     } else {
       return 'Get Ticket';
     }
@@ -90,12 +100,12 @@ class ViewEventViewModel extends BaseViewModel {
   final dialogService = locator<DialogService>();
   final bottomSheetService = locator<BottomSheetService>();
   passwordProtected() async {
-    if(isPasswordProtected) {
+    if (isPasswordProtected) {
       final response = await dialogService.showCustomDialog(
         variant: DialogType.passwordProtected,
         title: 'Type the event password to have purchase the ticket',
         description:
-        'This event is password protected. Please enter the password to continue.',
+            'This event is password protected. Please enter the password to continue.',
         barrierDismissible: true,
       );
       if (response!.confirmed) {
@@ -114,11 +124,27 @@ class ViewEventViewModel extends BaseViewModel {
           duration: const Duration(seconds: 3),
         );
       }
-    }else{
-      final result = await bottomSheetService.showCustomSheet(
-        variant: BottomSheetType.tickets,
-        data: event!.ticketPricing,
-      );
+    } else {
+      final formattedTickets =
+          event!.ticketPricing.asMap().entries.map((entry) {
+        final index = entry.key;
+        final ticket = entry.value;
+
+        return {
+          'index': index,
+          'name': ticket.name ?? '',
+          'price': ticket.price ?? 0.0,
+          'type': ticket.type ?? 'paid',
+          'available': (ticket.quantity ?? 0) > 0,
+          'limit': ticket.quantity ?? 10,
+          'password_required': ticket.isPasswordProtected ?? false,
+          'description': '',
+        };
+      }).toList();
+      final result = await bottomSheetService
+          .showCustomSheet(variant: BottomSheetType.tickets, data: {
+        'tickets': formattedTickets, // Multiple tickets
+      });
     }
   }
 
@@ -137,10 +163,12 @@ class ViewEventViewModel extends BaseViewModel {
         logger.i('Ticket id-------: ${ticketId}');
         final result = await bottomSheetService.showCustomSheet(
           variant: BottomSheetType.tickets,
-          data: response.data,
+          data: {
+            'ticket': response.data['ticket'], // Single ticket
+          },
         );
         if (result != null) {
-          logger.i(result);
+          logger.i(result.data);
         }
       } else {
         logger.e(response.message);

@@ -20,6 +20,7 @@ import 'package:nest/services/payment_service.dart';
 import 'package:nest/services/stripe_service.dart';
 import 'package:nest/services/social_service.dart';
 import 'package:nest/services/comments_service.dart';
+import 'package:nest/services/shared_coordinates_service.dart';
 // @stacked-import
 
 import 'test_helpers.mocks.dart';
@@ -50,6 +51,8 @@ import 'test_helpers.mocks.dart';
     MockSpec<StripeService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<SocialService>(onMissingStub: OnMissingStub.returnDefault),
     MockSpec<CommentsService>(onMissingStub: OnMissingStub.returnDefault),
+    MockSpec<SharedCoordinatesService>(
+        onMissingStub: OnMissingStub.returnDefault),
 // @stacked-mock-spec
   ],
 )
@@ -75,6 +78,7 @@ void registerServices() {
   getAndRegisterStripeService();
   getAndRegisterSocialService();
   getAndRegisterCommentsService();
+  getAndRegisterSharedCoordinatesService();
 // @stacked-mock-register
 }
 
@@ -255,6 +259,13 @@ MockCommentsService getAndRegisterCommentsService() {
   _removeRegistrationIfExists<CommentsService>();
   final service = MockCommentsService();
   locator.registerSingleton<CommentsService>(service);
+  return service;
+}
+
+MockSharedCoordinatesService getAndRegisterSharedCoordinatesService() {
+  _removeRegistrationIfExists<SharedCoordinatesService>();
+  final service = MockSharedCoordinatesService();
+  locator.registerSingleton<SharedCoordinatesService>(service);
   return service;
 }
 // @stacked-mock-create

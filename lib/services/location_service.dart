@@ -1,7 +1,13 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
+import '../abstractClasses/abstract_class.dart';
+import '../app/app.locator.dart';
+import '../models/places.dart';
+
 class LocationService {
+  final apiService = locator<IApiService>();
   static Future<bool> isLocationServiceEnabled() async {
     return await Geolocator.isLocationServiceEnabled();
   }
@@ -111,6 +117,69 @@ class LocationService {
     } catch (e) {
       print('Error getting coordinates: $e');
       return null;
+    }
+  }
+
+  //places api
+  static final String _apiKey =
+      dotenv.env['GOOGLE_PLACES_API_KEY']!; // Replace with your API key
+  static const String _baseUrl = 'https://maps.googleapis.com/maps/api/place';
+
+  Future<List<PlaceModel>> searchPlaces(String query) async {
+    try {
+      if (query.isEmpty) return [];
+
+      final response = await apiService.get(
+        '$_baseUrl/autocomplete/json',
+        queryParameters: {
+          'input': query,
+          'key': _apiKey,
+          'types': 'establishment|geocode',
+          'components': 'country:us', // Restrict to us, change as needed
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'OK') {
+          final predictions = data['predictions'] as List;
+          return predictions
+              .map((prediction) => PlaceModel.fromJson(prediction))
+              .toList();
+        } else {
+          throw Exception('Places API Error: ${data['status']}');
+        }
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to search places: $e');
+    }
+  }
+
+  Future<PlaceCoordinates> getPlaceCoordinates(String placeId) async {
+    try {
+      final response = await apiService.get(
+        '$_baseUrl/details/json',
+        queryParameters: {
+          'place_id': placeId,
+          'fields': 'geometry,formatted_address',
+          'key': _apiKey,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == 'OK') {
+          return PlaceCoordinates.fromJson(data);
+        } else {
+          throw Exception('Place Details API Error: ${data['status']}');
+        }
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to get place coordinates: $e');
     }
   }
 }

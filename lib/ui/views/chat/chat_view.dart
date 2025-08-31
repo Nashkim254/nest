@@ -68,12 +68,13 @@ class ChatView extends StackedView<ChatViewModel> {
         title: Row(
           children: [
             InkWell(
-              onTap: ()=> viewModel.goToOtherProfile(otherUser!.id!),
+              onTap: () => viewModel.goToOtherProfile(otherUser!.id!),
               child: CircleAvatar(
                 radius: 20,
-                backgroundImage: displayAvatar != null && displayAvatar.isNotEmpty
-                    ? NetworkImage(displayAvatar)
-                    : null,
+                backgroundImage:
+                    displayAvatar != null && displayAvatar.isNotEmpty
+                        ? NetworkImage(displayAvatar)
+                        : null,
                 backgroundColor: kcPrimaryColor,
                 child: displayAvatar == null || displayAvatar.isEmpty
                     ? Text(
@@ -271,8 +272,10 @@ class ChatView extends StackedView<ChatViewModel> {
                             builder: (context) => CustomEmojiPicker(
                               onEmojiSelected: (emoji) {
                                 // Add emoji to text field
-                                final currentText = viewModel.messageController.text;
-                                final selection = viewModel.messageController.selection;
+                                final currentText =
+                                    viewModel.messageController.text;
+                                final selection =
+                                    viewModel.messageController.selection;
 
                                 final newText = currentText.replaceRange(
                                   selection.start,
@@ -281,11 +284,13 @@ class ChatView extends StackedView<ChatViewModel> {
                                 );
 
                                 viewModel.messageController.text = newText;
-                                viewModel.messageController.selection = TextSelection.collapsed(
+                                viewModel.messageController.selection =
+                                    TextSelection.collapsed(
                                   offset: selection.start + emoji.length,
                                 );
 
-                                Navigator.pop(context); // Close the emoji picker
+                                Navigator.pop(
+                                    context); // Close the emoji picker
                               },
                             ),
                           );

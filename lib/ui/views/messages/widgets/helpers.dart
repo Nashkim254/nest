@@ -1,11 +1,10 @@
-
 import '../../../../models/message_models.dart';
 
 extension ConversationHelpers on Conversation {
   /// Get the other participant in a conversation (excluding current user)
   User? getOtherParticipant(int currentUserId) {
     return participants.firstWhere(
-          (participant) => participant.id != currentUserId,
+      (participant) => participant.id != currentUserId,
       orElse: () => const User(), // Return empty user if not found
     );
   }
@@ -36,17 +35,23 @@ extension ConversationHelpers on Conversation {
 
   /// Get all other participants (excluding current user)
   List<User> getOtherParticipants(int currentUserId) {
-    return participants.where((participant) => participant.id != currentUserId).toList();
+    return participants
+        .where((participant) => participant.id != currentUserId)
+        .toList();
   }
 
   /// Check if current user is admin (for group chats)
   bool isCurrentUserAdmin(int currentUserId) {
     return adminIds?.contains(currentUserId) ?? false;
   }
+
   int getUnreadCount(int currentUserId) {
-    return messages.where((message) =>
-    message.senderId != currentUserId && !message.isRead).length;
+    return messages
+        .where(
+            (message) => message.senderId != currentUserId && !message.isRead)
+        .length;
   }
+
   /// Get the last message preview text
   String get lastMessagePreview {
     final lastMessage = messages.isNotEmpty ? messages.last : null;
@@ -67,8 +72,6 @@ extension ConversationHelpers on Conversation {
     }
   }
 }
-
-
 
 extension MessageHelpers on Message {
   /// Check if message is sent by current user

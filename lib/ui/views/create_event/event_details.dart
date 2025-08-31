@@ -72,15 +72,105 @@ class EventDetails extends StatelessWidget {
                 ),
               ),
               verticalSpaceSmall,
-              TextFormField(
-                style: titleTextMedium.copyWith(fontSize: 16),
-                controller: viewModel.eventLocationController,
-                validator: (value) => Validators.validateRequired(value),
-                decoration: AppInputDecoration.standard(
-                  hintText: "e.g., 'The Warehouse, Brooklyn'",
-                  filled: true,
-                ),
+              // Location TextField with Places API integration
+              Stack(
+                children: [
+                  TextFormField(
+                    style: titleTextMedium.copyWith(fontSize: 16),
+                    onChanged: viewModel.updateSearchQuery,
+                    controller: viewModel.eventLocationController,
+                    validator: (value) => Validators.validateRequired(value),
+                    decoration: AppInputDecoration.standard(
+                      hintText: "e.g., 'The Warehouse, Brooklyn'",
+                      filled: true,
+                      suffixIcon: viewModel.searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon:
+                                  const Icon(Icons.clear, color: kcWhiteColor),
+                              onPressed: viewModel.clearSearchResults,
+                            )
+                          : const Icon(Icons.location_on, color: kcWhiteColor),
+                    ),
+                  ),
+
+                  // Loading indicator overlay
+                  if (viewModel.isSearching)
+                    const Positioned(
+                      right: 50,
+                      top: 12,
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(kcPrimaryColor),
+                        ),
+                      ),
+                    ),
+                ],
               ),
+
+              // Places search results dropdown
+              if (viewModel.searchResults.isNotEmpty &&
+                  !viewModel.isSearching)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    color: kcStepperColor,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: kcPrimaryColor.withOpacity(0.3)),
+                  ),
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: viewModel.searchResults.length,
+                    itemBuilder: (context, index) {
+                      final place = viewModel.searchResults[index];
+                      return ListTile(
+                        dense: true,
+                        leading: const Icon(
+                          Icons.location_on,
+                          color: kcPrimaryColor,
+                          size: 20,
+                        ),
+                        title: Text(
+                          place.mainText ?? place.description,
+                          style: titleTextMedium.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: kcWhiteColor,
+                          ),
+                        ),
+                        subtitle: place.secondaryText != null
+                            ? Text(
+                                place.secondaryText!,
+                                style: titleTextMedium.copyWith(
+                                  fontSize: 12,
+                                  color: kcWhiteColor.withOpacity(0.7),
+                                ),
+                              )
+                            : null,
+                        onTap: () => viewModel.selectPlace(place),
+                        trailing: viewModel.isLoadingCoordinates
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      kcPrimaryColor),
+                                ),
+                              )
+                            : Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                                color: kcWhiteColor.withOpacity(0.7),
+                              ),
+                      );
+                    },
+                  ),
+                ),
               verticalSpaceMedium,
               Text(
                 'Event Mode',

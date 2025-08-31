@@ -9,6 +9,7 @@ import 'package:nest/services/social_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:path/path.dart' as p;
+import 'package:video_player/video_player.dart';
 import '../../../app/app.bottomsheets.dart';
 import '../../../services/file_service.dart';
 import '../../../services/global_service.dart';
@@ -24,6 +25,25 @@ class CreatePostViewModel extends ReactiveViewModel {
   getUser() {
     var user = locator<SharedPreferencesService>().getUserInfo();
     profile = Profile.fromJson(user!);
+    notifyListeners();
+  }
+
+  late VideoPlayerController _controller;
+  bool isInitialized = false;
+  bool isVideoByExtension(File file) {
+    final extension = file.path.toLowerCase().split('.').last;
+    const videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', '3gp'];
+    return videoExtensions.contains(extension);
+  }
+
+  Future<void> _initializeVideo(File file) async {
+    _controller = VideoPlayerController.file(file);
+    await _controller.initialize();
+
+    // Seek to a specific time to get thumbnail (e.g., 1 second)
+    await _controller.seekTo(const Duration(seconds: 1));
+
+    isInitialized = true;
     notifyListeners();
   }
 
@@ -53,7 +73,16 @@ class CreatePostViewModel extends ReactiveViewModel {
           break;
       }
       if (selectedImages.isNotEmpty) {
-        if (fileType == FileType.video) {
+        bool hasVideo = false;
+        for (var file in selectedImages) {
+          if (isVideoByExtension(file)) {
+            await _initializeVideo(file);
+            hasVideo = true;
+            break; // Found at least one video, no need to continue
+          }
+        }
+
+        if (hasVideo) {
           await getSignedURL();
           return;
         }
@@ -166,7 +195,13 @@ class CreatePostViewModel extends ReactiveViewModel {
 
   void removeImage(int index) {
     if (index >= 0 && index < selectedImages.length) {
-      selectedImages.removeAt(index);
+      final file = selectedImages[index];
+
+      // If using video_player method, you might want to dispose controllers
+      // but since each VideoThumbnailWidget manages its own controller,
+      // it will dispose automatically when the widget is removed
+
+      fileService.removeAt(index);
       uploadImageUrls.removeAt(index);
       notifyListeners();
     }

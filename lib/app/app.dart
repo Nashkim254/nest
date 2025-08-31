@@ -63,6 +63,7 @@ import 'package:nest/services/comments_service.dart';
 import 'package:nest/ui/views/analytics/analytics_view.dart';
 import 'package:nest/ui/views/ticket_scanning/ticket_scanning_view.dart';
 import 'package:nest/ui/views/manage_events/manage_events_view.dart';
+import 'package:nest/services/shared_coordinates_service.dart';
 // @stacked-import
 
 @StackedApp(
@@ -124,6 +125,7 @@ import 'package:nest/ui/views/manage_events/manage_events_view.dart';
     LazySingleton(classType: StripeService),
     LazySingleton(classType: SocialService),
     LazySingleton(classType: CommentsService),
+    LazySingleton(classType: SharedCoordinatesService),
 // @stacked-service
   ],
   bottomsheets: [

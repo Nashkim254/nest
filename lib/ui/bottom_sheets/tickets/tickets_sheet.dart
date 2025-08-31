@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -9,14 +10,18 @@ import 'tickets_sheet_model.dart';
 class TicketsSheet extends StackedView<TicketsSheetModel> {
   final Function(SheetResponse response)? completer;
   final SheetRequest request;
+
   const TicketsSheet({
     Key? key,
     required this.completer,
     required this.request,
   }) : super(key: key);
+
   @override
   void onViewModelReady(TicketsSheetModel viewModel) {
-    viewModel.init(request.data['ticket']);
+    // Pass either single ticket or array of tickets
+    final ticketData = request.data['tickets'] ?? request.data['ticket'];
+    viewModel.init(ticketData, completer);
     super.onViewModelReady(viewModel);
   }
 
@@ -28,7 +33,8 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
   ) {
     return SafeArea(
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height *
+            0.8, // Increased height for multiple tickets
         decoration: const BoxDecoration(
           color: Color(0xFF2A2A2A),
           borderRadius: BorderRadius.only(
@@ -38,8 +44,9 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
         ),
         child: Column(
           children: [
-            _buildHeader(context),
+            _buildHeader(context, viewModel),
             _buildTicketsList(viewModel),
+            if (viewModel.hasSelectedTickets) _buildSummary(viewModel),
             _buildCheckoutButton(viewModel),
           ],
         ),
@@ -47,19 +54,34 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, TicketsSheetModel viewModel) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            'Select Your Ticket',
-            style: TextStyle(
-              color: kcWhiteColor,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                viewModel.tickets.length > 1
+                    ? 'Select Your Tickets'
+                    : 'Select Your Ticket',
+                style: const TextStyle(
+                  color: kcWhiteColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              if (viewModel.tickets.length > 1)
+                Text(
+                  '${viewModel.tickets.length} ticket types available',
+                  style: const TextStyle(
+                    color: Color(0xFF999999),
+                    fontSize: 14,
+                  ),
+                ),
+            ],
           ),
           IconButton(
             onPressed: () => Navigator.pop(context),
@@ -80,52 +102,125 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            _buildTicketOption(viewModel, request.data['ticket']),
-            const Spacer(),
-          ],
+        child: ListView.builder(
+          itemCount: viewModel.tickets.length,
+          itemBuilder: (context, index) {
+            final ticket = viewModel.tickets[index];
+            return _buildTicketOption(viewModel, ticket, index);
+          },
         ),
       ),
     );
   }
 
   Widget _buildTicketOption(
-      TicketsSheetModel viewModel, Map<String, dynamic> ticket) {
-    final quantity = viewModel.getQuantity(ticket['index'].toString());
-    final isSelected = viewModel.isSelected(ticket['index'].toString());
+      TicketsSheetModel viewModel, Map<String, dynamic> ticket, int index) {
+    final ticketId = ticket['index']?.toString() ?? index.toString();
+    final quantity = viewModel.getQuantity(ticketId);
+    final isSelected = viewModel.isSelected(ticketId);
+    final isAvailable = ticket['available'] ?? true;
+    final requiresPassword = ticket['password_required'] ?? false;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Row(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? kcPrimaryColor.withOpacity(0.1)
+            : const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(12),
+        border: isSelected ? Border.all(color: kcPrimaryColor, width: 1) : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ticket['name'],
-                  style: const TextStyle(
-                    color: kcWhiteColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          ticket['name'] ?? 'Unnamed Ticket',
+                          style: const TextStyle(
+                            color: kcWhiteColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (requiresPassword) ...[
+                          horizontalSpaceTiny,
+                          Icon(
+                            Icons.lock,
+                            size: 16,
+                            color: kcPrimaryColor,
+                          ),
+                        ],
+                      ],
+                    ),
+                    verticalSpaceTiny,
+                    Text(
+                      ticket['type'] == 'free' || ticket['price'] == 0
+                          ? 'Free'
+                          : 'KSH ${ticket['price']}',
+                      style: TextStyle(
+                        color: ticket['type'] == 'free' || ticket['price'] == 0
+                            ? Colors.green
+                            : kcPrimaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (ticket['description'] != null &&
+                        ticket['description'].isNotEmpty) ...[
+                      verticalSpaceTiny,
+                      Text(
+                        ticket['description'],
+                        style: const TextStyle(
+                          color: Color(0xFF999999),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                    if (ticket['limit'] != null) ...[
+                      verticalSpaceTiny,
+                      Text(
+                        'Limit: ${ticket['limit']} per person',
+                        style: const TextStyle(
+                          color: Color(0xFF666666),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  ticket['price'].toString(),
-                  style: const TextStyle(
-                    color: Color(0xFF999999),
-                    fontSize: 14,
+              ),
+              if (!isAvailable)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.red, width: 1),
                   ),
-                ),
-              ],
-            ),
+                  child: const Text(
+                    'Sold Out',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              else if (isSelected)
+                _buildQuantitySelector(viewModel, ticketId, quantity)
+              else
+                _buildSelectButton(viewModel, ticketId),
+            ],
           ),
-          isSelected
-              ? _buildQuantitySelector(
-                  viewModel, ticket['index'].toString(), quantity)
-              : _buildSelectButton(viewModel, ticket['index'].toString()),
         ],
       ),
     );
@@ -204,29 +299,129 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
     );
   }
 
+  Widget _buildSummary(TicketsSheetModel viewModel) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF333333),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: kcPrimaryColor.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Order Summary',
+            style: TextStyle(
+              color: kcWhiteColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          verticalSpaceSmall,
+          ...viewModel.getSelectedTicketsDetails().map(
+                (ticket) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${ticket['name']} x${ticket['selected_quantity']}',
+                          style: const TextStyle(
+                            color: Color(0xFF999999),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'KSH ${ticket['subtotal']}',
+                        style: const TextStyle(
+                          color: kcWhiteColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          const Divider(color: Color(0xFF555555)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total (${viewModel.totalQuantity} tickets)',
+                style: const TextStyle(
+                  color: kcWhiteColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                'KSH ${viewModel.totalPrice}',
+                style: const TextStyle(
+                  color: kcPrimaryColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildCheckoutButton(TicketsSheetModel viewModel) {
+    final hasPasswordProtectedTickets = viewModel.hasSelectedTickets &&
+        viewModel
+            .getSelectedTicketsDetails()
+            .any((ticket) => ticket['password_required'] == true);
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(20),
-      child: ElevatedButton(
-        onPressed: viewModel.hasSelectedTickets ? viewModel.checkout : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: kcPrimaryColor,
-          disabledBackgroundColor: const Color(0xFF444444),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+      child: Column(
+        children: [
+          if (hasPasswordProtectedTickets)
+            Container(
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: kcPrimaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: kcPrimaryColor.withOpacity(0.3)),
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.lock,
+                    size: 16,
+                    color: kcPrimaryColor,
+                  ),
+                  horizontalSpaceTiny,
+                  Expanded(
+                    child: Text(
+                      'Some selected tickets require password verification',
+                      style: TextStyle(
+                        color: kcWhiteColor,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          AppButton(
+            onTap: () =>
+                viewModel.hasSelectedTickets ? viewModel.checkout() : null,
+            labelText: viewModel.hasSelectedTickets
+                ? 'Checkout - KSH ${viewModel.totalPrice}'
+                : 'Select Tickets',
           ),
-          elevation: 0,
-        ),
-        child: const Text(
-          'Checkout',
-          style: TextStyle(
-            color: kcWhiteColor,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        ],
       ),
     );
   }

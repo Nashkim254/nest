@@ -128,7 +128,7 @@ class EventVisuals extends StatelessWidget {
                       ),
                     ),
                     verticalSpaceMedium,
-                    buildThemeSelection(viewModel),
+                    buildThemeSelection(viewModel, context),
                   ],
                 ),
               ),
@@ -800,28 +800,47 @@ Widget _buildAddPhotosButton(CreateEventViewModel viewModel) {
   );
 }
 
-Widget buildThemeSelection(CreateEventViewModel viewModel) {
+Widget buildThemeSelection(
+    CreateEventViewModel viewModel, BuildContext context) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: List.generate(
       viewModel.themeColors.length,
-      (index) => InkWell(
-        onTap: () => viewModel.selectThemeColorByIndex(index),
-        child: Container(
-          width: 50,
-          height: 50,
-          margin: const EdgeInsets.all(4.0),
-          decoration: BoxDecoration(
-            color: viewModel.themeColors[index],
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(
-              color: viewModel.selectedThemeIndex == index
-                  ? kcTertiaryColor
-                  : Colors.transparent,
-              width: 2.0,
+      (index) => Row(
+        children: [
+          InkWell(
+            onTap: () => viewModel.selectThemeColorByIndex(index),
+            child: Container(
+              width: 50,
+              height: 50,
+              margin: const EdgeInsets.all(4.0),
+              decoration: BoxDecoration(
+                color: viewModel.themeColors[index],
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  color: viewModel.selectedThemeIndex == index
+                      ? kcTertiaryColor
+                      : Colors.transparent,
+                  width: 2.0,
+                ),
+              ),
             ),
           ),
-        ),
+          horizontalSpaceSmall,
+          if (index == viewModel.themeColors.length - 1)
+            InkWell(
+              onTap: () => viewModel.pickColor(context),
+              child: Container(
+                width: 50,
+                height: 50,
+                color: kcGrey3Color,
+                child: const Icon(
+                  Icons.add,
+                  color: kcDisableIconColor,
+                ),
+              ),
+            ),
+        ],
       ),
     ),
   );

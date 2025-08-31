@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_webview_window
-  emoji_picker_flutter
   file_selector_linux
   gtk
   url_launcher_linux

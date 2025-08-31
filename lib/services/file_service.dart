@@ -21,6 +21,12 @@ class FileService with ListenableServiceMixin {
     _selectedImages.clear();
     notifyListeners();
   }
+
+  removeAt(int index) {
+    _selectedImages.removeAt(index);
+    notifyListeners();
+  }
+
   Future<void> pickImageFromCamera(FileType fileType) async {
     try {
       bool hasPermission = await _imageService.requestPermissions();

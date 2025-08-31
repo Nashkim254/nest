@@ -15,7 +15,7 @@ class MessagesViewModel extends BaseViewModel {
   final MessageService _messagingService = locator<MessageService>();
   final bottomSheet = locator<BottomSheetService>();
   int currentUserId = locator<SharedPreferencesService>().getUserInfo()!['id'];
-  bool isSender  = true;
+  bool isSender = true;
   goToChatDetail(Conversation chat) {
     locator<NavigationService>()
         .navigateTo(Routes.chatView, arguments: ChatViewArguments(chat: chat));
@@ -32,7 +32,8 @@ class MessagesViewModel extends BaseViewModel {
     try {
       final response = await _messagingService.fetchConversations();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint('Conversations fetched successfully: ${response.data}', wrapWidth: 1024);
+        debugPrint('Conversations fetched successfully: ${response.data}',
+            wrapWidth: 1024);
         final conversationsList = response.data['conversations'] ?? [];
 
         final parsedConversations = conversationsList

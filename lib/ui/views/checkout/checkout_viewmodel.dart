@@ -16,17 +16,64 @@ import '../../common/app_enums.dart';
 
 class CheckoutViewModel extends BaseViewModel {
   final eventService = locator<EventService>();
-  TicketItem? _ticket;
-  init(Map<dynamic, dynamic> ticketInfo) {
-    _ticket = TicketItem(
-      name: ticketInfo['name'],
-      price: double.parse(ticketInfo['price'].toString()),
-      quantity: int.parse(ticketInfo['quantity'].toString()),
-    );
+  final Logger logger = Logger();
+
+  // Support both single and multiple tickets
+  List<TicketItem> _tickets = [];
+  bool _isMultipleTickets = false;
+  bool _requiresPassword = false;
+  bool _isMixedProtection = false;
+
+  List<TicketItem> get tickets => _tickets;
+  bool get isMultipleTickets => _isMultipleTickets;
+  bool get requiresPassword => _requiresPassword;
+  bool get isMixedProtection => _isMixedProtection;
+
+  // Legacy support - get first ticket for single ticket scenarios
+  TicketItem get ticket => _tickets.isNotEmpty
+      ? _tickets.first
+      : TicketItem(name: '', price: 0, quantity: 0);
+
+  void init(Map<dynamic, dynamic> ticketInfo) {
+    if (ticketInfo.containsKey('tickets')) {
+      // New multi-ticket format
+      _isMultipleTickets = true;
+      _requiresPassword = ticketInfo['requires_password'] ?? false;
+      _isMixedProtection = ticketInfo['is_mixed_protection'] ?? false;
+
+      final ticketsData = ticketInfo['tickets'] as List<Map<String, dynamic>>;
+      _tickets = ticketsData
+          .map((ticketData) => TicketItem(
+                name: ticketData['name'] ?? '',
+                price: double.parse(ticketData['price'].toString()),
+                quantity: ticketData['selected_quantity'] ?? 1,
+                passwordRequired: ticketData['password_required'] ?? false,
+                ticketId: ticketData['id']?.toString(),
+                index: ticketData['index'],
+                type: ticketData['type'] ?? 'paid',
+              ))
+          .toList();
+
+      logger.i('Initialized with ${_tickets.length} tickets');
+      logger.i('Requires password: $_requiresPassword');
+      logger.i('Mixed protection: $_isMixedProtection');
+    } else {
+      // Legacy single ticket format
+      _isMultipleTickets = false;
+      _tickets = [
+        TicketItem(
+          name: ticketInfo['name'] ?? '',
+          price: double.parse(ticketInfo['price'].toString()),
+          quantity: int.parse(ticketInfo['quantity'].toString()),
+          passwordRequired: ticketInfo['password_required'] ?? false,
+          ticketId: ticketInfo['id']?.toString(),
+          type: ticketInfo['type'] ?? 'paid',
+        )
+      ];
+    }
+
     notifyListeners();
   }
-
-  TicketItem get ticket => _ticket!;
 
   // Agreement states
   bool _agreeWithNestTOS = false;
@@ -80,20 +127,48 @@ class CheckoutViewModel extends BaseViewModel {
   ConfirmationMethod? get selectedConfirmationMethod =>
       _selectedConfirmationMethod;
 
-  // Order calculations
-  double get subtotal => _ticket!.totalPrice;
-  double get serviceFee => 0.0;
+  // Order calculations - now supports multiple tickets
+  double get subtotal =>
+      _tickets.fold(0.0, (sum, ticket) => sum + ticket.totalPrice);
+  double get serviceFee => subtotal * 0.05; // 5% service fee
   double get total => subtotal + serviceFee;
 
-  // Actions
+  int get totalQuantity =>
+      _tickets.fold(0, (sum, ticket) => sum + ticket.quantity);
+
+  // Actions for single ticket (legacy support)
   void incrementQuantity() {
-    _ticket!.quantity++;
-    notifyListeners();
+    if (_tickets.isNotEmpty) {
+      _tickets.first.quantity++;
+      notifyListeners();
+    }
   }
 
   void decrementQuantity() {
-    if (_ticket!.quantity > 1) {
-      _ticket!.quantity--;
+    if (_tickets.isNotEmpty && _tickets.first.quantity > 1) {
+      _tickets.first.quantity--;
+      notifyListeners();
+    }
+  }
+
+  // Actions for multiple tickets
+  void incrementTicketQuantity(int ticketIndex) {
+    if (ticketIndex < _tickets.length) {
+      _tickets[ticketIndex].quantity++;
+      notifyListeners();
+    }
+  }
+
+  void decrementTicketQuantity(int ticketIndex) {
+    if (ticketIndex < _tickets.length && _tickets[ticketIndex].quantity > 1) {
+      _tickets[ticketIndex].quantity--;
+      notifyListeners();
+    }
+  }
+
+  void removeTicket(int ticketIndex) {
+    if (ticketIndex < _tickets.length && _tickets.length > 1) {
+      _tickets.removeAt(ticketIndex);
       notifyListeners();
     }
   }
@@ -122,14 +197,140 @@ class CheckoutViewModel extends BaseViewModel {
     return _agreeWithNestTOS &&
         _agreeWithOrgTOS &&
         _selectedPaymentMethod != null &&
-        _selectedConfirmationMethod != null;
+        _selectedConfirmationMethod != null &&
+        _tickets.isNotEmpty;
   }
 
   void confirmAndGetTicket() async {
     if (canProceedToPayment) {
-      createBooking().then((val) async {
-        await processPayment(val!);
-      });
+      if (_requiresPassword || _isMixedProtection) {
+        await _handlePasswordVerification();
+      } else {
+        await _proceedWithBooking();
+      }
+    }
+  }
+
+  Future<void> _handlePasswordVerification() async {
+    // Check which tickets need password
+    final passwordTickets = _tickets.where((t) => t.passwordRequired).toList();
+    final openTickets = _tickets.where((t) => !t.passwordRequired).toList();
+
+    if (passwordTickets.isNotEmpty) {
+      // Show password verification dialog/screen
+      final response = await dialogService.showCustomDialog(
+        variant: DialogType.passwordProtected,
+        title: 'Password Required',
+        description: 'Some tickets require password verification',
+        data: {
+          'password_tickets': passwordTickets.map((t) => t.toMap()).toList(),
+          'open_tickets': openTickets.map((t) => t.toMap()).toList(),
+        },
+      );
+
+      if (response?.confirmed == true) {
+        await _proceedWithBooking();
+      }
+    } else {
+      await _proceedWithBooking();
+    }
+  }
+
+  Future<void> _proceedWithBooking() async {
+    try {
+      if (_isMultipleTickets) {
+        await _createMultipleBookings();
+      } else {
+        final bookingId = await createBooking();
+        if (bookingId != null) {
+          await processPayment(bookingId);
+        }
+      }
+    } catch (e) {
+      logger.e('Error in booking process: $e');
+      _showErrorDialog('Failed to create booking: $e');
+    }
+  }
+
+  Future<void> _createMultipleBookings() async {
+    setBusy(true);
+
+    try {
+      final int? eventId =
+          locator<SharedPreferencesService>().getInt('eventId');
+      final List<int> bookingIds = [];
+
+      // Create booking for each ticket type
+      for (final ticket in _tickets) {
+        final body = {
+          'ticket_id': ticket.ticketId,
+          'quantity': ticket.quantity,
+          'description': 'Booking for ${ticket.name}',
+          'password_required': ticket.passwordRequired,
+        };
+
+        logger.i('Creating booking: $body');
+
+        final response = await eventService.createBooking(
+          eventId: eventId!,
+          requestBody: body,
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          bookingIds.add(response.data['id']);
+        } else {
+          throw ApiException(response.message ??
+              'Failed to create booking for ${ticket.name}');
+        }
+      }
+
+      // Process payment for all bookings
+      if (bookingIds.isNotEmpty) {
+        await _processMultiplePayments(bookingIds);
+      }
+    } catch (e, s) {
+      logger.e('Error creating multiple bookings: $e');
+      logger.e(s.toString());
+      _showErrorDialog('Failed to create bookings: $e');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  Future<void> _processMultiplePayments(List<int> bookingIds) async {
+    try {
+      // You can either:
+      // 1. Process as one combined payment
+      final combinedResult = await _paymentService.processPayment(
+        amount: total,
+        currency: _selectedCurrency,
+        bookingId: bookingIds.first, // Use first booking ID as reference
+        provider: 'stripe',
+        metadata: {
+          'source': 'mobile_app',
+          'booking_ids': bookingIds,
+          'ticket_count': _tickets.length,
+          'total_quantity': totalQuantity,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+
+      _lastPaymentResult = combinedResult;
+
+      if (combinedResult.success) {
+        _showSuccessDialog();
+      } else {
+        _showErrorDialog(combinedResult.message ?? 'Payment failed');
+      }
+
+      // 2. Or process separate payments for each booking
+      // for (final bookingId in bookingIds) {
+      //   final ticketForBooking = _tickets[bookingIds.indexOf(bookingId)];
+      //   await processPayment(bookingId, ticketForBooking.totalPrice);
+      // }
+    } catch (e) {
+      logger.e('Error processing payments: $e');
+      _showErrorDialog('Payment processing failed: $e');
     }
   }
 
@@ -145,12 +346,10 @@ class CheckoutViewModel extends BaseViewModel {
   String _selectedCurrency = 'usd';
   PaymentResult? _lastPaymentResult;
 
-  // Getters
   String get selectedCurrency => _selectedCurrency;
   PaymentResult? get lastPaymentResult => _lastPaymentResult;
-  bool get canProcessPayment => ticket.price >= 0.5 && !isBusy;
+  bool get canProcessPayment => total >= 0.5 && !isBusy;
 
-  // Currency options
   final List<String> currencies = ['usd', 'eur', 'gbp'];
 
   void updateCurrency(String currency) {
@@ -159,14 +358,8 @@ class CheckoutViewModel extends BaseViewModel {
   }
 
   Future<void> processPayment(int bookingId) async {
-    if (ticket.price <= 0) {
-      _showError('Please enter an amount');
-      return;
-    }
-
-    final amount = ticket.price;
-    if (amount <= 0) {
-      _showError('Please enter a valid amount');
+    if (total <= 0) {
+      _showError('Invalid amount');
       return;
     }
 
@@ -174,12 +367,14 @@ class CheckoutViewModel extends BaseViewModel {
 
     try {
       final result = await _paymentService.processPayment(
-        amount: amount,
+        amount: total,
         currency: _selectedCurrency,
         bookingId: bookingId,
         provider: 'stripe',
         metadata: {
           'source': 'mobile_app',
+          'ticket_count': _tickets.length,
+          'total_quantity': totalQuantity,
           'timestamp': DateTime.now().toIso8601String(),
         },
       );
@@ -218,7 +413,9 @@ class CheckoutViewModel extends BaseViewModel {
     final response = await dialogService.showCustomDialog(
       variant: DialogType.paymentSuccessful,
       title: 'Payment Successful',
-      description: 'Your payment has been processed successfully!',
+      description: _isMultipleTickets
+          ? 'Your payment for ${_tickets.length} ticket types has been processed successfully!'
+          : 'Your payment has been processed successfully!',
       barrierDismissible: false,
     );
     if (response!.confirmed) {
@@ -235,33 +432,40 @@ class CheckoutViewModel extends BaseViewModel {
     );
   }
 
-  Logger logger = Logger();
+  // Legacy single booking method
   Future<int?> createBooking() async {
+    if (_tickets.isEmpty) return null;
+
     int? bookingId;
     try {
       setBusy(true);
       int? eventId = locator<SharedPreferencesService>().getInt('eventId');
+
+      final firstTicket = _tickets.first;
       Map<String, dynamic> body = {
         'ticket_id': locator<SharedPreferencesService>().getInt('ticketId'),
-        'quantity': ticket.quantity,
-        'description': 'Booking for ${ticket.name}',
+        'quantity': firstTicket.quantity,
+        'description': 'Booking for ${firstTicket.name}',
       };
+
       logger.i('Booking: $body');
       final response = await eventService.createBooking(
           eventId: eventId!, requestBody: body);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('Booking: ${response.data}');
         bookingId = response.data['id'];
         return bookingId;
       } else {
-        throw ApiException(response.message ?? 'Failed to create user');
+        throw ApiException(response.message ?? 'Failed to create booking');
       }
     } catch (e, s) {
       logger.e(s);
+      _showErrorDialog('Failed to create booking: $e');
     } finally {
       setBusy(false);
     }
-    return bookingId!;
+    return bookingId;
   }
 
   @override

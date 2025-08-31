@@ -24,6 +24,7 @@ import '../services/location_service.dart';
 import '../services/message_service.dart';
 import '../services/payment_service.dart';
 import '../services/share_service.dart';
+import '../services/shared_coordinates_service.dart';
 import '../services/shared_preferences_service.dart';
 import '../services/social_service.dart';
 import '../services/stripe_service.dart';
@@ -65,4 +66,5 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => StripeService());
   locator.registerLazySingleton(() => SocialService());
   locator.registerLazySingleton(() => CommentsService());
+  locator.registerLazySingleton(() => SharedCoordinatesService());
 }

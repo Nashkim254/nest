@@ -7,7 +7,6 @@ import 'package:nest/utils/utilities.dart';
 
 import '../../../../models/message_models.dart';
 
-
 class ChatListItem extends StatelessWidget {
   final Conversation chat;
   final int currentUserId; // Add this parameter
@@ -53,13 +52,15 @@ class ChatListItem extends StatelessWidget {
                   : null,
               child: displayAvatar == null || displayAvatar.isEmpty
                   ? Text(
-                displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              )
+                      displayName.isNotEmpty
+                          ? displayName[0].toUpperCase()
+                          : '?',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    )
                   : null,
             ),
             horizontalSpaceMedium,
@@ -125,7 +126,8 @@ class ChatListItem extends StatelessWidget {
                 // Show unread badge only if there are unread messages
                 if (unreadCount > 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     decoration: const BoxDecoration(
                       color: kcPrimaryColor,
                       shape: BoxShape.rectangle,
