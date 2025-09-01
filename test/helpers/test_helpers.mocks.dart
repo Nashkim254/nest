@@ -2727,6 +2727,15 @@ class MockFileService extends _i1.Mock implements _i36.FileService {
       ) as int);
 
   @override
+  dynamic removeAt(int? index) => super.noSuchMethod(
+        Invocation.method(
+          #removeAt,
+          [index],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i13.Future<void> pickImageFromCamera(_i19.FileType? fileType) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -3327,4 +3336,93 @@ class MockCommentsService extends _i1.Mock implements _i44.CommentsService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSharedCoordinatesService extends _i1.Mock
-    implements _i45.SharedCoordinatesService {}
+    implements _i45.SharedCoordinatesService {
+  @override
+  bool get hasCoordinates => (super.noSuchMethod(
+        Invocation.getter(#hasCoordinates),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  int get listenersCount => (super.noSuchMethod(
+        Invocation.getter(#listenersCount),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+
+  @override
+  void updateCoordinates({
+    required double? latitude,
+    required double? longitude,
+    required String? address,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #updateCoordinates,
+          [],
+          {
+            #latitude: latitude,
+            #longitude: longitude,
+            #address: address,
+          },
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void clearCoordinates() => super.noSuchMethod(
+        Invocation.method(
+          #clearCoordinates,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  Map<String, dynamic> toJson() => (super.noSuchMethod(
+        Invocation.method(
+          #toJson,
+          [],
+        ),
+        returnValue: <String, dynamic>{},
+        returnValueForMissingStub: <String, dynamic>{},
+      ) as Map<String, dynamic>);
+
+  @override
+  void listenToReactiveValues(List<dynamic>? reactiveValues) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #listenToReactiveValues,
+          [reactiveValues],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void addListener(void Function()? listener) => super.noSuchMethod(
+        Invocation.method(
+          #addListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeListener(void Function()? listener) => super.noSuchMethod(
+        Invocation.method(
+          #removeListener,
+          [listener],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void notifyListeners() => super.noSuchMethod(
+        Invocation.method(
+          #notifyListeners,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}

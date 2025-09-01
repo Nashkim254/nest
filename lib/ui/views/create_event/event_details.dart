@@ -112,8 +112,7 @@ class EventDetails extends StatelessWidget {
               ),
 
               // Places search results dropdown
-              if (viewModel.searchResults.isNotEmpty &&
-                  !viewModel.isSearching)
+              if (viewModel.searchResults.isNotEmpty && !viewModel.isSearching)
                 Container(
                   margin: const EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(

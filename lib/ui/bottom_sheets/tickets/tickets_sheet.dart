@@ -19,7 +19,6 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
 
   @override
   void onViewModelReady(TicketsSheetModel viewModel) {
-    // Pass either single ticket or array of tickets
     final ticketData = request.data['tickets'] ?? request.data['ticket'];
     viewModel.init(ticketData, completer);
     super.onViewModelReady(viewModel);
@@ -33,8 +32,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
   ) {
     return SafeArea(
       child: Container(
-        height: MediaQuery.of(context).size.height *
-            0.8, // Increased height for multiple tickets
+        height: MediaQuery.of(context).size.height * 0.8,
         decoration: const BoxDecoration(
           color: Color(0xFF2A2A2A),
           borderRadius: BorderRadius.only(
@@ -81,6 +79,16 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                     fontSize: 14,
                   ),
                 ),
+              // Show password protection status
+              if (viewModel.allTicketsPasswordProtected)
+                const Text(
+                  'All tickets require passwords',
+                  style: TextStyle(
+                    color: kcPrimaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
             ],
           ),
           IconButton(
@@ -120,6 +128,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
     final isSelected = viewModel.isSelected(ticketId);
     final isAvailable = ticket['available'] ?? true;
     final requiresPassword = ticket['password_required'] ?? false;
+    final isUnlocked = viewModel.isTicketUnlocked(ticketId);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -127,9 +136,15 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
       decoration: BoxDecoration(
         color: isSelected
             ? kcPrimaryColor.withOpacity(0.1)
-            : const Color(0xFF333333),
+            : requiresPassword && !isUnlocked
+                ? const Color(0xFF333333).withOpacity(0.6) // Dimmed for locked
+                : const Color(0xFF333333),
         borderRadius: BorderRadius.circular(12),
-        border: isSelected ? Border.all(color: kcPrimaryColor, width: 1) : null,
+        border: isSelected
+            ? Border.all(color: kcPrimaryColor, width: 1)
+            : requiresPassword && !isUnlocked
+                ? Border.all(color: kcPrimaryColor.withOpacity(0.3), width: 1)
+                : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,8 +159,10 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                       children: [
                         Text(
                           ticket['name'] ?? 'Unnamed Ticket',
-                          style: const TextStyle(
-                            color: kcWhiteColor,
+                          style: TextStyle(
+                            color: requiresPassword && !isUnlocked
+                                ? kcWhiteColor.withOpacity(0.6)
+                                : kcWhiteColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -153,27 +170,39 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                         if (requiresPassword) ...[
                           horizontalSpaceTiny,
                           Icon(
-                            Icons.lock,
+                            isUnlocked ? Icons.lock_open : Icons.lock,
                             size: 16,
-                            color: kcPrimaryColor,
+                            color: isUnlocked ? Colors.green : kcPrimaryColor,
                           ),
                         ],
                       ],
                     ),
                     verticalSpaceTiny,
-                    Text(
-                      ticket['type'] == 'free' || ticket['price'] == 0
-                          ? 'Free'
-                          : 'KSH ${ticket['price']}',
-                      style: TextStyle(
-                        color: ticket['type'] == 'free' || ticket['price'] == 0
-                            ? Colors.green
-                            : kcPrimaryColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                    if (requiresPassword && !isUnlocked)
+                      const Text(
+                        'Password required',
+                        style: TextStyle(
+                          color: kcPrimaryColor,
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      )
+                    else
+                      Text(
+                        ticket['type'] == 'free' || ticket['price'] == 0
+                            ? 'Free'
+                            : 'KSH ${ticket['price']}',
+                        style: TextStyle(
+                          color:
+                              ticket['type'] == 'free' || ticket['price'] == 0
+                                  ? Colors.green
+                                  : kcPrimaryColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    if (ticket['description'] != null &&
+                    if (isUnlocked &&
+                        ticket['description'] != null &&
                         ticket['description'].isNotEmpty) ...[
                       verticalSpaceTiny,
                       Text(
@@ -184,7 +213,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                         ),
                       ),
                     ],
-                    if (ticket['limit'] != null) ...[
+                    if (isUnlocked && ticket['limit'] != null) ...[
                       verticalSpaceTiny,
                       Text(
                         'Limit: ${ticket['limit']} per person',
@@ -197,24 +226,26 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                   ],
                 ),
               ),
-              if (!isAvailable)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.red, width: 1),
-                  ),
-                  child: const Text(
-                    'Sold Out',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
+              // if (!isAvailable)
+              //   Container(
+              //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              //     decoration: BoxDecoration(
+              //       color: Colors.red.withOpacity(0.2),
+              //       borderRadius: BorderRadius.circular(16),
+              //       border: Border.all(color: Colors.red, width: 1),
+              //     ),
+              //     child: const Text(
+              //       'Sold Out',
+              //       style: TextStyle(
+              //         color: Colors.red,
+              //         fontSize: 12,
+              //         fontWeight: FontWeight.w500,
+              //       ),
+              //     ),
+              //   )
+              // else
+              if (requiresPassword && !isUnlocked)
+                _buildUnlockButton(viewModel, ticketId)
               else if (isSelected)
                 _buildQuantitySelector(viewModel, ticketId, quantity)
               else
@@ -222,6 +253,33 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildUnlockButton(TicketsSheetModel viewModel, String ticketId) {
+    return ElevatedButton.icon(
+      onPressed: () => viewModel.requestPasswordForTicket(ticketId),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: kcPrimaryColor,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        elevation: 0,
+      ),
+      icon: const Icon(
+        Icons.lock_open,
+        color: kcWhiteColor,
+        size: 16,
+      ),
+      label: const Text(
+        'Unlock',
+        style: TextStyle(
+          color: kcWhiteColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
@@ -397,14 +455,14 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
               child: const Row(
                 children: [
                   Icon(
-                    Icons.lock,
+                    Icons.lock_open,
                     size: 16,
-                    color: kcPrimaryColor,
+                    color: Colors.green,
                   ),
                   horizontalSpaceTiny,
                   Expanded(
                     child: Text(
-                      'Some selected tickets require password verification',
+                      'Selected tickets have been unlocked and verified',
                       style: TextStyle(
                         color: kcWhiteColor,
                         fontSize: 12,

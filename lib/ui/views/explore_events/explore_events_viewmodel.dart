@@ -10,6 +10,7 @@ import '../../../services/event_service.dart';
 
 class ExploreEventsViewModel extends BaseViewModel {
   final searchController = TextEditingController();
+  final passwordController = TextEditingController();
   String _searchQuery = '';
   final searchFocusNode = FocusNode();
 
@@ -24,12 +25,20 @@ class ExploreEventsViewModel extends BaseViewModel {
   int size = 10;
   List<Event> upcomingEvents = [];
 
-  // Add these new properties
   bool _isLoadingMore = false;
   bool _hasMoreData = true;
+  bool _showPasswordDialogState = false;
+  bool _showPassword = false;
+  bool _isValidatingPassword = false;
+  String _passwordError = '';
+  Event? _currentPasswordProtectedEvent;
 
   bool get isLoadingMore => _isLoadingMore;
   bool get hasMoreData => _hasMoreData;
+  bool get showPasswordDialogState => _showPasswordDialogState;
+  bool get showPassword => _showPassword;
+  bool get isValidatingPassword => _isValidatingPassword;
+  String get passwordError => _passwordError;
 
   final eventService = locator<EventService>();
   final navigationService = locator<NavigationService>();
@@ -93,7 +102,6 @@ class ExploreEventsViewModel extends BaseViewModel {
             .whereType<Event>()
             .toList();
 
-        // Check if we have more data
         if (parsedEvents.length < size) {
           _hasMoreData = false;
         }
@@ -103,7 +111,7 @@ class ExploreEventsViewModel extends BaseViewModel {
         } else {
           upcomingEvents = parsedEvents;
         }
-
+        logger.wtf('Upcoming events: ${upcomingEvents.last.toJson()}');
         notifyListeners();
       } else {
         locator<SnackbarService>().showSnackbar(
@@ -150,7 +158,6 @@ class ExploreEventsViewModel extends BaseViewModel {
             .whereType<Event>()
             .toList();
 
-        // Check if we have more data for search results too
         if (parsedEvents.length < size) {
           _hasMoreData = false;
         }
@@ -181,7 +188,6 @@ class ExploreEventsViewModel extends BaseViewModel {
   }
 
   Future<void> onLoadMore() async {
-    // Prevent multiple simultaneous load more calls
     if (_isLoadingMore || !_hasMoreData) {
       return;
     }
@@ -190,17 +196,75 @@ class ExploreEventsViewModel extends BaseViewModel {
     await getUpcomingEvents(isLoadMore: true);
   }
 
+  // Password dialog methods
+  void showPasswordDialog(BuildContext context, Event event) {
+    _currentPasswordProtectedEvent = event;
+    _showPasswordDialogState = true;
+    _passwordError = '';
+    passwordController.clear();
+    notifyListeners();
+  }
+
+  void closePasswordDialog() {
+    _showPasswordDialogState = false;
+    // _currentPasswordProtectedEvent = null;
+    _passwordError = '';
+    _showPassword = false;
+    // passwordController.clear();
+    notifyListeners();
+  }
+
+  void togglePasswordVisibility() {
+    _showPassword = !_showPassword;
+    notifyListeners();
+  }
+
+  Future<void> validatePassword() async {
+    if (passwordController.text.isEmpty) {
+      _passwordError = 'Please enter a password';
+      notifyListeners();
+      return;
+    }
+
+    if (_currentPasswordProtectedEvent == null) {
+      _passwordError = 'Event not found';
+      notifyListeners();
+      return;
+    }
+
+    _isValidatingPassword = true;
+    _passwordError = '';
+    notifyListeners();
+
+    try {
+      closePasswordDialog();
+      logger.wtf(
+          '_currentPasswordProtectedEvent: ${_currentPasswordProtectedEvent!}');
+      navigateToViewEvent(_currentPasswordProtectedEvent!);
+    } catch (e, s) {
+      _passwordError = 'Error validating password. Please try again.';
+      logger.e('Password validation error: $s');
+    } finally {
+      _isValidatingPassword = false;
+      notifyListeners();
+    }
+  }
+
   navigateToCreateEvent() {
     locator<NavigationService>().navigateTo(Routes.createEventView);
   }
 
   navigateToViewEvent(Event event) {
-    locator<NavigationService>().navigateToViewEventView(event: event);
+    locator<NavigationService>().navigateToViewEventView(
+      event: event,
+      password: passwordController.text.trim(),
+    );
   }
 
   @override
   void dispose() {
     searchController.dispose();
+    passwordController.dispose();
     searchFocusNode.dispose();
     super.dispose();
   }

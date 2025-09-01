@@ -15,11 +15,13 @@ import '../../common/ui_helpers.dart';
 import 'view_event_viewmodel.dart';
 
 class ViewEventView extends StackedView<ViewEventViewModel> {
-  const ViewEventView({Key? key, required this.event}) : super(key: key);
+  const ViewEventView({Key? key, required this.event, this.password})
+      : super(key: key);
   final Event event;
+  final String? password;
   @override
   void onViewModelReady(ViewEventViewModel viewModel) {
-    viewModel.init(event);
+    viewModel.init(event, password ?? '');
     super.onViewModelReady(viewModel);
   }
 

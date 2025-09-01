@@ -83,10 +83,11 @@ class ChatViewModel extends ReactiveViewModel {
     SendMessageRequest request = SendMessageRequest(
       messageType: uploadFileUrl.isEmpty ? 'text' : 'file',
       receiverId: receiverId,
-      // conversationId: conversationId,
+      conversationId: conversationId,
       content: content,
       fileUrl: uploadFileUrl.isEmpty ? null : uploadFileUrl,
     );
+    logger.i('request: ${locator<SharedPreferencesService>().getAuthToken()}');
     await sendMessageApi(request);
     // Send through WebSocket
     // final success = await _messagingService.sendMessage(

@@ -6,7 +6,8 @@ import 'dart:io';
 class VideoThumbnailWidget extends StatefulWidget {
   final File videoFile;
 
-  const VideoThumbnailWidget({Key? key, required this.videoFile}) : super(key: key);
+  const VideoThumbnailWidget({Key? key, required this.videoFile})
+      : super(key: key);
 
   @override
   State<VideoThumbnailWidget> createState() => _VideoThumbnailWidgetState();

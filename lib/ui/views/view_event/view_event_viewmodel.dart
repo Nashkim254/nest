@@ -1,5 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
+import 'package:nest/app/app.router.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -32,17 +33,16 @@ class ViewEventViewModel extends BaseViewModel {
   setIsPasswordRequired() {
     if (event!.ticketPricing.any((t) => t.isPasswordProtected == false)) {
       isPasswordProtected =
-          false; // At least one ticket is open, handle individually later
+          false; // This means "at least one ticket is NOT protected"
     } else {
-      isPasswordProtected =
-          true; // All tickets require password, can handle globally
+      isPasswordProtected = true; // This means "ALL tickets ARE protected"
     }
   }
 
-  init(Event event) async {
+  init(Event event, String password) async {
     logger.wtf('$isPasswordProtected');
     await getCurrentLocation();
-    await getSingleEvent(event.id).then(
+    await getSingleEvent(event.id, password).then(
       (_) => setIsPasswordRequired(),
     );
   }
@@ -52,10 +52,12 @@ class ViewEventViewModel extends BaseViewModel {
   Event? event;
   final eventService = locator<EventService>();
   Logger logger = Logger();
-  Future getSingleEvent(int id) async {
+  Future getSingleEvent(int id, String password) async {
+    //X-Event-Password
     setBusy(true);
     try {
-      final response = await eventService.getSingleEvent(id: id);
+      final response =
+          await eventService.getSingleEvent(id: id, password: password);
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('Upcoming Events: ${response.data['event']}');
 
@@ -100,52 +102,106 @@ class ViewEventViewModel extends BaseViewModel {
   final dialogService = locator<DialogService>();
   final bottomSheetService = locator<BottomSheetService>();
   passwordProtected() async {
-    if (isPasswordProtected) {
+    locator<SharedPreferencesService>().setInt('eventId', event!.id);
+    final passwordProtectedTickets = event!.ticketPricing
+        .where((t) => t.isPasswordProtected == true)
+        .toList();
+
+    final totalTickets = event!.ticketPricing.length;
+
+    // Single password-protected ticket → Direct password dialog
+    if (totalTickets == 1 && passwordProtectedTickets.length == 1) {
+      final ticket = passwordProtectedTickets.first;
       final response = await dialogService.showCustomDialog(
         variant: DialogType.passwordProtected,
-        title: 'Type the event password to have purchase the ticket',
+        title: 'Password Required for ${ticket.name ?? 'This Ticket'}',
         description:
-            'This event is password protected. Please enter the password to continue.',
+            'This ticket requires a password. Please enter the password to continue.',
         barrierDismissible: true,
       );
+
       if (response!.confirmed) {
-        logger.i(response.data);
         final password = response.data['password'];
+        final isValid =
+            await validateTicketPassword(password, event!.id, ticket.id);
 
-        await validateTicketPassword(
-          password,
-          event!.id,
-          event!.ticketPricing.first.id,
-        );
-        notifyListeners();
-      } else {
-        locator<SnackbarService>().showSnackbar(
-          message: 'You cancelled the password entry.',
-          duration: const Duration(seconds: 3),
-        );
+        if (isValid) {
+          // Proceed with purchase
+          await _processPurchase(ticket);
+        } else {
+          locator<SnackbarService>().showSnackbar(
+            message: 'Incorrect password for this ticket.',
+            duration: const Duration(seconds: 3),
+          );
+        }
       }
-    } else {
-      final formattedTickets =
-          event!.ticketPricing.asMap().entries.map((entry) {
-        final index = entry.key;
-        final ticket = entry.value;
-
-        return {
-          'index': index,
-          'name': ticket.name ?? '',
-          'price': ticket.price ?? 0.0,
-          'type': ticket.type ?? 'paid',
-          'available': (ticket.quantity ?? 0) > 0,
-          'limit': ticket.quantity ?? 10,
-          'password_required': ticket.isPasswordProtected ?? false,
-          'description': '',
-        };
-      }).toList();
-      final result = await bottomSheetService
-          .showCustomSheet(variant: BottomSheetType.tickets, data: {
-        'tickets': formattedTickets, // Multiple tickets
-      });
     }
+    // Multiple tickets OR single non-protected → Bottom sheet handles everything
+    else {
+      await _showTicketBottomSheet();
+    }
+  }
+
+// Simplified bottom sheet - handles all multi-ticket scenarios
+  Future<void> _showTicketBottomSheet() async {
+    final formattedTickets = event!.ticketPricing.asMap().entries.map((entry) {
+      final index = entry.key;
+      final ticket = entry.value;
+
+      return {
+        'index': index,
+        'id': ticket.id,
+        'event_id': event!.id,
+        'name': ticket.name ?? 'Ticket ${index + 1}',
+        'price': ticket.price ?? 0.0,
+        'type': ticket.type ?? 'paid',
+        'available': (ticket.quantity ?? 0) > 0,
+        'limit': ticket.quantity ?? 10,
+        'password_required': ticket.isPasswordProtected ?? false,
+        'description': '',
+      };
+    }).toList();
+
+    final result = await bottomSheetService
+        .showCustomSheet(variant: BottomSheetType.tickets, data: {
+      'tickets': formattedTickets,
+      'event_id': event!.id,
+    });
+
+    // The enhanced bottom sheet will handle password dialogs internally
+    if (result != null && result.confirmed) {
+      // Checkout data already includes unlocked tickets
+      final checkoutData = result.data;
+      logger.i('Proceeding to checkout: $checkoutData');
+
+      // Navigate to checkout or handle purchase
+      locator<NavigationService>().navigateToCheckoutView(
+        ticketInfo: checkoutData,
+      );
+    }
+  }
+
+// Process purchase for direct single ticket flow
+  Future<void> _processPurchase(dynamic ticket) async {
+    logger.i('Processing purchase for ticket: ${ticket.id}');
+
+    // Create checkout data for single ticket
+    final checkoutData = {
+      'tickets': [
+        {
+          ...ticket.toJson(), // or however you convert ticket to map
+          'selected_quantity': 1,
+          'subtotal': ticket.price ?? 0.0,
+        }
+      ],
+      'total_price': ticket.price ?? 0.0,
+      'total_quantity': 1,
+      'requires_password': false, // Already validated
+    };
+
+    locator<NavigationService>().navigateToCheckoutView(
+      ticketInfo: checkoutData,
+    );
   }
 
   bool isValidating = false;

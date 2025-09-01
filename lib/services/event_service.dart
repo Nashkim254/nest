@@ -31,12 +31,15 @@ class EventService {
     }
   }
 
-  Future getSingleEvent({required int id}) async {
+  Future getSingleEvent({required int id, required String password}) async {
     try {
       final response = await _apiService.get(
         '${AppUrls.events}/$id',
         queryParameters: {
           'id': id,
+        },
+        headers: {
+          'X-Event-Password': password,
         },
       );
 

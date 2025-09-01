@@ -426,8 +426,8 @@ class StackedRouter extends _i1.RouterBase {
     _i25.ViewEventView: (data) {
       final args = data.getArgs<ViewEventViewArguments>(nullOk: false);
       return _i33.MaterialPageRoute<dynamic>(
-        builder: (context) =>
-            _i25.ViewEventView(key: args.key, event: args.event),
+        builder: (context) => _i25.ViewEventView(
+            key: args.key, event: args.event, password: args.password),
         settings: data,
       );
     },
@@ -603,26 +603,31 @@ class ViewEventViewArguments {
   const ViewEventViewArguments({
     this.key,
     required this.event,
+    this.password,
   });
 
   final _i33.Key? key;
 
   final _i37.Event event;
 
+  final String? password;
+
   @override
   String toString() {
-    return '{"key": "$key", "event": "$event"}';
+    return '{"key": "$key", "event": "$event", "password": "$password"}';
   }
 
   @override
   bool operator ==(covariant ViewEventViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key && other.event == event;
+    return other.key == key &&
+        other.event == event &&
+        other.password == password;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ event.hashCode;
+    return key.hashCode ^ event.hashCode ^ password.hashCode;
   }
 }
 
@@ -1048,6 +1053,7 @@ extension NavigatorStateExtension on _i38.NavigationService {
   Future<dynamic> navigateToViewEventView({
     _i33.Key? key,
     required _i37.Event event,
+    String? password,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1055,7 +1061,8 @@ extension NavigatorStateExtension on _i38.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(Routes.viewEventView,
-        arguments: ViewEventViewArguments(key: key, event: event),
+        arguments:
+            ViewEventViewArguments(key: key, event: event, password: password),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -1510,6 +1517,7 @@ extension NavigatorStateExtension on _i38.NavigationService {
   Future<dynamic> replaceWithViewEventView({
     _i33.Key? key,
     required _i37.Event event,
+    String? password,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1517,7 +1525,8 @@ extension NavigatorStateExtension on _i38.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(Routes.viewEventView,
-        arguments: ViewEventViewArguments(key: key, event: event),
+        arguments:
+            ViewEventViewArguments(key: key, event: event, password: password),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

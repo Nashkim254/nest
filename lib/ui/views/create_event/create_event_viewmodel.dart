@@ -293,7 +293,6 @@ class CreateEventViewModel extends ReactiveViewModel {
     notifyListeners();
   }
 
-
   removePerformer(int index) {
     notifyListeners();
   }
