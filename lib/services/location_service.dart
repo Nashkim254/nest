@@ -135,7 +135,6 @@ class LocationService {
           'input': query,
           'key': _apiKey,
           'types': 'establishment|geocode',
-          'components': 'country:us', // Restrict to us, change as needed
         },
       );
 

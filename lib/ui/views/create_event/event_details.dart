@@ -18,7 +18,7 @@ class EventDetails extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
       child: SingleChildScrollView(
         child: Form(
-          key: viewModel.eventDetailsKey,
+          key: viewModel.eventEditDetailsKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,7 +64,7 @@ class EventDetails extends StatelessWidget {
               ),
               verticalSpaceMedium,
               Text(
-                'Location',
+                'Address',
                 style: titleTextMedium.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -78,7 +78,7 @@ class EventDetails extends StatelessWidget {
                   TextFormField(
                     style: titleTextMedium.copyWith(fontSize: 16),
                     onChanged: viewModel.updateSearchQuery,
-                    controller: viewModel.eventLocationController,
+                    controller: viewModel.addressController,
                     validator: (value) => Validators.validateRequired(value),
                     decoration: AppInputDecoration.standard(
                       hintText: "e.g., 'The Warehouse, Brooklyn'",
@@ -171,6 +171,26 @@ class EventDetails extends StatelessWidget {
                   ),
                 ),
               verticalSpaceMedium,
+              Text(
+                'Location Name',
+                style: titleTextMedium.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: kcWhiteColor,
+                ),
+              ),
+              verticalSpaceSmall,
+              TextFormField(
+                style: titleTextMedium.copyWith(fontSize: 16),
+                controller: viewModel.eventLocationController,
+                decoration: AppInputDecoration.standard(
+                  hintText: "Location Name",
+                  filled: true,
+                ),
+                validator: (value) => Validators.validateRequired(value),
+              ),
+              verticalSpaceMedium,
+
               Text(
                 'Event Mode',
                 style: titleTextMedium.copyWith(

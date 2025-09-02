@@ -88,14 +88,14 @@ class ChatViewModel extends ReactiveViewModel {
       fileUrl: uploadFileUrl.isEmpty ? null : uploadFileUrl,
     );
     logger.i('request: ${locator<SharedPreferencesService>().getAuthToken()}');
-    await sendMessageApi(request);
+    // await sendMessageApi(request);
     // Send through WebSocket
-    // final success = await _messagingService.sendMessage(
-    //   receiverId: receiverId,
-    //   content: content,
-    //   conversationId: conversationId,
-    // );
-    //
+    final success = await _messagingService.sendMessage(
+      receiverId: receiverId,
+      content: content,
+      conversationId: conversationId,
+    );
+
     // if (success) {
     //   logger.w('Message sent successfully via WebSocket');
     //   final localMessage = Message(

@@ -30,6 +30,8 @@ class AppUrls {
   //organizations
   static final String organizations = '$baseUrl/organizations';
   static final String myOrganization = '$baseUrl/organizations/me';
+  static final String myOrganizationEvents =
+      '$baseUrl/organizations/all-events';
   static final String searchOrganization = '$baseUrl/organizations/search';
   static final String updateOrganization = '$baseUrl/organizations/update';
 //events

@@ -191,7 +191,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                       Text(
                         ticket['type'] == 'free' || ticket['price'] == 0
                             ? 'Free'
-                            : 'KSH ${ticket['price']}',
+                            : 'USD ${ticket['price']}',
                         style: TextStyle(
                           color:
                               ticket['type'] == 'free' || ticket['price'] == 0
@@ -394,7 +394,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                         ),
                       ),
                       Text(
-                        'KSH ${ticket['subtotal']}',
+                        'USD ${ticket['subtotal']}',
                         style: const TextStyle(
                           color: kcWhiteColor,
                           fontSize: 14,
@@ -418,7 +418,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
                 ),
               ),
               Text(
-                'KSH ${viewModel.totalPrice}',
+                'USD ${viewModel.totalPrice}',
                 style: const TextStyle(
                   color: kcPrimaryColor,
                   fontSize: 18,
@@ -476,7 +476,7 @@ class TicketsSheet extends StackedView<TicketsSheetModel> {
             onTap: () =>
                 viewModel.hasSelectedTickets ? viewModel.checkout() : null,
             labelText: viewModel.hasSelectedTickets
-                ? 'Checkout - KSH ${viewModel.totalPrice}'
+                ? 'Checkout - USD ${viewModel.totalPrice}'
                 : 'Select Tickets',
           ),
         ],

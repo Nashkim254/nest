@@ -244,4 +244,7 @@ class ViewEventViewModel extends BaseViewModel {
       notifyListeners();
     }
   }
+  goToEdit(Event event) {
+    locator<NavigationService>().navigateToEditEventView(event: event);
+  }
 }

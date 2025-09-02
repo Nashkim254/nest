@@ -8,6 +8,7 @@ class CreateEventRequest {
   final double? latitude;
   final double? longitude;
   final String? password;
+  final String? termsAndConditions;
 
   // Event details
   final String flyerUrl;
@@ -39,6 +40,7 @@ class CreateEventRequest {
     required this.ticketPricing,
     required this.guestListEnabled,
     required this.guestListLimit,
+    required this.termsAndConditions,
   });
 
   Map<String, dynamic> toJson() => {
@@ -58,6 +60,7 @@ class CreateEventRequest {
         "ticket_pricing": ticketPricing.map((t) => t.toJson()).toList(),
         "guest_list_enabled": guestListEnabled,
         "guest_list_limit": guestListLimit,
+        "terms_and_conditions": termsAndConditions,
       };
 }
 

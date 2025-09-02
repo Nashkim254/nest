@@ -64,6 +64,9 @@ import 'package:nest/ui/views/analytics/analytics_view.dart';
 import 'package:nest/ui/views/ticket_scanning/ticket_scanning_view.dart';
 import 'package:nest/ui/views/manage_events/manage_events_view.dart';
 import 'package:nest/services/shared_coordinates_service.dart';
+import 'package:nest/ui/views/manage_team/manage_team_view.dart';
+import 'package:nest/ui/views/manage_team/manage_team_view.dart';
+import 'package:nest/ui/views/edit_event/edit_event_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -99,6 +102,8 @@ import 'package:nest/services/shared_coordinates_service.dart';
     MaterialRoute(page: AnalyticsView),
     MaterialRoute(page: TicketScanningView),
     MaterialRoute(page: ManageEventsView),
+    MaterialRoute(page: ManageTeamView),
+    MaterialRoute(page: EditEventView),
 // @stacked-route
   ],
   dependencies: [

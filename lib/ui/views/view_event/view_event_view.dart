@@ -81,16 +81,33 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                                     onPressed: () => Navigator.pop(context),
                                   ),
                                 ),
-                                CircleAvatar(
-                                  backgroundColor:
-                                      kcBlackColor.withOpacity(0.5),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.share_outlined,
-                                      color: kcWhiteColor,
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor:
+                                          kcBlackColor.withOpacity(0.5),
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.share_outlined,
+                                          color: kcWhiteColor,
+                                        ),
+                                        onPressed: () {},
+                                      ),
                                     ),
-                                    onPressed: () {},
-                                  ),
+                                    horizontalSpaceSmall,
+                                    CircleAvatar(
+                                      backgroundColor:
+                                          kcBlackColor.withOpacity(0.5),
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.edit,
+                                          color: kcWhiteColor,
+                                        ),
+                                        onPressed: () =>
+                                            viewModel.goToEdit(event),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -259,8 +276,8 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                         child: FlutterMap(
                           options: MapOptions(
                             center: LatLng(
-                              viewModel.coordinates!.latitude,
-                              viewModel.coordinates!.longitude,
+                              viewModel.event!.latitude,
+                              viewModel.event!.longitude,
                             ),
                             zoom: 16.0,
                           ),
@@ -274,8 +291,8 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                               markers: [
                                 Marker(
                                   point: LatLng(
-                                    viewModel.coordinates!.latitude,
-                                    viewModel.coordinates!.longitude,
+                                    viewModel.event!.latitude,
+                                    viewModel.event!.longitude,
                                   ),
                                   width: 40,
                                   height: 40,

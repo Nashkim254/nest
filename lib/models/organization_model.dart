@@ -112,12 +112,18 @@ class TeamMember {
   int? organizationId;
   String? name;
   String? role;
+  final String? email;
+  final String? avatarUrl;
+  final String? status;
 
   TeamMember({
     this.id,
     this.organizationId,
     this.name,
     this.role,
+    this.email,
+    this.avatarUrl,
+    this.status,
   });
 
   factory TeamMember.fromJson(Map<String, dynamic> json) {
@@ -126,6 +132,9 @@ class TeamMember {
       organizationId: json['organization_id'],
       name: json['name'],
       role: json['role'],
+      email: json['email'],
+      avatarUrl: json['avatar_url'],
+      status: json['status'],
     );
   }
 
@@ -135,6 +144,9 @@ class TeamMember {
       "organization_id": organizationId,
       "name": name,
       "role": role,
+      "avatar_url": avatarUrl,
+      "email": email,
+      "status": status,
     };
   }
 }

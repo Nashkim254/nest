@@ -124,3 +124,4 @@ enum EventFilter {
     }
   }
 }
+enum Environment { development, staging, production }

@@ -5,6 +5,7 @@ import '../app/app.locator.dart';
 import '../models/api_exceptions.dart';
 import '../models/create_event.dart';
 import '../ui/common/app_urls.dart';
+import '../ui/views/edit_event/edit_event_viewmodel.dart';
 import '../ui/views/ticket_scanning/ticket_scanning_viewmodel.dart';
 
 class EventService {
@@ -41,6 +42,24 @@ class EventService {
         headers: {
           'X-Event-Password': password,
         },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateEvent(
+      {required int eventId, required UpdateEventRequest requestBody}) async {
+    try {
+      final response = await _apiService.put(
+        '${AppUrls.updateEvent}/$eventId',
+        data: requestBody.toJson(),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

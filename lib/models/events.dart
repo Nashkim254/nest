@@ -2,6 +2,8 @@ class Event {
   final int passes;
   final int totalTickets;
   final double revenue;
+  final double latitude;
+  final double longitude;
   final int id;
   final String title;
   final String description;
@@ -36,6 +38,7 @@ class Event {
 
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? coordinates;
 
   Event({
     required this.passes,
@@ -67,6 +70,9 @@ class Event {
     required this.paymentSetupComplete,
     required this.createdAt,
     required this.updatedAt,
+    this.latitude = 0.0,
+    this.longitude = 0.0,
+    this.coordinates,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
@@ -106,9 +112,54 @@ class Event {
                 .toList()
             : [], // Handle null going_users - return empty list
         isFavorited: json["is_favorited"],
+        coordinates: json["coordinates"],
         paymentSetupComplete: json["payment_setup_complete"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        latitude: json["coordinates"] == null
+            ? 0.0
+            : json["coordinates"]
+                        .replaceAll('(', '')
+                        .replaceAll(')', '')
+                        .split(',')
+                        .length ==
+                    2
+                ? (json["coordinates"]
+                                .replaceAll('(', '')
+                                .replaceAll(')', '')
+                                .split(',')[1]
+                                .trim() as String?)
+                            ?.isNotEmpty ==
+                        true
+                    ? double.tryParse(json["coordinates"]
+                        .replaceAll('(', '')
+                        .replaceAll(')', '')
+                        .split(',')[1]
+                        .trim())!
+                    : 0.0
+                : 0.0,
+        longitude: json["coordinates"] == null
+            ? 0.0
+            : json["coordinates"]
+                        .replaceAll('(', '')
+                        .replaceAll(')', '')
+                        .split(',')
+                        .length ==
+                    2
+                ? (json["coordinates"]
+                                .replaceAll('(', '')
+                                .replaceAll(')', '')
+                                .split(',')[0]
+                                .trim() as String?)
+                            ?.isNotEmpty ==
+                        true
+                    ? double.tryParse(json["coordinates"]
+                        .replaceAll('(', '')
+                        .replaceAll(')', '')
+                        .split(',')[0]
+                        .trim())!
+                    : 0.0
+                : 0.0,
       );
   Map<String, dynamic> toJson() => {
         "passes": passes,
@@ -140,6 +191,9 @@ class Event {
         "payment_setup_complete": paymentSetupComplete,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
+        "latitude": latitude,
+        "longitude": longitude,
+        "coordinates": coordinates,
       };
   String get formattedDate {
     final months = [
@@ -169,6 +223,23 @@ class Event {
     final period = startTime.hour >= 12 ? 'PM' : 'AM';
 
     return '$weekday, $month $day, $year - $hour:$minute $period';
+  }
+
+  List formatCoordinates() {
+//coordinates: (-122.084,37.421998)
+    if (coordinates == null || coordinates!.isEmpty) return [0, 0];
+    final coords = coordinates!
+        .replaceAll('(', '')
+        .replaceAll(')', '')
+        .split(',')
+        .map((e) => e.trim())
+        .toList();
+    if (coords.length != 2) return [0, 0];
+    final lon = double.tryParse(coords[0]);
+    final lat = double.tryParse(coords[1]);
+    if (lon == null || lat == null) return [0, 0];
+    return [lat, lon];
+    // return 'Lat: ${lat.toStringAsFixed(4)}, Lon: ${lon.toStringAsFixed(4)}';
   }
 }
 

@@ -122,17 +122,17 @@ class TicketsSheetModel extends BaseViewModel {
           password: password, eventId: eventId, ticketId: ticketId);
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.w(response.data['ticket']);
-        logger.i('Ticket id-------: ${ticketId}');
+
         var ticket = response.data['ticket'];
 
         isValid = true;
         if (isValid) {
-          final validatedData = getValidatedTicketData(ticket['id']);
-          if (validatedData != null) {
-            // Update the ticket in the bottom sheet with real data
-            _updateTicketWithValidatedData(
-                ticket['index'].toString(), validatedData);
-          }
+          // final validatedData = getValidatedTicketData(ticketId);
+          // if (validatedData != null) {
+          logger.i('Ticket id-------: ${ticketId}');
+          // Update the ticket in the bottom sheet with real data
+          _updateTicketWithValidatedData(ticket['index'].toString(), ticket);
+          // }
         }
       } else {
         logger.e(response.message);

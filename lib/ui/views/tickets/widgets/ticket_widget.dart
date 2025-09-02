@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:nest/models/ticket.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
@@ -11,6 +12,7 @@ import '../../../common/ui_helpers.dart';
 class TicketWidget extends StatelessWidget {
   const TicketWidget({super.key, required this.ticket});
   final Ticket ticket;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,14 +41,38 @@ class TicketWidget extends StatelessWidget {
                 color: kcDisableIconColor,
               ),
             ),
-            trailing: ticket.qrCode != null
-                ? Image.asset(
-                    qr,
-                    height: 42,
-                    width: 42,
-                    fit: BoxFit.scaleDown,
-                  )
-                : null,
+            trailing: ticket.qrCode != null && ticket.qrCode!.isNotEmpty
+                ? Container(
+              height: 42,
+              width: 42,
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: PrettyQrView.data(
+                data: ticket.qrCode!,
+                decoration: const PrettyQrDecoration(
+                  background: Colors.white,
+                  shape: PrettyQrSmoothSymbol(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            )
+                : Container(
+              height: 42,
+              width: 42,
+              decoration: BoxDecoration(
+                color: kcGreyButtonColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Icon(
+                Icons.qr_code,
+                color: kcDisableIconColor,
+                size: 24,
+              ),
+            ),
           ),
           Container(
             width: 160,
@@ -67,20 +93,55 @@ class TicketWidget extends StatelessWidget {
             ),
           ),
           verticalSpaceSmall,
-          Align(
-            child: Container(
-              height: 135,
-              width: 180,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                image: const DecorationImage(
-                  image: AssetImage(ev4),
+          // Align(
+          //   child: Container(
+          //     height: 135,
+          //     width: 180,
+          //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          //     decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(8),
+          //       image: const DecorationImage(
+          //         image: AssetImage(ev4),
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          verticalSpaceMedium,
+          // Show a larger QR code if ticket has qr_code data
+          if (ticket.qrCode != null && ticket.qrCode!.isNotEmpty) ...[
+            Center(
+              child: Container(
+                width: 144,
+                height: 144,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: PrettyQrView.data(
+                  data: ticket.qrCode!,
+                  decoration: const PrettyQrDecoration(
+                    background: Colors.white,
+                    shape: PrettyQrSmoothSymbol(
+                      color: Colors.black,
+                      roundFactor: 0.5,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-          verticalSpaceMedium,
+            verticalSpaceSmall,
+            Center(
+              child: Text(
+                'Scan QR Code for Entry',
+                style: titleTextMedium.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: kcDisableIconColor,
+                ),
+              ),
+            ),
+          ],
           // AppButton(
           //   leadingIcon: wallet,
           //   labelText: 'Save to Wallet',
@@ -92,3 +153,7 @@ class TicketWidget extends StatelessWidget {
     );
   }
 }
+
+// For pretty_qr_code, add this to pubspec.yaml:
+// dependencies:
+//   pretty_qr_code: ^3.3.0

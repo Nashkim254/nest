@@ -212,7 +212,6 @@ class WebsocketService {
           if (conversationId != null) 'conversation_id': conversationId,
         },
       );
-
       _channel?.sink.add(jsonEncode(message.toJson()));
       _logger.d('Message sent successfully');
       return true;

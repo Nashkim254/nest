@@ -1,3 +1,4 @@
+import 'package:nest/models/add_team_member.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -118,6 +119,52 @@ class UserService with ListenableServiceMixin {
   Future getMyOrganization() async {
     try {
       final response = await _apiService.get(AppUrls.myOrganization);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getMyOrganizationEvents() async {
+    try {
+      final response = await _apiService.get(AppUrls.myOrganizationEvents);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future listMyOrganizationTeam(int id) async {
+    try {
+      final response =
+          await _apiService.get('${AppUrls.myOrganization}$id/team');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to create user');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future addTeamMember(int id, AddTeamMemberInput input) async {
+    try {
+      final response = await _apiService.post(
+        '${AppUrls.myOrganization}$id/team',
+        data: input.toJson(),
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;

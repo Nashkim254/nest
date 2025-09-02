@@ -141,7 +141,7 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
                         ),
                         if (ticket.passwordRequired) ...[
                           horizontalSpaceTiny,
-                          Icon(
+                          const Icon(
                             Icons.lock,
                             size: 14,
                             color: kcPrimaryColor,
@@ -284,9 +284,9 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Subtotal',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
                   ),
@@ -318,7 +318,7 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.lock,
             size: 20,
             color: kcPrimaryColor,
@@ -444,10 +444,10 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
         ],
 
         _buildSummaryRow(
-            'Subtotal', 'KSH ${viewModel.subtotal.toStringAsFixed(0)}'),
+            'Subtotal', 'USD ${viewModel.subtotal.toStringAsFixed(0)}'),
         const SizedBox(height: 8),
         _buildSummaryRow(
-            'Service Fee', 'KSH ${viewModel.serviceFee.toStringAsFixed(0)}'),
+            'Service Fee', 'USD ${viewModel.serviceFee.toStringAsFixed(0)}'),
         const SizedBox(height: 16),
         Container(
           height: 1,
@@ -456,7 +456,7 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
         const SizedBox(height: 16),
         _buildSummaryRow(
           'Total',
-          'KSH ${viewModel.total.toStringAsFixed(0)}',
+          'USD ${viewModel.total.toStringAsFixed(0)}',
           isTotal: true,
         ),
         if (viewModel.isMultipleTickets) ...[
@@ -668,7 +668,7 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
               )
             : Text(
                 viewModel.isMultipleTickets
-                    ? 'Confirm & Get Tickets - KSH ${viewModel.total.toStringAsFixed(0)}'
+                    ? 'Confirm & Get Tickets - USD ${viewModel.total.toStringAsFixed(0)}'
                     : 'Confirm & Get Ticket',
                 style: const TextStyle(
                   color: kcWhiteColor,

@@ -107,40 +107,44 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                       viewModel.myOrganizations.length,
                       (int i) => Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: kcDarkGreyColor,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: kcContainerBorderColor,
+                        child: InkWell(
+                          onTap: () => viewModel.viewOrganizationDetails(
+                              viewModel.myOrganizations[i]),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: kcDarkGreyColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: kcContainerBorderColor,
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundImage: NetworkImage(
-                                    viewModel.myOrganizations[i].profilePic!),
-                              ),
-                              horizontalSpaceSmall,
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "${viewModel.myOrganizations[i].teamMembers!.first.name ?? '--'} ${viewModel.myOrganizations[i].teamMembers!.length - 1 > 0 ? 'and ${viewModel.myOrganizations[i].teamMembers!.length - 1} others' : ''}",
-                                    style: titleTextMedium.copyWith(
-                                      fontSize: 15,
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: NetworkImage(
+                                      viewModel.myOrganizations[i].profilePic!),
+                                ),
+                                horizontalSpaceSmall,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${viewModel.myOrganizations[i].teamMembers!.first.name ?? '--'} ${viewModel.myOrganizations[i].teamMembers!.length - 1 > 0 ? 'and ${viewModel.myOrganizations[i].teamMembers!.length - 1} others' : ''}",
+                                      style: titleTextMedium.copyWith(
+                                        fontSize: 15,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    'going to "${viewModel.myOrganizations[i].name}" events',
-                                    style: titleTextMedium.copyWith(
-                                        fontSize: 13, color: kcGreyColor),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                    Text(
+                                      'going to "${viewModel.myOrganizations[i].name}" events',
+                                      style: titleTextMedium.copyWith(
+                                          fontSize: 13, color: kcGreyColor),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

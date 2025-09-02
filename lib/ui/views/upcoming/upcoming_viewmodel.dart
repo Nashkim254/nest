@@ -194,4 +194,9 @@ class UpcomingViewModel extends BaseViewModel {
       setBusy(false);
     }
   }
+
+  viewOrganizationDetails(Organization organization) {
+    locator<NavigationService>()
+        .navigateToManageTeamView(organization: organization);
+  }
 }

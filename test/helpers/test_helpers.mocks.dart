@@ -8,19 +8,20 @@ import 'dart:io' as _i16;
 import 'dart:ui' as _i14;
 
 import 'package:flutter/material.dart' as _i12;
-import 'package:flutter_stripe/flutter_stripe.dart' as _i40;
+import 'package:flutter_stripe/flutter_stripe.dart' as _i42;
 import 'package:geolocator/geolocator.dart' as _i28;
 import 'package:logger/logger.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i11;
 import 'package:nest/abstractClasses/abstract_class.dart' as _i2;
 import 'package:nest/abstractClasses/deep_link_handler_interface.dart' as _i30;
+import 'package:nest/models/add_team_member.dart' as _i35;
 import 'package:nest/models/api_response.dart' as _i4;
-import 'package:nest/models/create_event.dart' as _i38;
-import 'package:nest/models/create_post.dart' as _i43;
+import 'package:nest/models/create_event.dart' as _i40;
+import 'package:nest/models/create_post.dart' as _i45;
 import 'package:nest/models/login_model.dart' as _i26;
 import 'package:nest/models/message_models.dart' as _i20;
-import 'package:nest/models/organization_model.dart' as _i35;
+import 'package:nest/models/organization_model.dart' as _i36;
 import 'package:nest/models/payments.dart' as _i9;
 import 'package:nest/models/places.dart' as _i5;
 import 'package:nest/models/registration_model.dart' as _i25;
@@ -28,24 +29,25 @@ import 'package:nest/models/send_message_request.dart' as _i22;
 import 'package:nest/models/update_profile_input.dart' as _i34;
 import 'package:nest/services/api_service.dart' as _i23;
 import 'package:nest/services/auth_service.dart' as _i24;
-import 'package:nest/services/comments_service.dart' as _i44;
+import 'package:nest/services/comments_service.dart' as _i46;
 import 'package:nest/services/deep_link_generator_service.dart' as _i31;
 import 'package:nest/services/deep_link_service.dart' as _i29;
-import 'package:nest/services/event_service.dart' as _i37;
-import 'package:nest/services/file_service.dart' as _i36;
+import 'package:nest/services/event_service.dart' as _i38;
+import 'package:nest/services/file_service.dart' as _i37;
 import 'package:nest/services/global_service.dart' as _i15;
 import 'package:nest/services/image_service.dart' as _i17;
 import 'package:nest/services/location_service.dart' as _i27;
 import 'package:nest/services/message_service.dart' as _i21;
-import 'package:nest/services/payment_service.dart' as _i39;
+import 'package:nest/services/payment_service.dart' as _i41;
 import 'package:nest/services/share_service.dart' as _i32;
-import 'package:nest/services/shared_coordinates_service.dart' as _i45;
+import 'package:nest/services/shared_coordinates_service.dart' as _i47;
 import 'package:nest/services/shared_preferences_service.dart' as _i3;
-import 'package:nest/services/social_service.dart' as _i42;
-import 'package:nest/services/stripe_service.dart' as _i41;
+import 'package:nest/services/social_service.dart' as _i44;
+import 'package:nest/services/stripe_service.dart' as _i43;
 import 'package:nest/services/user_service.dart' as _i33;
 import 'package:nest/services/websocket_service.dart' as _i18;
 import 'package:nest/ui/common/app_enums.dart' as _i19;
+import 'package:nest/ui/views/edit_event/edit_event_viewmodel.dart' as _i39;
 import 'package:nest/ui/views/ticket_scanning/ticket_scanning_viewmodel.dart'
     as _i8;
 import 'package:shared_preferences/shared_preferences.dart' as _i6;
@@ -2585,6 +2587,43 @@ class MockUserService extends _i1.Mock implements _i33.UserService {
       ) as _i13.Future<dynamic>);
 
   @override
+  _i13.Future<dynamic> getMyOrganizationEvents() => (super.noSuchMethod(
+        Invocation.method(
+          #getMyOrganizationEvents,
+          [],
+        ),
+        returnValue: _i13.Future<dynamic>.value(),
+        returnValueForMissingStub: _i13.Future<dynamic>.value(),
+      ) as _i13.Future<dynamic>);
+
+  @override
+  _i13.Future<dynamic> listMyOrganizationTeam(int? id) => (super.noSuchMethod(
+        Invocation.method(
+          #listMyOrganizationTeam,
+          [id],
+        ),
+        returnValue: _i13.Future<dynamic>.value(),
+        returnValueForMissingStub: _i13.Future<dynamic>.value(),
+      ) as _i13.Future<dynamic>);
+
+  @override
+  _i13.Future<dynamic> addTeamMember(
+    int? id,
+    _i35.AddTeamMemberInput? input,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addTeamMember,
+          [
+            id,
+            input,
+          ],
+        ),
+        returnValue: _i13.Future<dynamic>.value(),
+        returnValueForMissingStub: _i13.Future<dynamic>.value(),
+      ) as _i13.Future<dynamic>);
+
+  @override
   _i13.Future<dynamic> searchOrganization({required String? q}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2609,7 +2648,7 @@ class MockUserService extends _i1.Mock implements _i33.UserService {
 
   @override
   _i13.Future<dynamic> createOrganization(
-          {required _i35.Organization? organization}) =>
+          {required _i36.Organization? organization}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createOrganization,
@@ -2689,7 +2728,7 @@ class MockUserService extends _i1.Mock implements _i33.UserService {
 /// A class which mocks [FileService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFileService extends _i1.Mock implements _i36.FileService {
+class MockFileService extends _i1.Mock implements _i37.FileService {
   @override
   _i7.Logger get logger => (super.noSuchMethod(
         Invocation.getter(#logger),
@@ -2807,7 +2846,7 @@ class MockFileService extends _i1.Mock implements _i36.FileService {
 /// A class which mocks [EventService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEventService extends _i1.Mock implements _i37.EventService {
+class MockEventService extends _i1.Mock implements _i38.EventService {
   @override
   _i3.SharedPreferencesService get prefsService => (super.noSuchMethod(
         Invocation.getter(#prefsService),
@@ -2840,12 +2879,36 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
       ) as _i13.Future<dynamic>);
 
   @override
-  _i13.Future<dynamic> getSingleEvent({required int? id}) =>
+  _i13.Future<dynamic> getSingleEvent({
+    required int? id,
+    required String? password,
+  }) =>
       (super.noSuchMethod(
         Invocation.method(
           #getSingleEvent,
           [],
-          {#id: id},
+          {
+            #id: id,
+            #password: password,
+          },
+        ),
+        returnValue: _i13.Future<dynamic>.value(),
+        returnValueForMissingStub: _i13.Future<dynamic>.value(),
+      ) as _i13.Future<dynamic>);
+
+  @override
+  _i13.Future<dynamic> updateEvent({
+    required int? eventId,
+    required _i39.UpdateEventRequest? requestBody,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateEvent,
+          [],
+          {
+            #eventId: eventId,
+            #requestBody: requestBody,
+          },
         ),
         returnValue: _i13.Future<dynamic>.value(),
         returnValueForMissingStub: _i13.Future<dynamic>.value(),
@@ -2891,7 +2954,7 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
 
   @override
   _i13.Future<dynamic> createEvent(
-          {required _i38.CreateEventRequest? requestBody}) =>
+          {required _i40.CreateEventRequest? requestBody}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createEvent,
@@ -2983,7 +3046,7 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
 /// A class which mocks [PaymentService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPaymentService extends _i1.Mock implements _i39.PaymentService {
+class MockPaymentService extends _i1.Mock implements _i41.PaymentService {
   @override
   _i13.Future<_i9.PaymentResult> processPayment({
     required double? amount,
@@ -3041,7 +3104,7 @@ class MockPaymentService extends _i1.Mock implements _i39.PaymentService {
     required String? currency,
     required String? provider,
     required int? bookingId,
-    required _i40.PaymentMethodParams? paymentMethodParams,
+    required _i42.PaymentMethodParams? paymentMethodParams,
     Map<String, dynamic>? metadata,
   }) =>
       (super.noSuchMethod(
@@ -3094,7 +3157,7 @@ class MockPaymentService extends _i1.Mock implements _i39.PaymentService {
 /// A class which mocks [StripeService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStripeService extends _i1.Mock implements _i41.StripeService {
+class MockStripeService extends _i1.Mock implements _i43.StripeService {
   @override
   _i2.IApiService get apiService => (super.noSuchMethod(
         Invocation.getter(#apiService),
@@ -3147,7 +3210,7 @@ class MockStripeService extends _i1.Mock implements _i41.StripeService {
 /// A class which mocks [SocialService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSocialService extends _i1.Mock implements _i42.SocialService {
+class MockSocialService extends _i1.Mock implements _i44.SocialService {
   @override
   _i3.SharedPreferencesService get prefsService => (super.noSuchMethod(
         Invocation.getter(#prefsService),
@@ -3162,7 +3225,7 @@ class MockSocialService extends _i1.Mock implements _i42.SocialService {
       ) as _i3.SharedPreferencesService);
 
   @override
-  _i13.Future<dynamic> createPost({required _i43.CreatePostRequest? post}) =>
+  _i13.Future<dynamic> createPost({required _i45.CreatePostRequest? post}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createPost,
@@ -3227,7 +3290,7 @@ class MockSocialService extends _i1.Mock implements _i42.SocialService {
 /// A class which mocks [CommentsService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCommentsService extends _i1.Mock implements _i44.CommentsService {
+class MockCommentsService extends _i1.Mock implements _i46.CommentsService {
   @override
   _i2.IApiService get apiService => (super.noSuchMethod(
         Invocation.getter(#apiService),
@@ -3336,7 +3399,7 @@ class MockCommentsService extends _i1.Mock implements _i44.CommentsService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSharedCoordinatesService extends _i1.Mock
-    implements _i45.SharedCoordinatesService {
+    implements _i47.SharedCoordinatesService {
   @override
   bool get hasCoordinates => (super.noSuchMethod(
         Invocation.getter(#hasCoordinates),

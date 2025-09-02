@@ -35,6 +35,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   TextEditingController igController = TextEditingController();
   TextEditingController sponsorController = TextEditingController();
   TextEditingController termsController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
   final globalService = locator<GlobalService>();
   final eventService = locator<EventService>();
   final locationService = locator<LocationService>();
@@ -225,6 +226,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   }
 
   Future<void> nextPage() async {
+    logger.e(isEventDetailsFormValid);
     if (isFirstPage && isEventDetailsFormValid) {
       await _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -339,6 +341,7 @@ class CreateEventViewModel extends ReactiveViewModel {
   final TextEditingController guestListDescriptionController =
       TextEditingController();
   final eventDetailsKey = GlobalKey<FormState>();
+  final eventEditDetailsKey = GlobalKey<FormState>();
   final ticketSetupKey = GlobalKey<FormState>();
   final eventVisualsFormKey = GlobalKey<FormState>();
   bool get isEventDetailsFormValid =>
@@ -414,7 +417,7 @@ class CreateEventViewModel extends ReactiveViewModel {
         title: eventTitleController.text,
         endTime: endTime,
         startTime: startTime,
-        location: eventLocationController.text,
+        location: addressController.text,
         flyerUrl: uploadFlyerPictureUrl,
         theme: hexColor,
         genres: [],
@@ -426,6 +429,7 @@ class CreateEventViewModel extends ReactiveViewModel {
         latitude: selectedPlaceCoordinates!.latitude ?? 0.0,
         password: eventPasswordController.text,
         address: eventLocationController.text,
+        termsAndConditions: termsController.text,
       );
       logger.w(request.toJson());
       final response = await eventService.createEvent(requestBody: request);
@@ -766,7 +770,7 @@ class CreateEventViewModel extends ReactiveViewModel {
 
       // Clear search results after selection
       clearSearchResults();
-      eventLocationController.text = place.description;
+      addressController.text = place.description;
 
       _snackbarService.showSnackbar(
         message: 'Selected: ${place.description}',

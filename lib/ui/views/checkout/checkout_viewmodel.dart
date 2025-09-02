@@ -203,11 +203,11 @@ class CheckoutViewModel extends BaseViewModel {
 
   void confirmAndGetTicket() async {
     if (canProceedToPayment) {
-      if (_requiresPassword || _isMixedProtection) {
-        await _handlePasswordVerification();
-      } else {
-        await _proceedWithBooking();
-      }
+      // if (_requiresPassword || _isMixedProtection) {
+      //   await _handlePasswordVerification();
+      // } else {
+      await _proceedWithBooking();
+      // }
     }
   }
 
@@ -263,7 +263,7 @@ class CheckoutViewModel extends BaseViewModel {
       // Create booking for each ticket type
       for (final ticket in _tickets) {
         final body = {
-          'ticket_id': ticket.ticketId,
+          'ticket_id': int.parse(ticket.ticketId!),
           'quantity': ticket.quantity,
           'description': 'Booking for ${ticket.name}',
           'password_required': ticket.passwordRequired,
@@ -428,7 +428,7 @@ class CheckoutViewModel extends BaseViewModel {
       variant: DialogType.paymentSuccessful,
       title: 'Payment Failed',
       description: message,
-      barrierDismissible: false,
+      barrierDismissible: true,
     );
   }
 
