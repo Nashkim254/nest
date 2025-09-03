@@ -2,10 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 
-import '../ui/common/app_enums.dart';
 
-class FlexibleApiConfig {
-  static const String _developmentIP = '192.168.1.100'; // CHANGE THIS!
+class ApiConfig {
+  static const String _developmentIP = '192.168.201.217'; // CHANGE THIS!
   static const String _port = '8080';
 
   // You can set this manually or detect it

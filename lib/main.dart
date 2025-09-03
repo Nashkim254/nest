@@ -7,6 +7,7 @@ import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/services/api_service.dart';
 import 'package:nest/services/deep_link_service.dart';
+import 'package:nest/utils/env_config.dart';
 import 'package:nest/utils/stripe_configs.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -16,6 +17,7 @@ import 'handlers/verification_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ApiConfig.setPhysicalDevice(true);
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();

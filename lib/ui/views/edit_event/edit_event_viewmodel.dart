@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:nest/models/events.dart';
+import 'package:nest/models/places.dart';
 import 'package:nest/utils/extensions.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -16,6 +15,21 @@ class EditEventViewModel extends CreateEventViewModel {
   final navigatorKey = GlobalKey<NavigatorState>();
   Event? _originalEvent;
   Event? get originalEvent => _originalEvent;
+
+  // Override form keys with unique instances for edit view
+  @override
+  final eventDetailsKey = GlobalKey<FormState>();
+  
+  @override  
+  final ticketSetupKey = GlobalKey<FormState>();
+  
+  @override
+  final eventVisualsFormKey = GlobalKey<FormState>();
+
+  // Override place coordinates to access private field
+  PlaceCoordinates? _selectedPlaceCoordinates;
+  @override
+  PlaceCoordinates? get selectedPlaceCoordinates => _selectedPlaceCoordinates;
 
   bool _hasChanges = false;
   bool get hasChanges => _hasChanges;
@@ -69,15 +83,16 @@ class EditEventViewModel extends CreateEventViewModel {
     }
 
     // Populate ticket tiers
-    // _populateTicketTiers(event.ticketPricing);
-    //
-    // // Set coordinates if available
-    // if (event.latitude != 0.0 && event.longitude != 0.0) {
-    //   selectedPlaceCoordinates = PlaceCoordinates(
-    //     latitude: event.latitude,
-    //     longitude: event.longitude, formattedAddress: '',
-    //   );
-    // }
+    _populateTicketTiersFromPreview(event.ticketPricing);
+
+    // Set coordinates if available
+    if (event.latitude != 0.0 && event.longitude != 0.0) {
+      _selectedPlaceCoordinates = PlaceCoordinates(
+        latitude: event.latitude,
+        longitude: event.longitude,
+        formattedAddress: event.location,
+      );
+    }
 
     notifyListeners();
   }
@@ -90,6 +105,37 @@ class EditEventViewModel extends CreateEventViewModel {
         break;
       }
     }
+  }
+
+  void _populateTicketTiersFromPreview(List<TicketPricingPreview> ticketPricing) {
+    // Clear existing tiers
+    clearTicketTiers();
+
+    // Add tiers from existing event
+    for (final pricing in ticketPricing) {
+      final tier = TicketTier(
+        id: TicketTier.generateId(),
+      );
+
+      tier.tierNameController.text = pricing.name;
+      tier.priceController.text = pricing.price.toString();
+      tier.quantityController.text = pricing.quantity.toString();
+      // Note: TicketPricingPreview doesn't have description field
+      tier.descriptionController.text = '';
+      tier.isPasswordProtected = pricing.isPasswordProtected;
+      // Note: TicketPricingPreview doesn't have requireApproval or transferable fields
+      // tier.isRequireApproval = false;
+      // tier.isTransferable = true;
+
+      ticketTiers.add(tier);
+    }
+
+    // Initialize with at least one tier if none exist
+    if (ticketTiers.isEmpty) {
+      initializeTicketTiers();
+    }
+
+    notifyListeners();
   }
 
   void _populateTicketTiers(List<TicketPricing> ticketPricing) {

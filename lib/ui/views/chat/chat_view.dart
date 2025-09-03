@@ -56,343 +56,345 @@ class ChatView extends StackedView<ChatViewModel> {
     final displayName = chat!.getDisplayName(viewModel.currentUserId!);
     final displayAvatar = chat!.getDisplayAvatar(viewModel.currentUserId!);
 
-    return Scaffold(
-      backgroundColor: kcDarkColor,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.adaptive.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-          color: kcWhiteColor,
-        ),
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: kcDarkColor,
-        title: Row(
-          children: [
-            InkWell(
-              onTap: () => viewModel.goToOtherProfile(otherUser!.id!),
-              child: CircleAvatar(
-                radius: 20,
-                backgroundImage:
-                    displayAvatar != null && displayAvatar.isNotEmpty
-                        ? NetworkImage(displayAvatar)
-                        : null,
-                backgroundColor: kcPrimaryColor,
-                child: displayAvatar == null || displayAvatar.isEmpty
-                    ? Text(
-                        displayName.isNotEmpty
-                            ? displayName[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      )
-                    : null,
-              ),
-            ),
-            horizontalSpaceMedium,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    displayName,
-                    style: titleTextMedium.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: kcWhiteColor,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // Optional: Show online status or last seen
-                  if (!chat!.isGroup && otherUser?.lastActive != null)
-                    Text(
-                      _getLastSeenText(otherUser!.lastActive!),
-                      style: titleTextMedium.copyWith(
-                        fontSize: 12,
-                        color: kcSubtitleText2Color,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          spacedDivider,
-          // Messages area
-          Expanded(
-            child: viewModel.chats.isEmpty
-                ? Center(
-                    child: Text(
-                      'No messages yet',
-                      style: titleTextMedium.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: kcDisableIconColor,
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    reverse: true, // Show latest messages at bottom
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: viewModel.chats.length,
-                    itemBuilder: (context, index) {
-                      // Reverse the index to show latest messages at bottom
-                      final message =
-                          viewModel.chats[viewModel.chats.length - 1 - index];
-                      return ChatBubble(
-                        message: message,
-                        currentUserId: viewModel.currentUserId!,
-                      );
-                    },
-                  ),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.adaptive.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            color: kcWhiteColor,
           ),
-          // Message input area
-          Container(
-            decoration: BoxDecoration(
-              color: kcDarkColor,
-              border: Border(
-                top: BorderSide(color: kcSubtitleText2Color.withOpacity(0.1)),
+          backgroundColor: kcDarkColor,
+          title: Row(
+            children: [
+              InkWell(
+                onTap: () => viewModel.goToOtherProfile(otherUser!.id!),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage:
+                      displayAvatar != null && displayAvatar.isNotEmpty
+                          ? NetworkImage(displayAvatar)
+                          : null,
+                  backgroundColor: kcPrimaryColor,
+                  child: displayAvatar == null || displayAvatar.isEmpty
+                      ? Text(
+                          displayName.isNotEmpty
+                              ? displayName[0].toUpperCase()
+                              : '?',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        )
+                      : null,
+                ),
               ),
+              horizontalSpaceMedium,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      displayName,
+                      style: titleTextMedium.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: kcWhiteColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // Optional: Show online status or last seen
+                    if (!chat!.isGroup && otherUser?.lastActive != null)
+                      Text(
+                        _getLastSeenText(otherUser!.lastActive!),
+                        style: titleTextMedium.copyWith(
+                          fontSize: 12,
+                          color: kcSubtitleText2Color,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          elevation: 0,
+        ),
+        body: Column(
+          children: [
+            spacedDivider,
+            // Messages area
+            Expanded(
+              child: viewModel.chats.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No messages yet',
+                        style: titleTextMedium.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: kcDisableIconColor,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      reverse: true, // Show latest messages at bottom
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: viewModel.chats.length,
+                      itemBuilder: (context, index) {
+                        // Reverse the index to show latest messages at bottom
+                        final message =
+                            viewModel.chats[viewModel.chats.length - 1 - index];
+                        return ChatBubble(
+                          message: message,
+                          currentUserId: viewModel.currentUserId!,
+                        );
+                      },
+                    ),
             ),
-            child: Column(
-              children: [
-                // Image preview section - show when image is selected
-                if (viewModel.uploadFileUrl.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.all(16),
+            // Message input area
+            Container(
+              decoration: BoxDecoration(
+                color: kcDarkColor,
+                border: Border(
+                  top: BorderSide(color: kcSubtitleText2Color.withOpacity(0.1)),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Image preview section - show when image is selected
+                  if (viewModel.uploadFileUrl.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          // Image preview
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: kcPrimaryColor, width: 2),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: viewModel.uploadFileUrl.startsWith('http')
+                                  ? Image.network(
+                                      viewModel.uploadFileUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        color:
+                                            kcSubtitleText2Color.withOpacity(0.3),
+                                        child: const Icon(Icons.image,
+                                            color: kcWhiteColor),
+                                      ),
+                                    )
+                                  : Image.file(
+                                      File(viewModel.selectedImages.first.path),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        color:
+                                            kcSubtitleText2Color.withOpacity(0.3),
+                                        child: const Icon(Icons.image,
+                                            color: kcWhiteColor),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          horizontalSpaceSmall,
+                          // Image info
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Image selected',
+                                  style: titleTextMedium.copyWith(
+                                    color: kcWhiteColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  'Ready to send',
+                                  style: titleTextMedium.copyWith(
+                                    color: kcPrimaryColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Remove button
+                          InkWell(
+                            onTap: () => viewModel
+                                .clearSelectedImage(), // Add this method to your viewModel
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: kcSubtitleText2Color.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: kcWhiteColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+      
+                  // Message input row
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: Row(
                       children: [
-                        // Image preview
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: kcPrimaryColor, width: 2),
+                        InkWell(
+                          child: SvgPicture.asset(
+                            emoji,
+                            width: 24,
+                            height: 24,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: viewModel.uploadFileUrl.startsWith('http')
-                                ? Image.network(
-                                    viewModel.uploadFileUrl,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                      color:
-                                          kcSubtitleText2Color.withOpacity(0.3),
-                                      child: const Icon(Icons.image,
-                                          color: kcWhiteColor),
-                                    ),
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              builder: (context) => CustomEmojiPicker(
+                                onEmojiSelected: (emoji) {
+                                  // Add emoji to text field
+                                  final currentText =
+                                      viewModel.messageController.text;
+                                  final selection =
+                                      viewModel.messageController.selection;
+      
+                                  final newText = currentText.replaceRange(
+                                    selection.start,
+                                    selection.end,
+                                    emoji,
+                                  );
+      
+                                  viewModel.messageController.text = newText;
+                                  viewModel.messageController.selection =
+                                      TextSelection.collapsed(
+                                    offset: selection.start + emoji.length,
+                                  );
+      
+                                  Navigator.pop(
+                                      context); // Close the emoji picker
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        horizontalSpaceSmall,
+                        InkWell(
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: viewModel.uploadFileUrl.isNotEmpty
+                                ? BoxDecoration(
+                                    color: kcPrimaryColor.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: kcPrimaryColor, width: 1),
                                   )
-                                : Image.file(
-                                    File(viewModel.selectedImages.first.path),
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                      color:
-                                          kcSubtitleText2Color.withOpacity(0.3),
-                                      child: const Icon(Icons.image,
-                                          color: kcWhiteColor),
-                                    ),
-                                  ),
+                                : null,
+                            child: SvgPicture.asset(
+                              attach,
+                              width: 24,
+                              height: 24,
+                              color: viewModel.uploadFileUrl.isNotEmpty
+                                  ? kcPrimaryColor
+                                  : null,
+                            ),
+                          ),
+                          onTap: () =>
+                              viewModel.showImageSourceSheet(FileType.image),
+                        ),
+                        horizontalSpaceSmall,
+                        Expanded(
+                          child: TextFormField(
+                            style: titleTextMedium.copyWith(color: kcWhiteColor),
+                            controller: viewModel.messageController,
+                            decoration: AppInputDecoration.standard(
+                              hintText: viewModel.uploadFileUrl.isNotEmpty
+                                  ? 'Add a caption...'
+                                  : 'Message...',
+                            ),
+                            // onChanged: viewModel.onMessageChanged,
                           ),
                         ),
                         horizontalSpaceSmall,
-                        // Image info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Image selected',
-                                style: titleTextMedium.copyWith(
-                                  color: kcWhiteColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Text(
-                                'Ready to send',
-                                style: titleTextMedium.copyWith(
-                                  color: kcPrimaryColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Remove button
                         InkWell(
-                          onTap: () => viewModel
-                              .clearSelectedImage(), // Add this method to your viewModel
                           child: Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: kcSubtitleText2Color.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(12),
+                              color: (viewModel.messageController.text
+                                          .trim()
+                                          .isNotEmpty ||
+                                      viewModel.uploadFileUrl.isNotEmpty)
+                                  ? kcPrimaryColor
+                                  : kcSubtitleText2Color.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Icon(
-                              Icons.close,
-                              size: 16,
-                              color: kcWhiteColor,
-                            ),
+                            child: viewModel.uploadFileUrl.isNotEmpty
+                                ? Stack(
+                                    children: [
+                                      SvgPicture.asset(
+                                        send,
+                                        width: 20,
+                                        height: 20,
+                                        color: Colors.white,
+                                      ),
+                                      Positioned(
+                                        top: -2,
+                                        right: -2,
+                                        child: Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: BoxDecoration(
+                                            color: Colors.green,
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : SvgPicture.asset(
+                                    send,
+                                    width: 20,
+                                    height: 20,
+                                    color: Colors.white,
+                                  ),
                           ),
+                          onTap: () {
+                            if (viewModel.messageController.text
+                                    .trim()
+                                    .isNotEmpty ||
+                                viewModel.uploadFileUrl.isNotEmpty) {
+                              viewModel.sendMessage();
+                            }
+                          },
                         ),
                       ],
                     ),
                   ),
-
-                // Message input row
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        child: SvgPicture.asset(
-                          emoji,
-                          width: 24,
-                          height: 24,
-                        ),
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                            builder: (context) => CustomEmojiPicker(
-                              onEmojiSelected: (emoji) {
-                                // Add emoji to text field
-                                final currentText =
-                                    viewModel.messageController.text;
-                                final selection =
-                                    viewModel.messageController.selection;
-
-                                final newText = currentText.replaceRange(
-                                  selection.start,
-                                  selection.end,
-                                  emoji,
-                                );
-
-                                viewModel.messageController.text = newText;
-                                viewModel.messageController.selection =
-                                    TextSelection.collapsed(
-                                  offset: selection.start + emoji.length,
-                                );
-
-                                Navigator.pop(
-                                    context); // Close the emoji picker
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      horizontalSpaceSmall,
-                      InkWell(
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: viewModel.uploadFileUrl.isNotEmpty
-                              ? BoxDecoration(
-                                  color: kcPrimaryColor.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      color: kcPrimaryColor, width: 1),
-                                )
-                              : null,
-                          child: SvgPicture.asset(
-                            attach,
-                            width: 24,
-                            height: 24,
-                            color: viewModel.uploadFileUrl.isNotEmpty
-                                ? kcPrimaryColor
-                                : null,
-                          ),
-                        ),
-                        onTap: () =>
-                            viewModel.showImageSourceSheet(FileType.image),
-                      ),
-                      horizontalSpaceSmall,
-                      Expanded(
-                        child: TextFormField(
-                          style: titleTextMedium.copyWith(color: kcWhiteColor),
-                          controller: viewModel.messageController,
-                          decoration: AppInputDecoration.standard(
-                            hintText: viewModel.uploadFileUrl.isNotEmpty
-                                ? 'Add a caption...'
-                                : 'Message...',
-                          ),
-                          // onChanged: viewModel.onMessageChanged,
-                        ),
-                      ),
-                      horizontalSpaceSmall,
-                      InkWell(
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: (viewModel.messageController.text
-                                        .trim()
-                                        .isNotEmpty ||
-                                    viewModel.uploadFileUrl.isNotEmpty)
-                                ? kcPrimaryColor
-                                : kcSubtitleText2Color.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: viewModel.uploadFileUrl.isNotEmpty
-                              ? Stack(
-                                  children: [
-                                    SvgPicture.asset(
-                                      send,
-                                      width: 20,
-                                      height: 20,
-                                      color: Colors.white,
-                                    ),
-                                    Positioned(
-                                      top: -2,
-                                      right: -2,
-                                      child: Container(
-                                        width: 8,
-                                        height: 8,
-                                        decoration: BoxDecoration(
-                                          color: Colors.green,
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : SvgPicture.asset(
-                                  send,
-                                  width: 20,
-                                  height: 20,
-                                  color: Colors.white,
-                                ),
-                        ),
-                        onTap: () {
-                          if (viewModel.messageController.text
-                                  .trim()
-                                  .isNotEmpty ||
-                              viewModel.uploadFileUrl.isNotEmpty) {
-                            viewModel.sendMessage();
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

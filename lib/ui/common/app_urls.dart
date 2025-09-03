@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:nest/utils/env_config.dart';
 
 class AppUrls {
-  static final String baseUrl = Platform.isAndroid
-      ? 'http://10.0.2.2:8080/api/v1'
-      : 'http://localhost:8080/api/v1';
+  static final String baseUrl = ApiConfig.baseUrl;
 
   // auth
   static final String baseAuthUrl = '$baseUrl/auth';

@@ -341,7 +341,6 @@ class CreateEventViewModel extends ReactiveViewModel {
   final TextEditingController guestListDescriptionController =
       TextEditingController();
   final eventDetailsKey = GlobalKey<FormState>();
-  final eventEditDetailsKey = GlobalKey<FormState>();
   final ticketSetupKey = GlobalKey<FormState>();
   final eventVisualsFormKey = GlobalKey<FormState>();
   bool get isEventDetailsFormValid =>
@@ -352,31 +351,43 @@ class CreateEventViewModel extends ReactiveViewModel {
       eventVisualsFormKey.currentState?.validate() ?? false;
 
   String parseTimeOnly(String timeStr) {
-    final timeRegex =
-        RegExp(r'(\d{1,2}):(\d{2})\s*(AM|PM)', caseSensitive: false);
-    final match = timeRegex.firstMatch(timeStr.trim());
+    timeStr = timeStr.trim();
 
-    if (match != null) {
-      int hour = int.parse(match.group(1)!);
-      int minute = int.parse(match.group(2)!);
-      String amPm = match.group(3)!.toUpperCase();
+    try {
+      // Try parsing with DateFormat first (handles multiple formats automatically)
+      DateFormat format12 = DateFormat.jm(); // 12-hour format
+      DateFormat format24 = DateFormat.Hm(); // 24-hour format
 
-      if (amPm == 'PM' && hour != 12) hour += 12;
-      if (amPm == 'AM' && hour == 12) hour = 0;
-      final formatter = DateFormat("yyyy-MM-ddTHH:mm:ss.SSSSSS");
-      // use this formatter to parse the time
-      var time = DateTime.now().copyWith(
-        hour: hour,
-        minute: minute,
+      DateTime? parsedTime;
+
+      // Try 12-hour format first
+      try {
+        parsedTime = format12.parse(timeStr);
+      } catch (e) {
+        // If 12-hour fails, try 24-hour format
+        try {
+          parsedTime = format24.parse(timeStr);
+        } catch (e) {
+          // If both fail, throw descriptive error
+          throw FormatException('Invalid time format: "$timeStr". '
+              'Expected formats: "2:30 PM" (12-hour) or "14:30" (24-hour)');
+        }
+      }
+
+      // Combine with current date
+      final now = DateTime.now();
+      final combinedDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        parsedTime.hour,
+        parsedTime.minute,
       );
-      // If you need to format it back to a string, you can use:
-      String formattedTime = time.toUtc().toIso8601String();
-      // For example, if you want to return a DateTime object:
 
-      return formattedTime;
+      return combinedDateTime.toUtc().toIso8601String();
+    } catch (e) {
+      throw FormatException('Failed to parse time "$timeStr": ${e.toString()}');
     }
-
-    throw FormatException('Invalid time format: $timeStr');
   }
 
   Position? coordinates;

@@ -172,7 +172,7 @@ class HostingView extends StackedView<HostingViewModel> {
                                 verticalSpaceSmall,
                                 Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.3,
+                                      MediaQuery.of(context).size.height * 0.25,
                                   width: double.infinity,
                                   padding: const EdgeInsets.all(16.0),
                                   decoration: BoxDecoration(
@@ -185,7 +185,7 @@ class HostingView extends StackedView<HostingViewModel> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      verticalSpaceMedium,
+                                      verticalSpaceSmall,
                                       Text(
                                         'Boost Your Event Visibility!',
                                         style: titleTextMedium.copyWith(
@@ -194,7 +194,7 @@ class HostingView extends StackedView<HostingViewModel> {
                                           color: kcWhiteColor,
                                         ),
                                       ),
-                                      verticalSpaceMedium,
+                                      verticalSpaceSmall,
                                       Text(
                                         'Share your event link on social media to'
                                         'reach more attendees. Events with'
@@ -205,7 +205,7 @@ class HostingView extends StackedView<HostingViewModel> {
                                           color: kcGrey4Color,
                                         ),
                                       ),
-                                      verticalSpaceMedium,
+                                      verticalSpaceSmall,
                                       AppButton(
                                         width: 110,
                                         labelText: 'Learn More',

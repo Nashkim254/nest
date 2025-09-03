@@ -13,59 +13,88 @@ class StartupView extends StackedView<StartupViewModel> {
 
   @override
   Widget builder(
-    BuildContext context,
-    StartupViewModel viewModel,
-    Widget? child,
-  ) {
-    return Scaffold(
-      backgroundColor: kcDarkColor,
-      body: SizedBox(
-        child: Column(
-          children: [
-            Expanded(
-              child: Image.asset(
-                splash,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+      BuildContext context,
+      StartupViewModel viewModel,
+      Widget? child,
+      ) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: kcDarkColor,
+        body: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: screenHeight - MediaQuery.of(context).padding.top,
             ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    'We make it\nhappen baby!',
-                    style: titleTextLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                  verticalSpaceMedium,
-                  Text(
-                    'Nest connects you to exclusive\nnightlife events and your favorite\nhosts.',
-                    style: bodyTextMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  verticalSpaceLarge,
-                  DotWidget(),
-                  verticalSpaceMedium,
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: AppButton(
-                      labelText: 'Get Started',
-                      onTap: () => viewModel.getStarted(),
+            child: Column(
+              children: [
+                // Image Section
+                Container(
+                  height: screenHeight * 0.4, // 50% of screen height
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(splash),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  verticalSpaceMedium,
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: AppButton(
-                      labelText: 'Skip',
-                      buttonColor: Colors.transparent,
-                      onTap: () => viewModel.navigateToLogin(),
-                    ),
+                ),
+
+                // Content Section
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 20),
+
+                      // Title
+                      Text(
+                        'We make it\nhappen baby!',
+                        style: titleTextLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Subtitle
+                      Text(
+                        'Nest connects you to exclusive\nnightlife events and your favorite\nhosts.',
+                        style: bodyTextMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Dots indicator
+                       DotWidget(),
+                      const SizedBox(height: 32),
+
+                      // Get Started Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: AppButton(
+                          labelText: 'Get Started',
+                          onTap:() => viewModel.getStarted(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Skip Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: AppButton(
+                          labelText: 'Skip',
+                          buttonColor: Colors.transparent,
+                          onTap: () => viewModel.navigateToLogin(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

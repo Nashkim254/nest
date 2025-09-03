@@ -15,10 +15,10 @@ class EventDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
+      padding: const EdgeInsets.symmetric( vertical: 25.0),
       child: SingleChildScrollView(
         child: Form(
-          key: viewModel.eventEditDetailsKey,
+          key: viewModel.eventDetailsKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

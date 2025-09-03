@@ -6,6 +6,7 @@ import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/utils/utilities.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:stacked/stacked.dart';
 
 import '../upcoming_viewmodel.dart';
@@ -13,6 +14,7 @@ import '../upcoming_viewmodel.dart';
 class MyTicketWidget extends StatelessWidget {
   const MyTicketWidget({Key? key, required this.ticket}) : super(key: key);
   final Ticket ticket;
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<UpcomingViewModel>.reactive(
@@ -27,7 +29,7 @@ class MyTicketWidget extends StatelessWidget {
             width: 226,
             height: 210,
             margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12), // Reduced padding
             decoration: BoxDecoration(
               color: kcDarkGreyColor,
               borderRadius: BorderRadius.circular(16),
@@ -38,29 +40,74 @@ class MyTicketWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 200,
-                  height: 95,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    image: DecorationImage(
-                        image: AssetImage(ev1), fit: BoxFit.cover),
+                // Image - Further optimized
+                Flexible(
+                  flex: 4,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      image: DecorationImage(
+                          image: AssetImage(ev1), fit: BoxFit.cover),
+                    ),
                   ),
                 ),
-                verticalSpaceTiny,
-                Text(ticket.eventTitle!, style: titleTextMedium),
-                verticalSpaceTiny,
-                // Date and time
-                Text(
-                  formatter.format(ticket.eventDate!),
-                  style: titleTextMedium.copyWith(
-                    color: kcGreyColor,
-                    fontSize: 13,
+                const SizedBox(height: 6),
+
+                // Title - Flexible to take available space
+                Flexible(
+                  flex: 2,
+                  child: Text(
+                    ticket.eventTitle!,
+                    style: titleTextMedium.copyWith(fontSize: 14),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                verticalSpaceTiny,
-                // Bottom row with countdown and status
-                SvgPicture.asset(qrcode),
+
+                // Date and QR code row - Fixed height
+                SizedBox(
+                  height: 24,
+                  child: Row(
+                    children: [
+                      // Date takes available space
+                      Expanded(
+                        child: Text(
+                          formatter.format(ticket.eventDate!),
+                          style: titleTextMedium.copyWith(
+                            color: kcGreyColor,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                      // QR Code - Fixed size
+                      SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: ticket.qrCode != null && ticket.qrCode.isNotEmpty
+                            ? Container(
+                                height: 42,
+                                width: 42,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: PrettyQrView.data(
+                                  data: ticket.qrCode,
+                                  decoration: const PrettyQrDecoration(
+                                    background: Colors.white,
+                                    shape: PrettyQrSmoothSymbol(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SvgPicture.asset(qrcode),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

@@ -19,7 +19,7 @@ class EventVisuals extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 25.0),
+      padding: const EdgeInsets.symmetric( vertical: 25.0),
       child: SingleChildScrollView(
         child: Form(
           key: viewModel.eventVisualsFormKey,
@@ -826,7 +826,7 @@ Widget buildThemeSelection(
               ),
             ),
           ),
-          horizontalSpaceSmall,
+          horizontalSpaceTiny,
           if (index == viewModel.themeColors.length - 1)
             InkWell(
               onTap: () => viewModel.pickColor(context),

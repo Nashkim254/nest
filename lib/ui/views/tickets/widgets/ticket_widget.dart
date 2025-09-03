@@ -41,7 +41,7 @@ class TicketWidget extends StatelessWidget {
                 color: kcDisableIconColor,
               ),
             ),
-            trailing: ticket.qrCode != null && ticket.qrCode!.isNotEmpty
+            trailing: ticket.qrCode != null && ticket.qrCode.isNotEmpty
                 ? Container(
               height: 42,
               width: 42,
@@ -51,7 +51,7 @@ class TicketWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: PrettyQrView.data(
-                data: ticket.qrCode!,
+                data: ticket.qrCode,
                 decoration: const PrettyQrDecoration(
                   background: Colors.white,
                   shape: PrettyQrSmoothSymbol(
@@ -108,7 +108,7 @@ class TicketWidget extends StatelessWidget {
           // ),
           verticalSpaceMedium,
           // Show a larger QR code if ticket has qr_code data
-          if (ticket.qrCode != null && ticket.qrCode!.isNotEmpty) ...[
+          if (ticket.qrCode != null && ticket.qrCode.isNotEmpty) ...[
             Center(
               child: Container(
                 width: 144,
@@ -119,7 +119,7 @@ class TicketWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: PrettyQrView.data(
-                  data: ticket.qrCode!,
+                  data: ticket.qrCode,
                   decoration: const PrettyQrDecoration(
                     background: Colors.white,
                     shape: PrettyQrSmoothSymbol(
