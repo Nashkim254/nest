@@ -33,7 +33,13 @@ class ProfileView extends StackedView<ProfileViewModel> {
         child: Scaffold(
           backgroundColor: kcDarkColor,
           appBar: AppBar(
-            automaticallyImplyLeading: false,
+            automaticallyImplyLeading: isOtherUser,
+            leading: isOtherUser
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back, color: kcWhiteColor),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                : null,
             backgroundColor: kcDarkColor,
             title: Text("Profile",
                 style: titleTextMedium.copyWith(

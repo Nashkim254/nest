@@ -86,87 +86,87 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Invite New Member Section
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Invite New Member',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  onChanged: viewModel.updateInviteEmail,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Enter email address',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    filled: true,
-                    fillColor: const Color(0xFF333333),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => viewModel.isBusy
-                        ? null
-                        : viewModel.addNewMember(organization.id!),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kcPrimaryColor,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (viewModel.isBusy)
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        else
-                          const Icon(Icons.add, color: Colors.white),
-                        const SizedBox(width: 8),
-                        Text(
-                          viewModel.isBusy ? 'Adding...' : 'Add New Member',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.all(20),
+          //   decoration: BoxDecoration(
+          //     color: const Color(0xFF2A2A2A),
+          //     borderRadius: BorderRadius.circular(12),
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       const Text(
+          //         'Invite New Member',
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontSize: 18,
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //       const SizedBox(height: 16),
+          //       TextField(
+          //         onChanged: viewModel.updateInviteEmail,
+          //         style: const TextStyle(color: Colors.white),
+          //         decoration: InputDecoration(
+          //           hintText: 'Enter email address',
+          //           hintStyle: TextStyle(color: Colors.grey[500]),
+          //           filled: true,
+          //           fillColor: const Color(0xFF333333),
+          //           border: OutlineInputBorder(
+          //             borderRadius: BorderRadius.circular(8),
+          //             borderSide: BorderSide.none,
+          //           ),
+          //           contentPadding: const EdgeInsets.symmetric(
+          //             horizontal: 16,
+          //             vertical: 14,
+          //           ),
+          //         ),
+          //       ),
+          //       const SizedBox(height: 16),
+          //       SizedBox(
+          //         width: double.infinity,
+          //         child: ElevatedButton(
+          //           onPressed: () => viewModel.isBusy
+          //               ? null
+          //               : viewModel.addNewMember(organization.id!),
+          //           style: ElevatedButton.styleFrom(
+          //             backgroundColor: kcPrimaryColor,
+          //             padding: const EdgeInsets.symmetric(vertical: 16),
+          //             shape: RoundedRectangleBorder(
+          //               borderRadius: BorderRadius.circular(8),
+          //             ),
+          //             elevation: 0,
+          //           ),
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               if (viewModel.isBusy)
+          //                 const SizedBox(
+          //                   width: 16,
+          //                   height: 16,
+          //                   child: CircularProgressIndicator(
+          //                     color: Colors.white,
+          //                     strokeWidth: 2,
+          //                   ),
+          //                 )
+          //               else
+          //                 const Icon(Icons.add, color: Colors.white),
+          //               const SizedBox(width: 8),
+          //               Text(
+          //                 viewModel.isBusy ? 'Adding...' : 'Add New Member',
+          //                 style: const TextStyle(
+          //                   color: Colors.white,
+          //                   fontSize: 16,
+          //                   fontWeight: FontWeight.w600,
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           const SizedBox(height: 24),
 
           // Team Members Section
@@ -347,29 +347,29 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
       child: Column(
         children: [
           // Create Event Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: viewModel.onCreateEventPressed,
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: const Text(
-                'Create New Event',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kcPrimaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: double.infinity,
+          //   child: ElevatedButton.icon(
+          //     onPressed: viewModel.onCreateEventPressed,
+          //     icon: const Icon(Icons.add, color: Colors.white),
+          //     label: const Text(
+          //       'Create New Event',
+          //       style: TextStyle(
+          //         color: Colors.white,
+          //         fontSize: 16,
+          //         fontWeight: FontWeight.w600,
+          //       ),
+          //     ),
+          //     style: ElevatedButton.styleFrom(
+          //       backgroundColor: kcPrimaryColor,
+          //       padding: const EdgeInsets.symmetric(vertical: 16),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(8),
+          //       ),
+          //       elevation: 0,
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 24),
 
           // Events List

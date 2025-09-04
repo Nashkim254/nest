@@ -21,7 +21,9 @@ class ManageTeamViewModel extends BaseViewModel {
     loadTeamMembers(organization);
   }
 
-  loadTeamMembers(Organization organization) {}
+  loadTeamMembers(Organization organization) {
+    _teamMembers = organization.teamMembers!;
+  }
   // Load events for the organization
   Future<void> loadOrganizationEvents(int? organizationId) async {
     if (organizationId == null) return;
@@ -58,7 +60,7 @@ class ManageTeamViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-  final List<TeamMember> _teamMembers = [];
+   List<TeamMember> _teamMembers = [];
 
   String _inviteEmail = '';
 

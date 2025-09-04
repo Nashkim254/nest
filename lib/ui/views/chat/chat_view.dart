@@ -2,10 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logger/logger.dart';
-import 'package:nest/app/app.locator.dart';
 import 'package:nest/models/user_serach_ressult.dart';
-import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/ui/views/chat/widgets/chat_bubble.dart';
 import 'package:nest/ui/views/chat/widgets/shimmer_loader.dart';
@@ -34,10 +31,16 @@ class ChatView extends StackedView<ChatViewModel> {
 
   @override
   void onViewModelReady(ChatViewModel viewModel) {
-    //if user is not null get from local storage
-
-    // Pass the current user ID to the viewModel
-    viewModel.init(chat!.participantIds!.last, chat!.id!);
+    if (chat != null) {
+      // Existing chat - initialize with chat data
+      viewModel.init(chat!.participantIds!.last, chat!.id!);
+    } else if (user != null) {
+      // New conversation - create conversation with the provided user
+      viewModel.initWithUser(user!);
+    } else {
+      // Neither chat nor user provided - cannot proceed
+      return;
+    }
     super.onViewModelReady(viewModel);
   }
 
@@ -52,9 +55,32 @@ class ChatView extends StackedView<ChatViewModel> {
     }
 
     // Get the other participant's information
-    final otherUser = chat!.getOtherParticipant(viewModel.currentUserId!);
-    final displayName = chat!.getDisplayName(viewModel.currentUserId!);
-    final displayAvatar = chat!.getDisplayAvatar(viewModel.currentUserId!);
+    String displayName;
+    String? displayAvatar;
+    User? otherUser;
+
+    if (chat != null) {
+      // Existing chat
+      otherUser = chat!.getOtherParticipant(viewModel.currentUserId!);
+      displayName = chat!.getDisplayName(viewModel.currentUserId!);
+      displayAvatar = chat!.getDisplayAvatar(viewModel.currentUserId!);
+    } else if (user != null) {
+      // New conversation with provided user
+      otherUser = User(
+        id: user!.id,
+        firstName: user!.firstName,
+        lastName: user!.lastName,
+        role: user!.role,
+        avatar: user!.profilePicture,
+        isPrivate: user!.isPrivate,
+      );
+      displayName = '${user!.firstName} ${user!.lastName}';
+      displayAvatar = user!.profilePicture ?? '';
+    } else {
+      // Fallback - shouldn't happen
+      displayName = 'Unknown';
+      displayAvatar = '';
+    }
 
     return SafeArea(
       child: Scaffold(
@@ -107,7 +133,9 @@ class ChatView extends StackedView<ChatViewModel> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     // Optional: Show online status or last seen
-                    if (!chat!.isGroup && otherUser?.lastActive != null)
+                    if (chat != null &&
+                        !chat!.isGroup &&
+                        otherUser?.lastActive != null)
                       Text(
                         _getLastSeenText(otherUser!.lastActive!),
                         style: titleTextMedium.copyWith(
@@ -176,7 +204,8 @@ class ChatView extends StackedView<ChatViewModel> {
                             height: 60,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: kcPrimaryColor, width: 2),
+                              border:
+                                  Border.all(color: kcPrimaryColor, width: 2),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(6),
@@ -187,8 +216,8 @@ class ChatView extends StackedView<ChatViewModel> {
                                       errorBuilder:
                                           (context, error, stackTrace) =>
                                               Container(
-                                        color:
-                                            kcSubtitleText2Color.withOpacity(0.3),
+                                        color: kcSubtitleText2Color
+                                            .withOpacity(0.3),
                                         child: const Icon(Icons.image,
                                             color: kcWhiteColor),
                                       ),
@@ -199,8 +228,8 @@ class ChatView extends StackedView<ChatViewModel> {
                                       errorBuilder:
                                           (context, error, stackTrace) =>
                                               Container(
-                                        color:
-                                            kcSubtitleText2Color.withOpacity(0.3),
+                                        color: kcSubtitleText2Color
+                                            .withOpacity(0.3),
                                         child: const Icon(Icons.image,
                                             color: kcWhiteColor),
                                       ),
@@ -252,11 +281,11 @@ class ChatView extends StackedView<ChatViewModel> {
                         ],
                       ),
                     ),
-      
+
                   // Message input row
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
                     child: Row(
                       children: [
                         InkWell(
@@ -277,19 +306,19 @@ class ChatView extends StackedView<ChatViewModel> {
                                       viewModel.messageController.text;
                                   final selection =
                                       viewModel.messageController.selection;
-      
+
                                   final newText = currentText.replaceRange(
                                     selection.start,
                                     selection.end,
                                     emoji,
                                   );
-      
+
                                   viewModel.messageController.text = newText;
                                   viewModel.messageController.selection =
                                       TextSelection.collapsed(
                                     offset: selection.start + emoji.length,
                                   );
-      
+
                                   Navigator.pop(
                                       context); // Close the emoji picker
                                 },
@@ -318,13 +347,13 @@ class ChatView extends StackedView<ChatViewModel> {
                                   : null,
                             ),
                           ),
-                          onTap: () =>
-                              viewModel.showImageSourceSheet(FileType.image),
+                          onTap: () => viewModel.showImageSourceSheet(),
                         ),
                         horizontalSpaceSmall,
                         Expanded(
                           child: TextFormField(
-                            style: titleTextMedium.copyWith(color: kcWhiteColor),
+                            style:
+                                titleTextMedium.copyWith(color: kcWhiteColor),
                             controller: viewModel.messageController,
                             decoration: AppInputDecoration.standard(
                               hintText: viewModel.uploadFileUrl.isNotEmpty

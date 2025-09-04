@@ -52,7 +52,7 @@ class EditProfileViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera(fileType);
+          await fileService.pickImageFromCamera();
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();

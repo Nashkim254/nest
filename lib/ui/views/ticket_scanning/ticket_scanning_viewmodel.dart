@@ -287,11 +287,127 @@ class TicketScanningViewModel extends BaseViewModel {
     }
   }
 
-  // History
+  // History management
   void showScanHistory() {
     // This would typically navigate to a history screen
     // For now, we'll just log the count
     _showInfo('Scanned ${_scanHistory.length} tickets total');
+  }
+
+  Future<void> loadScanHistoryFromApi() async {
+    if (_eventId == null) return;
+
+    try {
+      setBusy(true);
+      final history = await eventService.getTicketScanHistory(eventId: _eventId!);
+      _scanHistory.clear();
+      _scanHistory.addAll(history);
+      
+      // Update statistics from loaded history
+      _scannedCount = history.length;
+      _validCount = history.where((item) => item.result.isValid).length;
+      
+      notifyListeners();
+    } catch (e) {
+      _showError('Failed to load scan history: ${e.toString()}');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Batch validation for multiple tickets
+  Future<void> validateMultipleTickets(List<String> qrDataList) async {
+    if (qrDataList.isEmpty) return;
+
+    setBusy(true);
+    try {
+      final results = await eventService.validateMultipleTickets(
+        qrDataList: qrDataList,
+        eventId: _eventId,
+      );
+
+      // Update statistics and history
+      for (int i = 0; i < results.length; i++) {
+        final result = results[i];
+        final qrData = qrDataList[i];
+        
+        _scannedCount++;
+        if (result.isValid) {
+          _validCount++;
+        }
+
+        _scanHistory.insert(
+          0,
+          ScanHistoryItem(
+            qrData: qrData,
+            result: result,
+            timestamp: DateTime.now(),
+            isManual: true,
+          ),
+        );
+      }
+
+      notifyListeners();
+
+      final validCount = results.where((r) => r.isValid).length;
+      _showInfo('Validated ${results.length} tickets: ${validCount} valid, ${results.length - validCount} invalid');
+
+    } catch (e) {
+      _showError('Batch validation failed: ${e.toString()}');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Export scan history
+  Future<String> exportScanHistory() async {
+    try {
+      final buffer = StringBuffer();
+      buffer.writeln('Event: $_eventName');
+      buffer.writeln('Export Date: ${DateTime.now().toIso8601String()}');
+      buffer.writeln('Total Scanned: $_scannedCount');
+      buffer.writeln('Valid Tickets: $_validCount');
+      buffer.writeln('Invalid Tickets: ${_scannedCount - _validCount}');
+      buffer.writeln('---');
+      buffer.writeln('QR Data,Status,Message,Timestamp,Entry Type');
+      
+      for (final item in _scanHistory) {
+        buffer.writeln(
+          '${item.qrData},'
+          '${item.result.isValid ? 'VALID' : 'INVALID'},'
+          '"${item.result.message}",'
+          '${item.timestamp.toIso8601String()},'
+          '${item.isManual ? 'MANUAL' : 'SCANNED'}'
+        );
+      }
+      
+      return buffer.toString();
+    } catch (e) {
+      _showError('Failed to export scan history: ${e.toString()}');
+      return '';
+    }
+  }
+
+  // Clear scan history
+  void clearScanHistory() {
+    _scanHistory.clear();
+    _scannedCount = 0;
+    _validCount = 0;
+    notifyListeners();
+  }
+
+  // Get validation statistics
+  Map<String, dynamic> getValidationStats() {
+    final invalidCount = _scannedCount - _validCount;
+    final validPercentage = _scannedCount > 0 ? (_validCount / _scannedCount * 100) : 0;
+    
+    return {
+      'total_scanned': _scannedCount,
+      'valid_tickets': _validCount,
+      'invalid_tickets': invalidCount,
+      'valid_percentage': validPercentage,
+      'scan_history_count': _scanHistory.length,
+    };
   }
 
   // Helper methods

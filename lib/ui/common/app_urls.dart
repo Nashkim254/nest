@@ -61,8 +61,11 @@ class AppUrls {
 
   //social
   static final String social = '$baseUrl/social';
+
   static final String createPosts = '$social/posts';
   static final String getUserPostsUrl = '$social/user/posts';
+
+  static final String admin = '$baseUrl/admin';
 
   static final String NEXT_PUBLIC_GOOGLE_ACCESS_ID =
       dotenv.env['NEXT_PUBLIC_GOOGLE_ACCESS_ID']!;

@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_dotted_container.dart';
-import 'package:nest/ui/common/app_enums.dart';
 import 'package:nest/ui/views/create_post/video_thumbnail.dart';
 import 'package:stacked/stacked.dart';
 
@@ -87,7 +84,7 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                 ),
                 verticalSpaceMedium,
                 InkWell(
-                  onTap: () => viewModel.showImageSourceSheet(FileType.image),
+                  onTap: () => viewModel.showImageSourceSheet(),
                   child: DottedBorderContainer(
                     borderColor: kcContainerBorderColor,
                     height: 200,
@@ -100,8 +97,58 @@ class CreatePostView extends StackedView<CreatePostViewModel> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (viewModel.isBusy)
-                            const CircularProgressIndicator(
-                              color: kcPrimaryColor,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const CircularProgressIndicator(
+                                  color: kcPrimaryColor,
+                                ),
+                                if (viewModel.uploadProgress > 0)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 12.0),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Uploading video...',
+                                          style: titleTextMedium.copyWith(
+                                            fontSize: 14,
+                                            color: kcWhiteColor,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Container(
+                                          width: 200,
+                                          height: 4,
+                                          decoration: BoxDecoration(
+                                            color: kcOffWhite8Grey,
+                                            borderRadius:
+                                                BorderRadius.circular(2),
+                                          ),
+                                          child: FractionallySizedBox(
+                                            alignment: Alignment.centerLeft,
+                                            widthFactor:
+                                                viewModel.uploadProgress / 100,
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: kcPrimaryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(2),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${viewModel.uploadProgress.toInt()}%',
+                                          style: titleTextMedium.copyWith(
+                                            fontSize: 12,
+                                            color: kcFollowColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
                             )
                           else if (viewModel.hasImages) ...[
                             Expanded(

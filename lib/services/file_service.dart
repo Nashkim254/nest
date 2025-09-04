@@ -27,23 +27,16 @@ class FileService with ListenableServiceMixin {
     notifyListeners();
   }
 
-  Future<void> pickImageFromCamera(FileType fileType) async {
+  Future<void> pickImageFromCamera() async {
     try {
       bool hasPermission = await _imageService.requestPermissions();
       if (!hasPermission) {
         return;
       }
-      if (fileType == FileType.image) {
-        File? image = await _imageService.pickImageFromCamera();
-        if (image != null) {
-          _selectedImages.clear();
-          _selectedImages.add(image);
-          notifyListeners();
-        }
-      } else if (fileType == FileType.video) {
-        File? video = await _imageService.pickVideoFromCamera();
+      File? image = await _imageService.pickImageFromCamera();
+      if (image != null) {
         _selectedImages.clear();
-        _selectedImages.add(video!);
+        _selectedImages.add(image);
         notifyListeners();
       }
     } catch (e) {

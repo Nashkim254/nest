@@ -15,6 +15,7 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.locator.dart';
 import '../../../models/message_models.dart';
+import '../../../models/user_serach_ressult.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/file_service.dart';
 import '../../common/app_enums.dart';
@@ -90,11 +91,13 @@ class ChatViewModel extends ReactiveViewModel {
     logger.i('request: ${locator<SharedPreferencesService>().getAuthToken()}');
     // await sendMessageApi(request);
     // Send through WebSocket
-    final success = await _messagingService.sendMessage(
-      receiverId: receiverId,
-      content: content,
-      conversationId: conversationId,
-    );
+    //if conversationId is null, create a new conversation first
+
+      final success = await _messagingService.sendMessage(
+        receiverId: receiverId,
+        content: content,
+      );
+
 
     // if (success) {
     //   logger.w('Message sent successfully via WebSocket');
@@ -245,6 +248,27 @@ class ChatViewModel extends ReactiveViewModel {
     // await createConversation();
   }
 
+  initWithUser(UserSearchResult user) async {
+    setBusy(true);
+    try {
+      // Set the receiver ID from the user
+      receiverId = user.id;
+
+      // Create conversation first
+      await createConversation();
+
+      // After creating conversation, we should get the conversation ID
+      // For now, we'll set it to 0 and the conversation will be created when sending the first message
+      conversationId = null;
+
+      connect();
+    } catch (e) {
+      Logger().e('Error initializing with user: $e');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   // Connection management
   Future<void> connect() async {
     logger.e('Connecting to WebSocket...');
@@ -300,7 +324,7 @@ class ChatViewModel extends ReactiveViewModel {
 
   final _bottomSheetService = locator<BottomSheetService>();
 
-  Future<void> showImageSourceSheet(FileType fileType) async {
+  Future<void> showImageSourceSheet() async {
     SheetResponse? response = await _bottomSheetService.showCustomSheet(
       variant: BottomSheetType.imageSource,
       isScrollControlled: true,
@@ -311,7 +335,7 @@ class ChatViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera(fileType);
+          await fileService.pickImageFromCamera();
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();

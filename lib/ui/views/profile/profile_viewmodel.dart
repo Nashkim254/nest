@@ -49,7 +49,16 @@ class ProfileViewModel extends ReactiveViewModel {
   }
 
   void goToChatView() {
-    locator<NavigationService>().navigateToMessagesView();
+    locator<NavigationService>().navigateToChatView(
+        chat: null,
+        user: UserSearchResult(
+            id: profile!.id,
+            firstName: profile!.firstName,
+            lastName: profile!.lastName,
+            role: profile!.role,
+            profilePicture: profile!.profilePicture,
+            isPrivate: profile!.isPrivate,
+            score: 0));
   }
 
   cretePost() async {

@@ -7,10 +7,8 @@ import 'package:nest/services/event_service.dart';
 import 'package:nest/utils/extensions.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/material.dart';
-import 'package:nest/models/dj_model.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_enums.dart';
-import 'package:nest/ui/common/app_strings.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -106,7 +104,7 @@ class CreateEventViewModel extends ReactiveViewModel {
 
       switch (sourceType) {
         case ImageSourceType.camera:
-          await fileService.pickImageFromCamera(FileType.image);
+          await fileService.pickImageFromCamera();
           break;
         case ImageSourceType.gallery:
           await fileService.pickImageFromGallery();
