@@ -32,16 +32,14 @@ class EventGalleryGrid extends StatelessWidget {
                 mainAxisSpacing: 8,
               ),
               itemBuilder: (context, index) {
+                final post = posts[index];
                 return InkWell(
-                  onTap: () => onTap(posts[index]),
+                  onTap: () => onTap(post),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Hero(
                       tag: index,
-                      child: Image.network(
-                        posts[index].imageUrls.first,
-                        fit: BoxFit.cover,
-                      ),
+                      child: _buildMediaWidget(post),
                     ),
                   ),
                 );
@@ -57,6 +55,121 @@ class EventGalleryGrid extends StatelessWidget {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildMediaWidget(Post post) {
+    // Priority: Video thumbnail > First image > Placeholder
+    if (post.hasVideo && post.videoThumbnail != null && post.videoThumbnail!.isNotEmpty) {
+      // Show video thumbnail with play icon overlay
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            post.videoThumbnail!,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // Fallback if thumbnail fails to load
+              return _buildVideoPlaceholder();
+            },
+          ),
+          // Play icon overlay
+          const Center(
+            child: Icon(
+              Icons.play_circle_fill,
+              color: Colors.white,
+              size: 40,
+            ),
+          ),
+          // Video indicator badge
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'VIDEO',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (post.hasVideo) {
+      // Video exists but no thumbnail yet (probably still processing)
+      return _buildVideoPlaceholder(processing: !post.videoReady);
+    } else if (post.hasImages) {
+      // Show first image
+      return Image.network(
+        post.imageUrls.first,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildImagePlaceholder();
+        },
+      );
+    } else {
+      // No media - show text post placeholder
+      return _buildTextPostPlaceholder();
+    }
+  }
+
+  Widget _buildVideoPlaceholder({bool processing = false}) {
+    return Container(
+      color: Colors.grey[800],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              processing ? Icons.video_settings : Icons.videocam,
+              color: Colors.white,
+              size: 30,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              processing ? 'Processing...' : 'Video',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      child: const Center(
+        child: Icon(
+          Icons.image,
+          color: Colors.grey,
+          size: 30,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextPostPlaceholder() {
+    return Container(
+      color: kcOffWhite8Grey,
+      child: const Center(
+        child: Icon(
+          Icons.text_fields,
+          color: kcFollowColor,
+          size: 30,
+        ),
+      ),
     );
   }
 }

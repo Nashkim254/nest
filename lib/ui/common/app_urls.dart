@@ -32,7 +32,7 @@ class AppUrls {
   static final String myOrganizationEvents =
       '$baseUrl/organizations/all-events';
   static final String searchOrganization = '$baseUrl/organizations/search';
-  static final String updateOrganization = '$baseUrl/organizations/update';
+  static final String updateOrganization = '$baseUrl/organizations';
 //events
   static final String events = '$baseUrl/events';
   static final String createEvent = '$baseUrl/events/';

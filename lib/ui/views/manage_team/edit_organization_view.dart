@@ -9,23 +9,28 @@ import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../../models/organization_model.dart';
 import '../../../utils/validators.dart';
 import '../../common/app_colors.dart';
 import '../../common/app_custom_button.dart';
-import 'create_organization_viewmodel.dart';
+import 'edit_organization_viewmodel.dart';
 
-class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
-  const CreateOrganizationView({Key? key}) : super(key: key);
+class EditOrganizationView extends StackedView<EditOrganizationViewModel> {
+  const EditOrganizationView({Key? key, required this.organization}) : super(key: key);
+  
+  final Organization organization;
+
   @override
-  void onViewModelReady(CreateOrganizationViewModel viewModel) {
+  void onViewModelReady(EditOrganizationViewModel viewModel) {
     viewModel.loadCountries();
+    viewModel.initializeWithOrganization(organization);
     super.onViewModelReady(viewModel);
   }
 
   @override
   Widget builder(
     BuildContext context,
-    CreateOrganizationViewModel viewModel,
+    EditOrganizationViewModel viewModel,
     Widget? child,
   ) {
     return SafeArea(
@@ -43,7 +48,7 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
           ),
           elevation: 0,
           title: const Text(
-            'Create Organization',
+            'Edit Organization',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -168,6 +173,24 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                               width: double.infinity,
                               height: 150,
                             )
+                          : viewModel.banner.isNotEmpty
+                              ? Image.network(
+                                  viewModel.banner,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 150,
+                                  errorBuilder: (context, error, stackTrace) => Container(
+                                    height: 150,
+                                    color: Colors.grey[600],
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.error_outline,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ),
+                                )
                           : Column(
                               children: [
                                 verticalSpaceMedium,
@@ -212,6 +235,17 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                                 radius: 50,
                                 backgroundImage: FileImage(viewModel.selectedProfileImage!),
                               )
+                            : viewModel.profilePic.isNotEmpty
+                                ? CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: NetworkImage(viewModel.profilePic) as ImageProvider,
+                                    onBackgroundImageError: (exception, stackTrace) {},
+                                    child: const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                  )
                             : Column(
                                 children: [
                                   verticalSpaceMedium,
@@ -279,7 +313,7 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                     controller: viewModel.bioController,
                     maxLines: 3,
                     decoration: AppInputDecoration.standard(
-                      hintText: "Tell us about your organization and what"
+                      hintText: "Tell us about your organization and what "
                           'you do',
                       filled: true,
                     ),
@@ -351,9 +385,10 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
+                      final member = viewModel.teamMembers[index];
                       return ListTile(
                         title: Text(
-                          viewModel.teamMembers[index].name!,
+                          member.name ?? 'Unknown User',
                           style: titleTextMedium.copyWith(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
@@ -361,7 +396,7 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                           ),
                         ),
                         subtitle: Text(
-                          viewModel.teamMembers[index].role!,
+                          member.role ?? 'Member',
                           style: titleTextMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
@@ -388,8 +423,8 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
                   verticalSpaceSmall,
                   AppButton(
                     isBusy: viewModel.isBusy,
-                    labelText: 'Create Organization',
-                    onTap: () => viewModel.createOrganizations(),
+                    labelText: 'Update Organization',
+                    onTap: () => viewModel.updateOrganization(),
                   ),
                   verticalSpaceMedium,
                 ],
@@ -403,8 +438,8 @@ class CreateOrganizationView extends StackedView<CreateOrganizationViewModel> {
 
 
   @override
-  CreateOrganizationViewModel viewModelBuilder(
+  EditOrganizationViewModel viewModelBuilder(
     BuildContext context,
   ) =>
-      CreateOrganizationViewModel();
+      EditOrganizationViewModel();
 }

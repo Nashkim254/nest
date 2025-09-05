@@ -42,6 +42,8 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
   String profilePicUploadUrl = '';
   String banner = '';
   String bannerUploadUrl = '';
+  File? selectedBannerImage;
+  File? selectedProfileImage;
 
   List<TeamMember> teamMembers = [];
   addTeamMember(TeamMember member) {
@@ -235,6 +237,12 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
           break;
       }
       if (selectedImages.isNotEmpty) {
+        // Store the selected image for the specific type
+        if (type == 'banner') {
+          selectedBannerImage = selectedImages.last;
+        } else if (type == 'profile') {
+          selectedProfileImage = selectedImages.last;
+        }
         await getProfileUploadUrl(type);
       }
     }
@@ -247,8 +255,13 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
   Future getProfileUploadUrl(String type) async {
     setBusy(true);
     try {
-      final response = await globalService
-          .uploadFileGetURL(getFileExtension(selectedImages.first));
+      // Determine which file to upload based on type and upload URLs
+      File imageFile = _getImageFileForUpload(type);
+      
+      final response = await globalService.uploadFileGetURL(
+          getFileExtension(imageFile),
+          folder: 'profile');
+      
       if (response.statusCode == 200 && response.data != null) {
         if (type == 'profile') {
           profilePic = response.data['url'];
@@ -257,20 +270,39 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
           banner = response.data['url'];
           bannerUploadUrl = response.data['upload_url'];
         }
+        
+        // Now actually upload the file
+        final result = await globalService.uploadFile(
+          response.data['upload_url'],
+          imageFile,
+        );
+        
+        if (result.statusCode != 200 && result.statusCode != 201) {
+          throw Exception('Failed to upload $type image');
+        }
+        
+        logger.i('Successfully uploaded $type image: ${response.data['url']}');
 
-        logger.i('upload url: ${response.data}');
       } else {
-        throw Exception(response.message ?? 'Failed to load upload url:');
+        throw Exception(response.message ?? 'Failed to get upload URL for $type image');
       }
-    } catch (e, s) {
-      logger.e('Failed to load upload url:', e, s);
-      locator<SnackbarService>().showSnackbar(
-        message: 'Failed to upload url:: $e',
-        duration: const Duration(seconds: 3),
-      );
+    } catch (e) {
+      logger.e('Error uploading $type image: $e');
+      rethrow;
     } finally {
       setBusy(false);
     }
+  }
+
+  File _getImageFileForUpload(String type) {
+    // Use the specific image selected for this type
+    if (type == 'banner' && selectedBannerImage != null) {
+      return selectedBannerImage!;
+    } else if (type == 'profile' && selectedProfileImage != null) {
+      return selectedProfileImage!;
+    }
+    // Fallback to most recent selection
+    return selectedImages.last;
   }
 
   @override

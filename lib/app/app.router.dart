@@ -5,16 +5,17 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i35;
+import 'package:flutter/material.dart' as _i36;
 import 'package:flutter/material.dart';
-import 'package:nest/models/events.dart' as _i39;
-import 'package:nest/models/message_models.dart' as _i37;
-import 'package:nest/models/organization_model.dart' as _i40;
-import 'package:nest/models/registration_model.dart' as _i36;
-import 'package:nest/models/user_serach_ressult.dart' as _i38;
-import 'package:nest/ui/views/analytics/analytics_view.dart' as _i30;
+import 'package:nest/models/events.dart' as _i40;
+import 'package:nest/models/message_models.dart' as _i38;
+import 'package:nest/models/organization_model.dart' as _i42;
+import 'package:nest/models/post_models.dart' as _i41;
+import 'package:nest/models/registration_model.dart' as _i37;
+import 'package:nest/models/user_serach_ressult.dart' as _i39;
+import 'package:nest/ui/views/analytics/analytics_view.dart' as _i31;
 import 'package:nest/ui/views/chat/chat_view.dart' as _i16;
-import 'package:nest/ui/views/checkout/checkout_view.dart' as _i28;
+import 'package:nest/ui/views/checkout/checkout_view.dart' as _i29;
 import 'package:nest/ui/views/create_event/create_event_view.dart' as _i19;
 import 'package:nest/ui/views/create_organization/create_organization_view.dart'
     as _i27;
@@ -22,7 +23,7 @@ import 'package:nest/ui/views/create_post/create_post_view.dart' as _i17;
 import 'package:nest/ui/views/discover/discover_view.dart' as _i8;
 import 'package:nest/ui/views/discover_find_people/discover_find_people_view.dart'
     as _i18;
-import 'package:nest/ui/views/edit_event/edit_event_view.dart' as _i34;
+import 'package:nest/ui/views/edit_event/edit_event_view.dart' as _i35;
 import 'package:nest/ui/views/edit_profile/edit_profile_view.dart' as _i14;
 import 'package:nest/ui/views/event_activity/event_activity_view.dart' as _i15;
 import 'package:nest/ui/views/explore_events/explore_events_view.dart' as _i23;
@@ -36,22 +37,23 @@ import 'package:nest/ui/views/interest_selection/interest_selection_view.dart'
     as _i4;
 import 'package:nest/ui/views/location/location_view.dart' as _i5;
 import 'package:nest/ui/views/login/login_view.dart' as _i6;
-import 'package:nest/ui/views/manage_events/manage_events_view.dart' as _i32;
-import 'package:nest/ui/views/manage_team/manage_team_view.dart' as _i33;
+import 'package:nest/ui/views/manage_events/manage_events_view.dart' as _i33;
+import 'package:nest/ui/views/manage_team/manage_team_view.dart' as _i34;
 import 'package:nest/ui/views/messages/messages_view.dart' as _i10;
 import 'package:nest/ui/views/navigation/navigation_view.dart' as _i13;
-import 'package:nest/ui/views/paymentweb/paymentweb_view.dart' as _i29;
+import 'package:nest/ui/views/paymentweb/paymentweb_view.dart' as _i30;
 import 'package:nest/ui/views/profile/profile_view.dart' as _i12;
 import 'package:nest/ui/views/register/register_view.dart' as _i7;
 import 'package:nest/ui/views/settings/settings_view.dart' as _i26;
 import 'package:nest/ui/views/startup/startup_view.dart' as _i3;
 import 'package:nest/ui/views/ticket_scanning/ticket_scanning_view.dart'
-    as _i31;
+    as _i32;
 import 'package:nest/ui/views/tickets/tickets_view.dart' as _i11;
 import 'package:nest/ui/views/upcoming/upcoming_view.dart' as _i20;
+import 'package:nest/ui/views/video_player/video_player_view.dart' as _i28;
 import 'package:nest/ui/views/view_event/view_event_view.dart' as _i25;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i41;
+import 'package:stacked_services/stacked_services.dart' as _i43;
 
 class Routes {
   static const homeView = '/home-view';
@@ -106,6 +108,8 @@ class Routes {
 
   static const createOrganizationView = '/create-organization-view';
 
+  static const videoPlayerView = '/video-player-view';
+
   static const checkoutView = '/checkout-view';
 
   static const paymentwebView = '/paymentweb-view';
@@ -147,6 +151,7 @@ class Routes {
     viewEventView,
     settingsView,
     createOrganizationView,
+    videoPlayerView,
     checkoutView,
     paymentwebView,
     analyticsView,
@@ -264,251 +269,263 @@ class StackedRouter extends _i1.RouterBase {
       page: _i27.CreateOrganizationView,
     ),
     _i1.RouteDef(
+      Routes.videoPlayerView,
+      page: _i28.VideoPlayerView,
+    ),
+    _i1.RouteDef(
       Routes.checkoutView,
-      page: _i28.CheckoutView,
+      page: _i29.CheckoutView,
     ),
     _i1.RouteDef(
       Routes.paymentwebView,
-      page: _i29.PaymentwebView,
+      page: _i30.PaymentwebView,
     ),
     _i1.RouteDef(
       Routes.analyticsView,
-      page: _i30.AnalyticsView,
+      page: _i31.AnalyticsView,
     ),
     _i1.RouteDef(
       Routes.ticketScanningView,
-      page: _i31.TicketScanningView,
+      page: _i32.TicketScanningView,
     ),
     _i1.RouteDef(
       Routes.manageEventsView,
-      page: _i32.ManageEventsView,
+      page: _i33.ManageEventsView,
     ),
     _i1.RouteDef(
       Routes.manageTeamView,
-      page: _i33.ManageTeamView,
+      page: _i34.ManageTeamView,
     ),
     _i1.RouteDef(
       Routes.editEventView,
-      page: _i34.EditEventView,
+      page: _i35.EditEventView,
     ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i2.HomeView(),
         settings: data,
       );
     },
     _i3.StartupView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i3.StartupView(),
         settings: data,
       );
     },
     _i4.InterestSelectionView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i4.InterestSelectionView(),
         settings: data,
       );
     },
     _i5.LocationView: (data) {
       final args = data.getArgs<LocationViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => _i5.LocationView(
             key: args.key, registrationModel: args.registrationModel),
         settings: data,
       );
     },
     _i6.LoginView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i6.LoginView(),
         settings: data,
       );
     },
     _i7.RegisterView: (data) {
       final args = data.getArgs<RegisterViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => _i7.RegisterView(
             key: args.key, registrationModel: args.registrationModel),
         settings: data,
       );
     },
     _i8.DiscoverView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i8.DiscoverView(),
         settings: data,
       );
     },
     _i9.HostingView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i9.HostingView(),
         settings: data,
       );
     },
     _i10.MessagesView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i10.MessagesView(),
         settings: data,
       );
     },
     _i11.TicketsView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i11.TicketsView(),
         settings: data,
       );
     },
     _i12.ProfileView: (data) {
       final args = data.getArgs<ProfileViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i12.ProfileView(key: args.key, isOtherUser: args.isOtherUser),
         settings: data,
       );
     },
     _i13.NavigationView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i13.NavigationView(),
         settings: data,
       );
     },
     _i14.EditProfileView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i14.EditProfileView(),
         settings: data,
       );
     },
     _i15.EventActivityView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i15.EventActivityView(),
         settings: data,
       );
     },
     _i16.ChatView: (data) {
       final args = data.getArgs<ChatViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) =>
             _i16.ChatView(key: args.key, chat: args.chat, user: args.user),
         settings: data,
       );
     },
     _i17.CreatePostView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i17.CreatePostView(),
         settings: data,
       );
     },
     _i18.DiscoverFindPeopleView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i18.DiscoverFindPeopleView(),
         settings: data,
       );
     },
     _i19.CreateEventView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i19.CreateEventView(),
         settings: data,
       );
     },
     _i20.UpcomingView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i20.UpcomingView(),
         settings: data,
       );
     },
     _i21.ForYouView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i21.ForYouView(),
         settings: data,
       );
     },
     _i22.FollowingView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i22.FollowingView(),
         settings: data,
       );
     },
     _i23.ExploreEventsView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i23.ExploreEventsView(),
         settings: data,
       );
     },
     _i24.FindPeopleAndOrgsView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i24.FindPeopleAndOrgsView(),
         settings: data,
       );
     },
     _i25.ViewEventView: (data) {
       final args = data.getArgs<ViewEventViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => _i25.ViewEventView(
             key: args.key, event: args.event, password: args.password),
         settings: data,
       );
     },
     _i26.SettingsView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i26.SettingsView(),
         settings: data,
       );
     },
     _i27.CreateOrganizationView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) => const _i27.CreateOrganizationView(),
         settings: data,
       );
     },
-    _i28.CheckoutView: (data) {
+    _i28.VideoPlayerView: (data) {
+      final args = data.getArgs<VideoPlayerViewArguments>(nullOk: false);
+      return _i36.MaterialPageRoute<dynamic>(
+        builder: (context) =>
+            _i28.VideoPlayerView(key: args.key, post: args.post),
+        settings: data,
+      );
+    },
+    _i29.CheckoutView: (data) {
       final args = data.getArgs<CheckoutViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i28.CheckoutView(key: args.key, ticketInfo: args.ticketInfo),
+            _i29.CheckoutView(key: args.key, ticketInfo: args.ticketInfo),
         settings: data,
       );
     },
-    _i29.PaymentwebView: (data) {
+    _i30.PaymentwebView: (data) {
       final args = data.getArgs<PaymentwebViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i29.PaymentwebView(key: args.key, checkoutURL: args.checkoutURL),
+            _i30.PaymentwebView(key: args.key, checkoutURL: args.checkoutURL),
         settings: data,
       );
     },
-    _i30.AnalyticsView: (data) {
+    _i31.AnalyticsView: (data) {
       final args = data.getArgs<AnalyticsViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
-        builder: (context) => _i30.AnalyticsView(
+      return _i36.MaterialPageRoute<dynamic>(
+        builder: (context) => _i31.AnalyticsView(
             key: args.key, organizationId: args.organizationId),
         settings: data,
       );
     },
-    _i31.TicketScanningView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i31.TicketScanningView(),
+    _i32.TicketScanningView: (data) {
+      return _i36.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i32.TicketScanningView(),
         settings: data,
       );
     },
-    _i32.ManageEventsView: (data) {
-      return _i35.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i32.ManageEventsView(),
+    _i33.ManageEventsView: (data) {
+      return _i36.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i33.ManageEventsView(),
         settings: data,
       );
     },
-    _i33.ManageTeamView: (data) {
+    _i34.ManageTeamView: (data) {
       final args = data.getArgs<ManageTeamViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i33.ManageTeamView(key: args.key, organization: args.organization),
+            _i34.ManageTeamView(key: args.key, organization: args.organization),
         settings: data,
       );
     },
-    _i34.EditEventView: (data) {
+    _i35.EditEventView: (data) {
       final args = data.getArgs<EditEventViewArguments>(nullOk: false);
-      return _i35.MaterialPageRoute<dynamic>(
+      return _i36.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i34.EditEventView(key: args.key, event: args.event),
+            _i35.EditEventView(key: args.key, event: args.event),
         settings: data,
       );
     },
@@ -527,9 +544,9 @@ class LocationViewArguments {
     required this.registrationModel,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
-  final _i36.RegistrationModel registrationModel;
+  final _i37.RegistrationModel registrationModel;
 
   @override
   String toString() {
@@ -554,9 +571,9 @@ class RegisterViewArguments {
     required this.registrationModel,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
-  final _i36.RegistrationModel registrationModel;
+  final _i37.RegistrationModel registrationModel;
 
   @override
   String toString() {
@@ -581,7 +598,7 @@ class ProfileViewArguments {
     required this.isOtherUser,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
   final bool isOtherUser;
 
@@ -609,11 +626,11 @@ class ChatViewArguments {
     this.user,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
-  final _i37.Conversation? chat;
+  final _i38.Conversation? chat;
 
-  final _i38.UserSearchResult? user;
+  final _i39.UserSearchResult? user;
 
   @override
   String toString() {
@@ -639,9 +656,9 @@ class ViewEventViewArguments {
     this.password,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
-  final _i39.Event event;
+  final _i40.Event event;
 
   final String? password;
 
@@ -664,13 +681,40 @@ class ViewEventViewArguments {
   }
 }
 
+class VideoPlayerViewArguments {
+  const VideoPlayerViewArguments({
+    this.key,
+    required this.post,
+  });
+
+  final _i36.Key? key;
+
+  final _i41.Post post;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "post": "$post"}';
+  }
+
+  @override
+  bool operator ==(covariant VideoPlayerViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key && other.post == post;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ post.hashCode;
+  }
+}
+
 class CheckoutViewArguments {
   const CheckoutViewArguments({
     this.key,
     required this.ticketInfo,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
   final Map<dynamic, dynamic> ticketInfo;
 
@@ -697,7 +741,7 @@ class PaymentwebViewArguments {
     required this.checkoutURL,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
   final String checkoutURL;
 
@@ -724,7 +768,7 @@ class AnalyticsViewArguments {
     required this.organizationId,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
   final int organizationId;
 
@@ -751,9 +795,9 @@ class ManageTeamViewArguments {
     required this.organization,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
-  final _i40.Organization organization;
+  final _i42.Organization organization;
 
   @override
   String toString() {
@@ -778,9 +822,9 @@ class EditEventViewArguments {
     required this.event,
   });
 
-  final _i35.Key? key;
+  final _i36.Key? key;
 
-  final _i39.Event event;
+  final _i40.Event event;
 
   @override
   String toString() {
@@ -799,7 +843,7 @@ class EditEventViewArguments {
   }
 }
 
-extension NavigatorStateExtension on _i41.NavigationService {
+extension NavigatorStateExtension on _i43.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -843,8 +887,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToLocationView({
-    _i35.Key? key,
-    required _i36.RegistrationModel registrationModel,
+    _i36.Key? key,
+    required _i37.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -875,8 +919,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToRegisterView({
-    _i35.Key? key,
-    required _i36.RegistrationModel registrationModel,
+    _i36.Key? key,
+    required _i37.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -949,7 +993,7 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToProfileView({
-    _i35.Key? key,
+    _i36.Key? key,
     required bool isOtherUser,
     int? routerId,
     bool preventDuplicates = true,
@@ -1008,9 +1052,9 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToChatView({
-    _i35.Key? key,
-    required _i37.Conversation? chat,
-    _i38.UserSearchResult? user,
+    _i36.Key? key,
+    required _i38.Conversation? chat,
+    _i39.UserSearchResult? user,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1138,8 +1182,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToViewEventView({
-    _i35.Key? key,
-    required _i39.Event event,
+    _i36.Key? key,
+    required _i40.Event event,
     String? password,
     int? routerId,
     bool preventDuplicates = true,
@@ -1184,8 +1228,25 @@ extension NavigatorStateExtension on _i41.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToVideoPlayerView({
+    _i36.Key? key,
+    required _i41.Post post,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return navigateTo<dynamic>(Routes.videoPlayerView,
+        arguments: VideoPlayerViewArguments(key: key, post: post),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> navigateToCheckoutView({
-    _i35.Key? key,
+    _i36.Key? key,
     required Map<dynamic, dynamic> ticketInfo,
     int? routerId,
     bool preventDuplicates = true,
@@ -1202,7 +1263,7 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToPaymentwebView({
-    _i35.Key? key,
+    _i36.Key? key,
     required String checkoutURL,
     int? routerId,
     bool preventDuplicates = true,
@@ -1219,7 +1280,7 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToAnalyticsView({
-    _i35.Key? key,
+    _i36.Key? key,
     required int organizationId,
     int? routerId,
     bool preventDuplicates = true,
@@ -1265,8 +1326,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToManageTeamView({
-    _i35.Key? key,
-    required _i40.Organization organization,
+    _i36.Key? key,
+    required _i42.Organization organization,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1283,8 +1344,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> navigateToEditEventView({
-    _i35.Key? key,
-    required _i39.Event event,
+    _i36.Key? key,
+    required _i40.Event event,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1342,8 +1403,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithLocationView({
-    _i35.Key? key,
-    required _i36.RegistrationModel registrationModel,
+    _i36.Key? key,
+    required _i37.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1374,8 +1435,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithRegisterView({
-    _i35.Key? key,
-    required _i36.RegistrationModel registrationModel,
+    _i36.Key? key,
+    required _i37.RegistrationModel registrationModel,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1448,7 +1509,7 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithProfileView({
-    _i35.Key? key,
+    _i36.Key? key,
     required bool isOtherUser,
     int? routerId,
     bool preventDuplicates = true,
@@ -1507,9 +1568,9 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithChatView({
-    _i35.Key? key,
-    required _i37.Conversation? chat,
-    _i38.UserSearchResult? user,
+    _i36.Key? key,
+    required _i38.Conversation? chat,
+    _i39.UserSearchResult? user,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1637,8 +1698,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithViewEventView({
-    _i35.Key? key,
-    required _i39.Event event,
+    _i36.Key? key,
+    required _i40.Event event,
     String? password,
     int? routerId,
     bool preventDuplicates = true,
@@ -1683,8 +1744,25 @@ extension NavigatorStateExtension on _i41.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> replaceWithVideoPlayerView({
+    _i36.Key? key,
+    required _i41.Post post,
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  }) async {
+    return replaceWith<dynamic>(Routes.videoPlayerView,
+        arguments: VideoPlayerViewArguments(key: key, post: post),
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> replaceWithCheckoutView({
-    _i35.Key? key,
+    _i36.Key? key,
     required Map<dynamic, dynamic> ticketInfo,
     int? routerId,
     bool preventDuplicates = true,
@@ -1701,7 +1779,7 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithPaymentwebView({
-    _i35.Key? key,
+    _i36.Key? key,
     required String checkoutURL,
     int? routerId,
     bool preventDuplicates = true,
@@ -1718,7 +1796,7 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithAnalyticsView({
-    _i35.Key? key,
+    _i36.Key? key,
     required int organizationId,
     int? routerId,
     bool preventDuplicates = true,
@@ -1764,8 +1842,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithManageTeamView({
-    _i35.Key? key,
-    required _i40.Organization organization,
+    _i36.Key? key,
+    required _i42.Organization organization,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -1782,8 +1860,8 @@ extension NavigatorStateExtension on _i41.NavigationService {
   }
 
   Future<dynamic> replaceWithEditEventView({
-    _i35.Key? key,
-    required _i39.Event event,
+    _i36.Key? key,
+    required _i40.Event event,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,

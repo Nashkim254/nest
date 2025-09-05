@@ -137,9 +137,8 @@ class CreatePostViewModel extends ReactiveViewModel {
           notifyListeners();
         }
 
-        if (selectedImages.isNotEmpty) {
-          await uploadMixedMedia();
-        }
+        // Just notify that files are selected - don't upload yet
+        notifyListeners();
       }
     }
   }
@@ -148,48 +147,15 @@ class CreatePostViewModel extends ReactiveViewModel {
   String? videoUrl;
   double uploadProgress = 0.0;
 
-  Future getSignedURL() async {
-    setBusy(true);
-    try {
-      final response = await socialService.claudFlareSignVideo();
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        logger.i('Signed URL response:', response.data);
-
-        File? videoFile;
-        for (var file in selectedImages) {
-          if (isVideoByExtension(file)) {
-            videoFile = file;
-            break;
-          }
-        }
-        if (videoFile != null) {
-          logger.i('Uploading video file: ${videoFile.path}');
-          await uploadVideoToCloudflareWithSignedData(response.data, videoFile);
-        }
-
-        return response.data;
-      } else {
-        throw Exception(
-            'Failed to get signed URL: ${response.message ?? 'Unknown error'}');
-      }
-    } catch (e) {
-      logger.e('Failed to get signed URL:', e);
-      locator<SnackbarService>().showSnackbar(
-        message: 'Failed to get signed URL: $e',
-        duration: const Duration(seconds: 3),
-      );
-    } finally {
-      setBusy(false);
-    }
-  }
-
   Future uploadVideoToCloudflareWithSignedData(
       dynamic signedUrlData, File videoFile) async {
     return await uploadVideoUsingCloudflarePackage(signedUrlData, videoFile);
   }
 
   Future uploadVideoUsingCloudflarePackage(
-      dynamic signedUrlData, File videoFile) async {
+    dynamic signedUrlData,
+    File videoFile,
+  ) async {
     try {
       final result = signedUrlData['result'];
       final uid = result['uid'];
@@ -199,6 +165,9 @@ class CreatePostViewModel extends ReactiveViewModel {
       notifyListeners();
 
       logger.i('Using multipart form upload for UID: $uid');
+      logger.i('Upload URL: $uploadUrl');
+      logger.i('File size: ${await videoFile.length()} bytes');
+      logger.i('File path: ${videoFile.path}');
 
       final dio = Dio();
       dio.options.connectTimeout = const Duration(minutes: 5);
@@ -230,18 +199,23 @@ class CreatePostViewModel extends ReactiveViewModel {
         uploadProgress = 100.0;
         notifyListeners();
 
-        final videoPlaybackUrl = 'https://videodelivery.net/$uid/manifest/video.m3u8';
-        uploadImageUrls.add(videoPlaybackUrl);
-
-        logger.i('Upload successful. Video URL: $videoPlaybackUrl');
-        logger.w('Upload successful. Video response: ${response.data}');
+        logger.i('Upload successful for UID: $uid');
+        logger.w('Upload response status: ${response.statusCode}');
+        logger.w('Upload response data: ${response.data}');
+        logger.w('Upload response headers: ${response.headers}');
+        
+        // Check if response actually indicates success
+        if (response.data == null || response.data.toString().trim().isEmpty) {
+          logger.e('Warning: Upload returned 200 but with empty response body - this may indicate a failed upload');
+        }
 
         locator<SnackbarService>().showSnackbar(
           message: 'Video uploaded successfully',
           duration: const Duration(seconds: 3),
         );
       } else {
-        throw Exception('Upload failed: ${response.statusCode} - ${response.statusMessage}');
+        throw Exception(
+            'Upload failed: ${response.statusCode} - ${response.statusMessage}');
       }
     } catch (e, s) {
       logger.e('Upload failed: $e\n$s');
@@ -290,8 +264,7 @@ class CreatePostViewModel extends ReactiveViewModel {
         uploadProgress = 100.0;
         notifyListeners();
 
-        final videoPlaybackUrl = 'https://videodelivery.net/$uid/manifest/video.m3u8';
-        uploadImageUrls.add(videoPlaybackUrl);
+        logger.i('Bytes upload successful for UID: $uid');
 
         locator<SnackbarService>().showSnackbar(
           message: 'Video uploaded successfully',
@@ -306,40 +279,68 @@ class CreatePostViewModel extends ReactiveViewModel {
     }
   }
 
-// Updated mixed media upload with fallback
-  Future uploadMixedMedia() async {
+// Prepare media before post creation - gets UID for first video, uploads images
+  Future prepareAllMedia() async {
     setBusy(true);
     try {
       uploadImageUrls.clear();
+      videoUploadData.clear();
+      videoMediaId = null;
+      bool hasProcessedVideo = false;
 
       for (int i = 0; i < selectedImages.length; i++) {
         File currentFile = selectedImages[i];
 
         if (isVideoByExtension(currentFile)) {
-          final response = await socialService.claudFlareSignVideo();
-          if (response.statusCode == 200 || response.statusCode == 201) {
-            try {
-              // Try streaming upload first
-              await uploadVideoToCloudflareWithSignedData(response.data, currentFile);
-            } catch (e) {
-              logger.w('Stream upload failed, trying bytes upload: $e');
-              // Fallback to bytes upload
-              await uploadVideoWithBytes(response.data, currentFile);
+          if (!hasProcessedVideo) {
+            // Process only the first video (one video per post)
+            final response = await socialService.claudFlareSignVideo();
+            if (response.statusCode == 200 || response.statusCode == 201) {
+              final result = response.data['result'];
+              final uid = result['uid'];
+              final uploadUrl = result['uploadURL'];
+
+              // Store only one video data for later upload
+              videoUploadData.add({
+                'file': currentFile,
+                'uid': uid,
+                'uploadUrl': uploadUrl,
+                'signedData': response.data,
+              });
+
+              // Store the video UID for mediaId field
+              videoMediaId = uid;
+              hasProcessedVideo = true;
+
+              logger.i('Got video UID for mediaId: $uid');
+            } else {
+              throw Exception('Failed to get signed URL for video');
             }
           } else {
-            throw Exception('Failed to get signed URL for video');
+            // Skip additional videos and notify user
+            logger.w('Skipping additional video: ${currentFile.path}');
           }
         } else {
+          // Upload images immediately
           await uploadImageFile(currentFile, i);
         }
       }
 
-      // fileService.clearSelectedImages();
-      logger.i('All media uploaded successfully. Total URLs: ${uploadImageUrls.length}');
+      // Count total videos selected
+      int totalVideos = selectedImages.where((file) => isVideoByExtension(file)).length;
+      if (totalVideos > 1) {
+        locator<SnackbarService>().showSnackbar(
+          message: 'Only one video per post is supported. Using the first video selected.',
+          duration: const Duration(seconds: 3),
+        );
+      }
+
+      logger.i(
+          'Media prepared successfully. Images: ${uploadImageUrls.length}, Video UID: $videoMediaId, Videos processed: ${hasProcessedVideo ? 1 : 0}/$totalVideos');
     } catch (e, s) {
-      logger.e('Failed to upload mixed media: $e\n$s');
+      logger.e('Failed to prepare media: $e\n$s');
       locator<SnackbarService>().showSnackbar(
-        message: 'Failed to upload media: $e',
+        message: 'Failed to prepare media: $e',
         duration: const Duration(seconds: 3),
       );
     } finally {
@@ -375,53 +376,6 @@ class CreatePostViewModel extends ReactiveViewModel {
     } catch (e) {
       logger.e('Failed to upload image file:', e);
       rethrow;
-    }
-  }
-
-  Future getFileUploadUrl() async {
-    setBusy(true);
-    try {
-      uploadImageUrls.clear();
-
-      for (int i = 0; i < selectedImages.length; i++) {
-        File currentImage = selectedImages[i];
-        String fileExtension = getFileExtension(currentImage);
-
-        logger.i(
-            'Uploading image ${i + 1}/${selectedImages.length}: ${currentImage.path}');
-
-        final response = await globalService.uploadFileGetURL(fileExtension,
-            folder: 'profile');
-
-        if (response.statusCode == 200 && response.data != null) {
-          uploadImageUrls.add(response.data['url']);
-
-          final result = await globalService.uploadFile(
-            response.data['upload_url'],
-            currentImage,
-          );
-          if (result.statusCode == 200 || result.statusCode == 201) {
-            fileService.clearSelectedImages();
-          }
-          logger.i(
-              'Successfully uploaded image ${i + 1}: ${response.data['url']}');
-          notifyListeners();
-        } else {
-          throw Exception(
-              'Failed to get upload URL for image ${i + 1}: ${response.message ?? 'Unknown error'}');
-        }
-      }
-
-      logger.i(
-          'All images uploaded successfully. Total: ${uploadImageUrls.length}');
-    } catch (e, s) {
-      logger.e('Failed to upload images: $e\n$s');
-      locator<SnackbarService>().showSnackbar(
-        message: 'Failed to upload images: $e',
-        duration: const Duration(seconds: 3),
-      );
-    } finally {
-      setBusy(false);
     }
   }
 
@@ -471,22 +425,51 @@ class CreatePostViewModel extends ReactiveViewModel {
   }
 
   bool isLoading = false;
+  List<dynamic> videoUploadData =
+      []; // Store video upload data for later upload
+  String? videoMediaId; // Store video UID for mediaId field
+
   Future createPost() async {
     isLoading = true;
     notifyListeners();
     try {
+      // First prepare all media (get video UIDs, upload images)
+      await prepareAllMedia();
+
+      // Create the post with media UIDs/URLs
       CreatePostRequest post = CreatePostRequest(
           location: location,
-          imageUrls: uploadImageUrls,
+          imageUrls: uploadImageUrls.isNotEmpty ? uploadImageUrls : null,
           content: postController.text,
           isPrivate: profile!.isPrivate,
+          mediaId: videoMediaId,
           hashtags: extractHashtagsFromContent(postController.text));
+
       final response = await socialService.createPost(
         post: post,
       );
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        clearAllImages();
-        postController.clear();
+        // Post created successfully, now upload videos in background
+        if (videoUploadData.isNotEmpty) {
+          // Make a copy of video data before clearing to avoid concurrent modification
+          final videosToUpload = List<Map<String, dynamic>>.from(videoUploadData);
+          
+          // Clear form data immediately
+          clearAllImages();
+          postController.clear();
+          location = '';
+          
+          // Upload videos using the copy
+          _uploadVideosInBackground(videosToUpload);
+        } else {
+          // No videos to upload, just clear and navigate
+          clearAllImages();
+          postController.clear();
+          location = '';
+        }
+
+        // Navigate back immediately
         locator<NavigationService>().back(result: true);
         locator<SnackbarService>().showSnackbar(
           message: 'Post created successfully',
@@ -500,15 +483,73 @@ class CreatePostViewModel extends ReactiveViewModel {
         );
       }
     } catch (e) {
-      logger.e(e.toString());
+      logger.e('Error creating post: $e');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to create post: $e',
+        duration: const Duration(seconds: 3),
+      );
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
+  Future _uploadVideosInBackground(List<Map<String, dynamic>> videosToUpload) async {
+    logger.i('Starting background video upload for ${videosToUpload.length} video(s)');
+    
+    try {
+      await _processVideoUploads(videosToUpload);
+      logger.i('All videos uploaded successfully in background');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Video uploaded successfully',
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      logger.e('Background video upload failed: $e');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Video upload failed. Please try again.',
+        duration: const Duration(seconds: 3),
+      );
+    }
+  }
+
+  Future _processVideoUploads(List<Map<String, dynamic>> videosToUpload) async {
+    for (var videoData in videosToUpload) {
+      try {
+        final file = videoData['file'] as File;
+        final signedData = videoData['signedData'];
+
+        logger.i('Uploading video to Cloudflare for UID: ${videoData['uid']}');
+
+        try {
+          // Try streaming upload first
+          await uploadVideoToCloudflareWithSignedData(signedData, file);
+        } catch (e) {
+          logger.w('Stream upload failed, trying bytes upload: $e');
+          // Fallback to bytes upload
+          await uploadVideoWithBytes(signedData, file);
+        }
+
+        logger.i('Successfully uploaded video: ${videoData['uid']}');
+      } catch (e) {
+        logger.e('Failed to upload video ${videoData['uid']}: $e');
+        // Continue with other videos even if one fails
+      }
+    }
+  }
+
+  // Legacy method for backward compatibility
+  Future uploadVideosToCloudflare() async {
+    final typedVideoData = videoUploadData.cast<Map<String, dynamic>>();
+    await _processVideoUploads(typedVideoData);
+  }
+
   void clearAllImages() {
-    selectedImages.clear();
+    fileService.clearSelectedImages();
+    uploadImageUrls.clear();
+    videoUploadData.clear();
+    videoMediaId = null;
+    uploadProgress = 0.0;
     notifyListeners();
   }
 

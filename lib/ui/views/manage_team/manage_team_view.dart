@@ -43,6 +43,10 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
           centerTitle: true,
           actions: [
             IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              onPressed: () => viewModel.onEditOrganizationPressed(organization),
+            ),
+            IconButton(
               icon: const Icon(Icons.settings, color: Colors.white),
               onPressed: viewModel.onSettingsPressed,
             ),

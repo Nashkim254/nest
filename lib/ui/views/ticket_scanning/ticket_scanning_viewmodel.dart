@@ -315,49 +315,6 @@ class TicketScanningViewModel extends BaseViewModel {
     }
   }
 
-  // Batch validation for multiple tickets
-  Future<void> validateMultipleTickets(List<String> qrDataList) async {
-    if (qrDataList.isEmpty) return;
-
-    setBusy(true);
-    try {
-      final results = await eventService.validateMultipleTickets(
-        qrDataList: qrDataList,
-        eventId: _eventId,
-      );
-
-      // Update statistics and history
-      for (int i = 0; i < results.length; i++) {
-        final result = results[i];
-        final qrData = qrDataList[i];
-        
-        _scannedCount++;
-        if (result.isValid) {
-          _validCount++;
-        }
-
-        _scanHistory.insert(
-          0,
-          ScanHistoryItem(
-            qrData: qrData,
-            result: result,
-            timestamp: DateTime.now(),
-            isManual: true,
-          ),
-        );
-      }
-
-      notifyListeners();
-
-      final validCount = results.where((r) => r.isValid).length;
-      _showInfo('Validated ${results.length} tickets: ${validCount} valid, ${results.length - validCount} invalid');
-
-    } catch (e) {
-      _showError('Batch validation failed: ${e.toString()}');
-    } finally {
-      setBusy(false);
-    }
-  }
 
   // Export scan history
   Future<String> exportScanHistory() async {

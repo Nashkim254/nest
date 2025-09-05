@@ -8,6 +8,7 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../models/organization_model.dart';
 import '../../common/app_colors.dart';
+import 'edit_organization_view.dart';
 
 class ManageTeamViewModel extends BaseViewModel {
   List<dynamic> _organizationEvents = [];
@@ -22,8 +23,9 @@ class ManageTeamViewModel extends BaseViewModel {
   }
 
   loadTeamMembers(Organization organization) {
-    _teamMembers = organization.teamMembers!;
+    _teamMembers = organization.teamMembers ?? [];
   }
+
   // Load events for the organization
   Future<void> loadOrganizationEvents(int? organizationId) async {
     if (organizationId == null) return;
@@ -60,7 +62,7 @@ class ManageTeamViewModel extends BaseViewModel {
     setBusy(false);
   }
 
-   List<TeamMember> _teamMembers = [];
+  List<TeamMember> _teamMembers = [];
 
   String _inviteEmail = '';
 
@@ -100,6 +102,14 @@ class ManageTeamViewModel extends BaseViewModel {
 
   void onSettingsPressed() {
     // Handle settings navigation
+  }
+
+  void onEditOrganizationPressed(Organization organization) async {
+    final result = await _navigationService
+        .navigateToView(EditOrganizationView(organization: organization));
+    if (result == true) {
+      initialize(organization);
+    }
   }
 
   Color getRoleColor(String? role) {

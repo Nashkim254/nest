@@ -48,6 +48,7 @@ import 'package:nest/services/share_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:nest/services/file_service.dart';
 import 'package:nest/ui/views/create_organization/create_organization_view.dart';
+import 'package:nest/ui/views/video_player/video_player_view.dart';
 import 'package:nest/ui/dialogs/add_social/add_social_dialog.dart';
 import 'package:nest/services/event_service.dart';
 import 'package:nest/ui/dialogs/password_protected/password_protected_dialog.dart';
@@ -97,6 +98,7 @@ import 'package:nest/ui/views/edit_event/edit_event_view.dart';
     MaterialRoute(page: ViewEventView),
     MaterialRoute(page: SettingsView),
     MaterialRoute(page: CreateOrganizationView),
+    MaterialRoute(page: VideoPlayerView),
     MaterialRoute(page: CheckoutView),
     MaterialRoute(page: PaymentwebView),
     MaterialRoute(page: AnalyticsView),

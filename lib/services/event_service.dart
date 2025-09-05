@@ -172,7 +172,7 @@ class EventService {
     }
   }
 
-  Future<ScanResult> validateTicket({
+  Future validateTicket({
     required String qrData,
     int? eventId,
   }) async {
@@ -194,7 +194,7 @@ class EventService {
       final response = await _apiService.post(endpoint);
 
       // Handle response
-      return _handleValidationResponse(response);
+      return response;
     } catch (e) {
       return ScanResult(
         isValid: false,
@@ -257,66 +257,6 @@ class EventService {
   }
 
 
-  // Handle API response and convert to ScanResult
-  ScanResult _handleValidationResponse(dynamic response) {
-    try {
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data;
-        
-        // Extract ticket information from response
-        final ticketInfo = data != null ? _parseTicketInfo(data) : null;
-        
-        return ScanResult(
-          isValid: true,
-          message: data['message'] ?? 'Ticket validated successfully',
-          ticketInfo: ticketInfo,
-        );
-      } else if (response.statusCode == 404) {
-        return ScanResult(
-          isValid: false,
-          message: response.data?['message'] ?? 'Ticket not found',
-          errorCode: 'TICKET_NOT_FOUND',
-        );
-      } else if (response.statusCode == 409) {
-        return ScanResult(
-          isValid: false,
-          message: response.data?['message'] ?? 'Ticket already scanned',
-          errorCode: 'ALREADY_SCANNED',
-        );
-      } else if (response.statusCode == 400) {
-        return ScanResult(
-          isValid: false,
-          message: response.data?['message'] ?? 'Invalid ticket data',
-          errorCode: 'INVALID_TICKET',
-        );
-      } else if (response.statusCode == 403) {
-        return ScanResult(
-          isValid: false,
-          message: response.data?['message'] ?? 'Access denied - ticket not valid for this event',
-          errorCode: 'ACCESS_DENIED',
-        );
-      } else if (response.statusCode == 410) {
-        return ScanResult(
-          isValid: false,
-          message: response.data?['message'] ?? 'Ticket has expired',
-          errorCode: 'TICKET_EXPIRED',
-        );
-      } else {
-        return ScanResult(
-          isValid: false,
-          message: 'Validation failed: ${response.statusMessage ?? 'Unknown error'}',
-          errorCode: 'VALIDATION_ERROR',
-        );
-      }
-    } catch (e) {
-      return ScanResult(
-        isValid: false,
-        message: 'Error processing response: ${e.toString()}',
-        errorCode: 'RESPONSE_ERROR',
-      );
-    }
-  }
-
   // Parse ticket information from API response
   TicketInfo? _parseTicketInfo(Map<String, dynamic> data) {
     try {
@@ -336,41 +276,7 @@ class EventService {
     }
   }
 
-  // Batch validate multiple tickets
-  Future<List<ScanResult>> validateMultipleTickets({
-    required List<String> qrDataList,
-    int? eventId,
-  }) async {
-    try {
-      final endpoint = '${AppUrls.tickets}/validate-batch';
-      final requestBody = {
-        'tickets': qrDataList.map((qr) => qr.trim()).toList(),
-        'event_id': eventId,
-        'timestamp': DateTime.now().toIso8601String(),
-      };
 
-      final response = await _apiService.post(endpoint, data: requestBody);
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final results = response.data['results'] as List;
-        return results.map((result) => _handleValidationResponse(result)).toList();
-      } else {
-        // Return error results for all tickets
-        return qrDataList.map((qr) => ScanResult(
-          isValid: false,
-          message: 'Batch validation failed',
-          errorCode: 'BATCH_ERROR',
-        )).toList();
-      }
-    } catch (e) {
-      // Return error results for all tickets
-      return qrDataList.map((qr) => ScanResult(
-        isValid: false,
-        message: 'Network error: ${e.toString()}',
-        errorCode: 'NETWORK_ERROR',
-      )).toList();
-    }
-  }
 
   // Get ticket scan history for an event
   Future<List<ScanHistoryItem>> getTicketScanHistory({

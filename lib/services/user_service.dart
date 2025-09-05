@@ -225,6 +225,23 @@ class UserService with ListenableServiceMixin {
     }
   }
 
+  Future updateOrganization({required Organization organization}) async {
+    try {
+      final response = await _apiService.put(
+        '${AppUrls.updateOrganization}/${organization.id}',
+        data: organization.toJson(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to update organization');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future followUnfollowUser({required int id, required bool isFollow}) async {
     try {
       final response = isFollow

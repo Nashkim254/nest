@@ -31,13 +31,21 @@ class ProfileViewModel extends ReactiveViewModel {
   }
 
   void handleEventTap(Post selected) {
-    // final reorderedList = [
-    //   selected,
-    //   ...posts.where((e) => e != selected),
-    // ];
-    locator<NavigationService>().navigateTo(
-      Routes.eventActivityView,
-    );
+    if (selected.hasVideo && selected.videoUrl != null && selected.videoUrl!.isNotEmpty) {
+      // Navigate to video player for video posts
+      locator<NavigationService>().navigateToVideoPlayerView(
+        post: selected,
+      );
+    } else {
+      // Navigate to event activity for image posts
+      // final reorderedList = [
+      //   selected,
+      //   ...posts.where((e) => e != selected),
+      // ];
+      locator<NavigationService>().navigateTo(
+        Routes.eventActivityView,
+      );
+    }
   }
 
   refresh() async {
