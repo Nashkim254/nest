@@ -2,6 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/services/share_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -246,5 +247,17 @@ class ViewEventViewModel extends BaseViewModel {
   }
   goToEdit(Event event) {
     locator<NavigationService>().navigateToEditEventView(event: event);
+  }
+
+  // Share event functionality
+  void shareEvent() {
+    if (event != null) {
+      ShareService.shareEvent(
+        eventId: event!.id.toString(),
+        title: event!.title,
+        description: event!.description,
+        imageUrl: event!.flyerUrl,
+      );
+    }
   }
 }

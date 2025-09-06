@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:nest/models/profile.dart';
 import 'package:nest/ui/views/following/following_view.dart';
 import 'package:nest/ui/views/for_you/for_you_view.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../../app/app.locator.dart';
+import '../../../services/shared_preferences_service.dart';
 import '../../common/app_enums.dart';
 import '../upcoming/upcoming_view.dart';
 
 class DiscoverViewModel extends BaseViewModel {
   int _currentIndex = 1;
   final PageController pageController = PageController(initialPage: 1);
-
+  Profile? profile;
   ContentType contentType = ContentType.upcoming;
+  getUser() {
+    var user = locator<SharedPreferencesService>().getUserInfo();
+    if(user == null) return;
+    profile = Profile.fromJson(user);
+    notifyListeners();
+  }
 
   void goToPage(int index) {
     _currentIndex = index;
@@ -29,7 +38,8 @@ class DiscoverViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void setContentType(ContentType type) {
+  void setContentType(ContentType type)async {
+
     contentType = type;
     final pageMap = {
       ContentType.fyp: 0,
@@ -37,6 +47,7 @@ class DiscoverViewModel extends BaseViewModel {
       ContentType.following: 2,
     };
     goToPage(pageMap[type] ?? 1);
+    await getUser();
   }
 
   int get currentIndex => _currentIndex;

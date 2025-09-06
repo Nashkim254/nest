@@ -30,7 +30,9 @@ class DiscoverView extends StackedView<DiscoverViewModel> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const FeedTopBarWidget(),
+            FeedTopBarWidget(
+              viewModel: viewModel,
+            ),
             spacedDivider,
             const FeedTabBarWidget(),
             verticalSpaceSmall,

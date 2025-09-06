@@ -1,3 +1,9 @@
+import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
+import 'package:nest/services/comments_service.dart';
+import 'package:nest/services/share_service.dart';
+import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/services/social_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
@@ -5,8 +11,7 @@ import 'package:video_player/video_player.dart';
 import '../../../app/app.bottomsheets.dart';
 import '../../../app/app.dialogs.dart';
 import '../../../app/app.locator.dart';
-import '../../../models/feed_post.dart';
-import '../../common/app_strings.dart';
+import '../../../models/post_models.dart';
 
 class FollowingViewModel extends BaseViewModel {
   VideoPlayerController? _controller;
@@ -14,8 +19,26 @@ class FollowingViewModel extends BaseViewModel {
   String? _currentVideoUrl;
   final dialogService = locator<DialogService>();
   final bottomSheet = locator<BottomSheetService>();
+  final socialService = locator<SocialService>();
+  final comments = locator<CommentsService>();
+  final share = locator<ShareService>();
+  Logger logger = Logger();
+  
   VideoPlayerController? get controller => _controller;
   bool get isInitialized => _isInitialized;
+
+  int page = 1;
+  int size = 10;
+  List<Post> posts = [];
+
+  // New properties for pagination and loading states
+  bool _isLoadingMore = false;
+  bool get isLoadingMore => _isLoadingMore;
+
+  bool _hasMoreData = true;
+  bool get hasMoreData => _hasMoreData;
+
+  int get id => locator<SharedPreferencesService>().getUserInfo()!['id'];
 
   Future<void> initializeVideo(String videoUrl) async {
     if (_currentVideoUrl == videoUrl && _controller != null) return;
@@ -72,6 +95,18 @@ class FollowingViewModel extends BaseViewModel {
 
   void onPageChanged(int index) {
     _currentIndex = index;
+    
+    // Handle video for current post
+    if (posts.isNotEmpty && index < posts.length) {
+      final currentPost = posts[index];
+      if (currentPost.hasVideo && currentPost.videoUrl != null) {
+        initializeVideo(currentPost.videoUrl!);
+      } else {
+        // If current post has no video, pause any existing video
+        pauseVideo();
+      }
+    }
+    
     notifyListeners();
   }
 
@@ -81,193 +116,173 @@ class FollowingViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  final List<FeedPost> _posts = [
-    FeedPost(
-      id: '1',
-      username: 'DJ Groove',
-      userAvatar: avatar,
-      description: 'Dropping some fresh beats at the Electric Pulse event! 🎵',
-      venue: '@warehouseX',
-      hashtags: '#DJLife #ElectronicMusic #ElectricPulse',
-      timeAgo: '5 hours ago',
-      likes: 2500,
-      comments: 512,
-      shares: 150,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    ),
-    FeedPost(
-      id: '2',
-      username: 'DreamMaker',
-      userAvatar: avatar,
-      description: 'Surreal visuals that take you to another dimension ✨',
-      venue: '@digitalArena',
-      hashtags: '#Dreams #Animation #DigitalArt',
-      timeAgo: '8 hours ago',
-      likes: 1800,
-      comments: 324,
-      reposts: 120,
-      shares: 89,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    ),
-    FeedPost(
-      id: '3',
-      username: 'FireStarter',
-      userAvatar: avatar,
-      description: 'When the beat drops and the crowd goes wild! 🔥',
-      venue: '@blazeClub',
-      hashtags: '#Fire #EDM #BeatDrop #NightLife',
-      timeAgo: '12 hours ago',
-      likes: 3200,
-      comments: 678,
-      shares: 234,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    ),
-    FeedPost(
-      id: '4',
-      username: 'EscapeArtist',
-      userAvatar: avatar,
-      description: 'Sometimes you need to escape reality and just vibe 🌅',
-      venue: '@sunsetLounge',
-      hashtags: '#Escape #Chill #Vibes #Sunset',
-      timeAgo: '1 day ago',
-      likes: 1450,
-      comments: 287,
-      shares: 156,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-    ),
-    FeedPost(
-      id: '5',
-      username: 'FunMaster',
-      userAvatar: avatar,
-      description: 'Life is too short not to have fun! Let\'s party 🎉',
-      venue: '@funZone',
-      hashtags: '#Fun #Party #GoodVibes #Dance',
-      timeAgo: '1 day ago',
-      likes: 2100,
-      comments: 445,
-      shares: 198,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-    ),
-    FeedPost(
-      id: '6',
-      username: 'RideOrDie',
-      userAvatar: avatar,
-      description: 'Taking you on the ultimate musical joyride 🏎️',
-      venue: '@speedwayClub',
-      hashtags: '#Joyride #Speed #Adrenaline #Music',
-      timeAgo: '2 days ago',
-      likes: 1750,
-      comments: 356,
-      shares: 127,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-    ),
-    FeedPost(
-      id: '7',
-      username: 'MeltdownMix',
-      userAvatar: avatar,
-      description: 'When the bass hits so hard it causes a meltdown 🎛️',
-      venue: '@undergroundVault',
-      hashtags: '#Meltdown #Bass #Underground #Techno',
-      timeAgo: '2 days ago',
-      likes: 2800,
-      comments: 567,
-      shares: 289,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-    ),
-    FeedPost(
-      id: '8',
-      username: 'SintelSounds',
-      userAvatar: avatar,
-      description: 'Cinematic beats that tell a story without words 🎬',
-      venue: '@cinemaClub',
-      hashtags: '#Cinematic #Story #Ambient #Soundtrack',
-      timeAgo: '3 days ago',
-      likes: 1200,
-      comments: 234,
-      shares: 78,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-    ),
-    FeedPost(
-      id: '9',
-      username: 'StreetBeats',
-      userAvatar: avatar,
-      description: 'From the streets to the stage - raw and unfiltered 🚗',
-      venue: '@streetSounds',
-      hashtags: '#Street #Raw #Unfiltered #Urban',
-      timeAgo: '3 days ago',
-      likes: 1650,
-      comments: 298,
-      shares: 145,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
-    ),
-    FeedPost(
-      id: '10',
-      username: 'SteelSymphony',
-      userAvatar: avatar,
-      description: 'Industrial sounds that forge the future of music ⚙️',
-      venue: '@industrialForge',
-      hashtags: '#Industrial #Steel #Future #Electronic',
-      timeAgo: '4 days ago',
-      likes: 1980,
-      comments: 423,
-      shares: 167,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-    ),
-    FeedPost(
-      id: '11',
-      username: 'BullrunBass',
-      userAvatar: avatar,
-      description: 'Going on a musical bull run - hold tight! 🐂',
-      venue: '@stockExchangeClub',
-      hashtags: '#Bullrun #Finance #Trading #ElectroSwing',
-      timeAgo: '4 days ago',
-      likes: 2250,
-      comments: 478,
-      shares: 201,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-    ),
-    FeedPost(
-      id: '12',
-      username: 'BudgetBeats',
-      userAvatar: avatar,
-      description: 'Quality music doesn\'t have to cost a fortune 💰',
-      venue: '@budgetStudio',
-      hashtags: '#Budget #Quality #Affordable #Music',
-      timeAgo: '5 days ago',
-      likes: 1350,
-      comments: 267,
-      shares: 93,
-      reposts: 120,
-      videoUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
-    ),
-  ];
+  // Initialize method to load posts when view is first opened
+  void initialize() async {
+    await getPosts();
+  }
 
-  List<FeedPost> get posts => _posts;
-  void toggleLike(String postId) {
-    // Implementation for like toggle
+  // Get posts from API (Following feed - posts from followed users)
+  Future getPosts({bool isRefresh = false}) async {
+    setBusy(true);
+
+    // Reset pagination for refresh
+    if (isRefresh) {
+      page = 1;
+      _hasMoreData = true;
+      posts.clear();
+    }
+
+    try {
+      // For following feed, we'll use getPosts but could add a filter if needed
+      // If there's a separate endpoint for following feed, replace this
+      final response = await socialService.getPosts(page: page, size: size);
+      if (response.statusCode == 200 && response.data != null) {
+        final List<dynamic> postsJson = response.data['posts'] ?? response.data;
+        debugPrint('Following posts loaded successfully: ${postsJson.length}',
+            wrapWidth: 1024);
+
+        // Convert each JSON object to Post model
+        final newPosts = postsJson
+            .map((postJson) => Post.fromJson(postJson))
+            .where((post) => post.id > 0 && post.content.isNotEmpty) // Basic validation
+            .toList();
+
+        if (isRefresh) {
+          posts = newPosts;
+        } else {
+          posts.addAll(newPosts);
+        }
+
+        // Check if there are more posts to load
+        _hasMoreData = newPosts.length == size;
+
+        notifyListeners();
+        
+        // Auto-play first video if available
+        if (posts.isNotEmpty && posts[0].hasVideo && posts[0].videoUrl != null) {
+          initializeVideo(posts[0].videoUrl!);
+        }
+      } else {
+        throw Exception(response.message ?? 'Failed to load posts');
+      }
+    } catch (e, s) {
+      logger.i('error: $e');
+      logger.e('error: $s');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to load posts: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // New method for pull-to-refresh
+  Future<void> refreshPosts() async {
+    await getPosts(isRefresh: true);
+  }
+
+  // New method for load more functionality
+  Future<void> loadMorePosts() async {
+    if (_isLoadingMore || !_hasMoreData) return;
+
+    _isLoadingMore = true;
     notifyListeners();
+
+    try {
+      page++;
+      final response = await socialService.getPosts(page: page, size: size);
+
+      if (response.statusCode == 200 && response.data != null) {
+        final List<dynamic> postsJson = response.data['posts'] ?? response.data;
+        debugPrint('More following posts loaded successfully: ${postsJson.length}',
+            wrapWidth: 1024);
+
+        // Convert and add new posts
+        final newPosts = postsJson
+            .map((postJson) => Post.fromJson(postJson))
+            .where((post) => post.id > 0 && post.content.isNotEmpty) // Basic validation
+            .toList();
+        posts.addAll(newPosts);
+
+        // Check if there are more posts to load
+        _hasMoreData = newPosts.length == size;
+
+        notifyListeners();
+      } else {
+        // If failed, decrement page to retry later
+        page--;
+        throw Exception(response.message ?? 'Failed to load more posts');
+      }
+    } catch (e, s) {
+      logger.i('Load more error: $e');
+      logger.e('Load more error: $s');
+
+      // Decrement page on error
+      page--;
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to load more posts: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      _isLoadingMore = false;
+      notifyListeners();
+    }
+  }
+
+  // Fixed toggleLike method with proper Post model
+  toggleLike(Post post) async {
+    // Optimistically update the UI first for better UX
+    final index = posts.indexWhere((p) => p.id == post.id);
+    if (index != -1) {
+      posts[index] = posts[index].copyWith(
+        isLiked: !posts[index].isLiked,
+        likeCount: posts[index].isLiked
+            ? posts[index].likeCount - 1
+            : posts[index].likeCount + 1,
+      );
+      notifyListeners();
+    }
+
+    try {
+      final response = await comments.toggleLikePost(post.id);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Success - UI already updated optimistically
+        logger.i('Like toggled successfully for post ${post.id}');
+      } else {
+        // Revert the optimistic update on failure
+        if (index != -1) {
+          posts[index] = posts[index].copyWith(
+            isLiked: !posts[index].isLiked,
+            likeCount: posts[index].isLiked
+                ? posts[index].likeCount - 1
+                : posts[index].likeCount + 1,
+          );
+          notifyListeners();
+        }
+        throw Exception('Failed to toggle like on post');
+      }
+    } catch (e) {
+      // Revert the optimistic update on error
+      if (index != -1) {
+        posts[index] = posts[index].copyWith(
+          isLiked: !posts[index].isLiked,
+          likeCount: posts[index].isLiked
+              ? posts[index].likeCount - 1
+              : posts[index].likeCount + 1,
+        );
+        notifyListeners();
+      }
+
+      if (kDebugMode) {
+        print('Like toggle error: $e');
+      }
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to update like',
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   void toggleFollow(String postId) {
@@ -275,26 +290,23 @@ class FollowingViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void openComments(String postId) async {
+  Future openComments(int id) async {
     final result = await bottomSheet.showCustomSheet(
       variant: BottomSheetType.comments,
       title: 'Comments',
-      data: postId, // or whatever data you need to pass
+      data: id.toString(),
       isScrollControlled: true,
     );
     if (result != null && result.confirmed) {}
     notifyListeners();
   }
 
-  void sharePost(String postId) {
-    final result = bottomSheet.showCustomSheet(
-      variant: BottomSheetType.share,
-      title: 'Share',
-      data: postId,
-    );
-    result.then((value) {
-      if (value != null && value.confirmed) {}
-    });
+  sharePost(Post post) {
+    ShareService.sharePost(
+        postId: post.id.toString(),
+        title: post.content,
+        description: post.content,
+        imageUrl: post.imageUrls.isNotEmpty ? post.imageUrls[0] : null);
   }
 
   void repost(String postId) {

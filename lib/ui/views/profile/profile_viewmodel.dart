@@ -5,6 +5,7 @@ import 'package:nest/models/message_models.dart';
 import 'package:nest/models/profile.dart';
 import 'package:nest/models/user_serach_ressult.dart';
 import 'package:nest/services/shared_preferences_service.dart';
+import 'package:nest/services/share_service.dart';
 import 'package:nest/services/social_service.dart';
 import 'package:nest/services/user_service.dart';
 import 'package:stacked/stacked.dart';
@@ -31,7 +32,9 @@ class ProfileViewModel extends ReactiveViewModel {
   }
 
   void handleEventTap(Post selected) {
-    if (selected.hasVideo && selected.videoUrl != null && selected.videoUrl!.isNotEmpty) {
+    if (selected.hasVideo &&
+        selected.videoUrl != null &&
+        selected.videoUrl!.isNotEmpty) {
       // Navigate to video player for video posts
       locator<NavigationService>().navigateToVideoPlayerView(
         post: selected,
@@ -224,6 +227,28 @@ class ProfileViewModel extends ReactiveViewModel {
     } finally {
       setBusy(false);
     }
+  }
+
+  // Share profile functionality
+  void shareProfile() async {
+    if (profile != null) {
+      await ShareService.shareProfile(
+        userId: profile!.id.toString(),
+        profileName: '${profile!.firstName} ${profile!.lastName}',
+        username: profile!.displayName, // or actual username if available
+        profilePicture: profile!.profilePicture,
+      );
+    }
+  }
+
+  // Share specific event/post from profile
+  void sharePost(Post post) {
+    ShareService.sharePost(
+      postId: post.id.toString(),
+      title: post.content,
+      description: post.content,
+      imageUrl: post.imageUrls.isNotEmpty ? post.imageUrls[0] : null,
+    );
   }
 
   @override

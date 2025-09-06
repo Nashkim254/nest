@@ -30,7 +30,7 @@ class FindPeopleAndOrgsView extends StackedView<FindPeopleAndOrgsViewModel> {
   ) {
     return SafeArea(
       child: Scaffold(
-        appBar: _buildAppBar(context),
+        appBar: _buildAppBar(context, viewModel),
         backgroundColor: kcDarkColor,
         body: viewModel.isBusy && !viewModel.isSearching
             ? _buildLoadingState()
@@ -39,7 +39,8 @@ class FindPeopleAndOrgsView extends StackedView<FindPeopleAndOrgsViewModel> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(
+      BuildContext context, FindPeopleAndOrgsViewModel viewModel) {
     return AppBar(
       leading: IconButton(
         icon: Icon(Icons.adaptive.arrow_back),
@@ -64,10 +65,14 @@ class FindPeopleAndOrgsView extends StackedView<FindPeopleAndOrgsViewModel> {
           child: SvgPicture.asset(notification),
         ),
         horizontalSpaceSmall,
-        const CircleAvatar(
-          radius: 16,
-          backgroundImage: AssetImage(avatar),
-        ),
+        viewModel.profile != null
+            ? CircleAvatar(
+                radius: 16,
+                backgroundImage:
+                    NetworkImage(viewModel.profile!.profilePicture))
+            : const CircleAvatar(
+                radius: 16,
+              ),
         horizontalSpaceSmall,
       ],
     );

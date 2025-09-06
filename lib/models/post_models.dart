@@ -28,7 +28,7 @@ class UserPreview {
 
 @JsonSerializable()
 class Post {
-  @JsonKey(defaultValue: 0, name: 'ID')
+  @JsonKey(defaultValue: 0)
   final int id;
   @JsonKey(defaultValue: '')
   final String content;

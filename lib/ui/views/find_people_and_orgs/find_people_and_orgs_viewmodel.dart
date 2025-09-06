@@ -10,6 +10,9 @@ import 'package:nest/ui/common/app_enums.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import '../../../models/profile.dart';
+import '../../../services/shared_preferences_service.dart';
+
 // Combined search result model for unified display
 
 class FindPeopleAndOrgsViewModel extends ReactiveViewModel {
@@ -18,6 +21,12 @@ class FindPeopleAndOrgsViewModel extends ReactiveViewModel {
   final UserService _userService = locator<UserService>();
   final SnackbarService _snackbarService = locator<SnackbarService>();
   final GlobalService _globalService = locator<GlobalService>();
+  Profile? profile;
+  Future<void> getUser() async {
+    var user = locator<SharedPreferencesService>().getUserInfo();
+    profile = Profile.fromJson(user!);
+    notifyListeners();
+  }
 
   // Search state
   String _searchQuery = '';
@@ -42,6 +51,7 @@ class FindPeopleAndOrgsViewModel extends ReactiveViewModel {
       await Future.wait([
         _loadInitialUsers(),
         _loadUserOrganization(),
+        getUser(),
       ]);
       _updateFilteredResults();
     } catch (e) {

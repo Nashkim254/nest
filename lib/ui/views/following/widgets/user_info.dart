@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_colors.dart';
 
-import '../../../../models/feed_post.dart';
+import '../../../../models/post_models.dart';
 import '../../../common/app_styles.dart';
 
 class FeedUserInfoWidget extends StatelessWidget {
-  final FeedPost post;
+  final Post post;
   final VoidCallback onFollow;
 
   const FeedUserInfoWidget({
@@ -27,11 +27,13 @@ class FeedUserInfoWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: AssetImage(post.userAvatar),
+                backgroundImage: post.user?.profilePicture != null
+                    ? NetworkImage(post.user!.profilePicture!)
+                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
               ),
               const SizedBox(width: 12),
               Text(
-                post.username,
+                post.user?.displayName ?? 'Unknown User',
                 style: titleTextMedium.copyWith(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -63,7 +65,9 @@ class FeedUserInfoWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            post.timeAgo,
+            post.createdAt != null 
+                ? _getTimeAgo(post.createdAt!)
+                : 'Just now',
             style: const TextStyle(
               color: Colors.grey,
               fontSize: 12,
@@ -71,7 +75,7 @@ class FeedUserInfoWidget extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            post.description,
+            post.content,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 14,
@@ -79,28 +83,48 @@ class FeedUserInfoWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: post.venue,
-                  style: const TextStyle(
-                    color: kcPrimaryColor,
-                    fontSize: 14,
-                  ),
-                ),
-                TextSpan(
-                  text: ' ${post.hashtags}',
-                  style: const TextStyle(
-                    color: kcPrimaryColor,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
+          if (post.hasLocation || post.hasHashtags)
+            RichText(
+              text: TextSpan(
+                children: [
+                  if (post.hasLocation)
+                    TextSpan(
+                      text: '@${post.location}',
+                      style: const TextStyle(
+                        color: kcPrimaryColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                  if (post.hasHashtags)
+                    TextSpan(
+                      text: ' ${post.hashtags.join(' ')}',
+                      style: const TextStyle(
+                        color: kcPrimaryColor,
+                        fontSize: 14,
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
+  }
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 7) {
+      return '${(difference.inDays / 7).floor()}w';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}d';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m';
+    } else {
+      return 'now';
+    }
   }
 }

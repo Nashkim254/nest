@@ -17,29 +17,48 @@ class ForYouView extends StackedView<ForYouViewModel> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: kcDarkColor,
-        body: Stack(
-          children: [
-            // Video Feed
-            PageView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: viewModel.posts.length,
-              onPageChanged: viewModel.onPageChanged,
-              itemBuilder: (context, index) {
-                return FeedPostWidget(
-                  post: viewModel.posts[index],
-                  onLike: () => viewModel.toggleLike(viewModel.posts[index].id),
-                  onFollow: () =>
-                      viewModel.toggleFollow(viewModel.posts[index].id),
-                  onComment: () =>
-                      viewModel.openComments(viewModel.posts[index].id),
-                  onShare: () => viewModel.sharePost(viewModel.posts[index].id),
-                  isVisible: true,
-                  onRepost: () => viewModel.repost(viewModel.posts[index].id),
-                );
-              },
-            ),
-          ],
-        ),
+        body: viewModel.isBusy
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: kcPrimaryColor,
+                ),
+              )
+            : viewModel.posts.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No posts available',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                : Stack(
+                    children: [
+                      // Video Feed
+                      RefreshIndicator(
+                        onRefresh: viewModel.refreshPosts,
+                        child: PageView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: viewModel.posts.length,
+                          onPageChanged: viewModel.onPageChanged,
+                          itemBuilder: (context, index) {
+                            return FeedPostWidget(
+                              post: viewModel.posts[index],
+                              onLike: () =>
+                                  viewModel.toggleLike(viewModel.posts[index]),
+                              onFollow: () => viewModel.toggleFollow(
+                                  viewModel.posts[index].id.toString()),
+                              onComment: () => viewModel
+                                  .openComments(viewModel.posts[index].id),
+                              onShare: () =>
+                                  viewModel.sharePost(viewModel.posts[index]),
+                              isVisible: index == viewModel.currentIndex,
+                              onRepost: () => viewModel
+                                  .repost(viewModel.posts[index].id.toString()),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
       ),
     );
   }
@@ -49,4 +68,9 @@ class ForYouView extends StackedView<ForYouViewModel> {
     BuildContext context,
   ) =>
       ForYouViewModel();
+
+  @override
+  void onViewModelReady(ForYouViewModel viewModel) {
+    viewModel.initialize();
+  }
 }

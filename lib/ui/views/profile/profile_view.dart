@@ -51,9 +51,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
             elevation: 0,
             actions: [
               InkWell(
-                onTap: () {
-                  // Handle share action
-                },
+                onTap: () => viewModel.shareProfile(),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SvgPicture.asset(share),

@@ -57,10 +57,14 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
               child: SvgPicture.asset(notification),
             ),
             horizontalSpaceSmall,
-            const CircleAvatar(
-              radius: 16,
-              backgroundImage: AssetImage(avatar),
-            ),
+            viewModel.profile != null
+                ? CircleAvatar(
+                    radius: 16,
+                    backgroundImage:
+                        NetworkImage(viewModel.profile!.profilePicture))
+                : const CircleAvatar(
+                    radius: 16,
+                  ),
           ],
         ),
         backgroundColor: kcDarkColor,

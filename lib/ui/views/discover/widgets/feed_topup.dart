@@ -7,10 +7,11 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../common/app_strings.dart';
 import '../../../common/app_styles.dart';
 import '../../../common/ui_helpers.dart';
+import '../discover_viewmodel.dart';
 
 class FeedTopBarWidget extends StatelessWidget {
-  const FeedTopBarWidget({Key? key}) : super(key: key);
-
+  const FeedTopBarWidget({Key? key, required this.viewModel}) : super(key: key);
+  final DiscoverViewModel viewModel;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,10 +37,14 @@ class FeedTopBarWidget extends StatelessWidget {
                 onTap: () {
                   locator<NavigationService>().navigateTo(Routes.settingsView);
                 },
-                child: const CircleAvatar(
-                  radius: 16,
-                  backgroundImage: AssetImage(avatar),
-                ),
+                child: viewModel.profile != null
+                    ? CircleAvatar(
+                        radius: 16,
+                        backgroundImage:
+                            NetworkImage(viewModel.profile!.profilePicture))
+                    : const CircleAvatar(
+                        radius: 16,
+                      ),
               ),
             ],
           ),

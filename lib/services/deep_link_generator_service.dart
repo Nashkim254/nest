@@ -57,13 +57,74 @@ class DeepLinkGeneratorService {
     }
   }
 
+  // Generate event sharing link
+  static Future<String> generateEventLink({
+    required String eventId,
+    String? title,
+    String? description,
+    String? imageUrl,
+    bool useShortLink = false,
+  }) async {
+    final Map<String, dynamic> linkData = {
+      'type': 'event',
+      'event_id': eventId,
+      'title': title,
+      'description': description,
+      'image_url': imageUrl,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+
+    if (useShortLink) {
+      return await _createShortLink(linkData);
+    } else {
+      return _createDirectLink(linkData);
+    }
+  }
+
+  // Generate profile sharing link
+  static Future<String> generateProfileLink({
+    required String userId,
+    String? username,
+    String? profileName,
+    String? profilePicture,
+    bool useShortLink = false,
+  }) async {
+    final Map<String, dynamic> linkData = {
+      'type': 'profile',
+      'user_id': userId,
+      'username': username,
+      'profile_name': profileName,
+      'profile_picture': profilePicture,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+
+    if (useShortLink) {
+      return await _createShortLink(linkData);
+    } else {
+      return _createDirectLink(linkData);
+    }
+  }
+
   // Create direct link (no backend required)
   static String _createDirectLink(Map<String, dynamic> linkData) {
     final String encodedData = base64Url
         .encode(utf8.encode(jsonEncode(linkData)))
         .replaceAll('=', ''); // Remove padding
 
-    return '$baseUrl://post/${linkData['post_id']}';
+    final String type = linkData['type'] ?? 'post';
+    
+    switch (type) {
+      case 'post':
+        return '$baseUrl://post/${linkData['post_id']}';
+      case 'event':
+        return '$baseUrl://event/${linkData['event_id']}';
+      case 'profile':
+        return '$baseUrl://profile/${linkData['user_id']}';
+      case 'verification':
+        return '$baseUrl://verify?token=${linkData['token']}&email=${linkData['email']}';
+      default:
+        return '$baseUrl://post/${linkData['post_id']}';
+    }
   }
 
   // Create short link (requires backend)

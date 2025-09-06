@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/models/events.dart';
+import 'package:nest/services/share_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.locator.dart';
 import '../../../app/app.router.dart';
+import '../../../models/profile.dart';
 import '../../../services/event_service.dart';
+import '../../../services/shared_preferences_service.dart';
 
 class ExploreEventsViewModel extends BaseViewModel {
   final searchController = TextEditingController();
@@ -52,6 +55,7 @@ class ExploreEventsViewModel extends BaseViewModel {
     Future.delayed(const Duration(milliseconds: 300), () {
       searchFocusNode.requestFocus();
     });
+    await getUser();
   }
 
   onSearchChanged(String value) {
@@ -258,6 +262,23 @@ class ExploreEventsViewModel extends BaseViewModel {
     locator<NavigationService>().navigateToViewEventView(
       event: event,
       password: passwordController.text.trim(),
+    );
+  }
+
+  Profile? profile;
+  getUser() {
+    var user = locator<SharedPreferencesService>().getUserInfo();
+    profile = Profile.fromJson(user!);
+    notifyListeners();
+  }
+
+  // Share event functionality
+  void shareEvent(Event event) {
+    ShareService.shareEvent(
+      eventId: event.id.toString(),
+      title: event.title,
+      description: event.description,
+      imageUrl: event.flyerUrl,
     );
   }
 

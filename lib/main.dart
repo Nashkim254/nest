@@ -12,7 +12,9 @@ import 'package:nest/utils/stripe_configs.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'abstractClasses/abstract_class.dart';
+import 'handlers/event_deeplink_handler.dart';
 import 'handlers/post_deeplink_handler.dart';
+import 'handlers/profile_deeplink_handler.dart';
 import 'handlers/verification_handler.dart';
 
 Future<void> main() async {
@@ -60,13 +62,37 @@ class _MainAppState extends State<MainApp> {
     // Register handlers
     deepLinkService.registerHandler(
       PostDeepLinkHandler(
-        onPostRequested: (postId) {},
+        onPostRequested: (postId) {
+          // Navigate to event activity view to show the specific post
+          locator<NavigationService>().navigateToEventActivityView();
+        },
+      ),
+    );
+
+    deepLinkService.registerHandler(
+      EventDeepLinkHandler(
+        onEventRequested: (eventId) {
+          // Navigate to explore events view or specific event view
+          locator<NavigationService>().navigateToExploreEventsView();
+        },
+      ),
+    );
+
+    deepLinkService.registerHandler(
+      ProfileDeepLinkHandler(
+        onProfileRequested: (userId) {
+          // Navigate to profile view
+          locator<NavigationService>().navigateToProfileView(isOtherUser: true);
+        },
       ),
     );
 
     deepLinkService.registerHandler(
       VerificationDeepLinkHandler(
-        onVerificationRequested: (token, email) {},
+        onVerificationRequested: (token, email) {
+          // Handle verification link - could navigate to verification view
+          print('Verification requested for $email with token: $token');
+        },
       ),
     );
   }

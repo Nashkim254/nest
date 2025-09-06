@@ -16,15 +16,7 @@ class EditEventViewModel extends CreateEventViewModel {
   Event? _originalEvent;
   Event? get originalEvent => _originalEvent;
 
-  // Override form keys with unique instances for edit view
-  @override
-  final eventDetailsKey = GlobalKey<FormState>();
-  
-  @override  
-  final ticketSetupKey = GlobalKey<FormState>();
-  
-  @override
-  final eventVisualsFormKey = GlobalKey<FormState>();
+  // Use inherited form keys from parent CreateEventViewModel
 
   // Override place coordinates to access private field
   PlaceCoordinates? _selectedPlaceCoordinates;
@@ -37,7 +29,7 @@ class EditEventViewModel extends CreateEventViewModel {
   bool _isUpdating = false;
   bool get isUpdating => _isUpdating;
 
-  void initializeWithEvent(Event event) {
+  void initializeWithEvent(Event event)  {
     _originalEvent = event;
     _populateFieldsFromEvent(event);
     _trackChanges();
@@ -107,7 +99,8 @@ class EditEventViewModel extends CreateEventViewModel {
     }
   }
 
-  void _populateTicketTiersFromPreview(List<TicketPricingPreview> ticketPricing) {
+  void _populateTicketTiersFromPreview(
+      List<TicketPricingPreview> ticketPricing) {
     // Clear existing tiers
     clearTicketTiers();
 
@@ -243,8 +236,12 @@ class EditEventViewModel extends CreateEventViewModel {
     _isUpdating = true;
 
     try {
-      // Validate forms
-      if (!isEventDetailsFormValid || !isEventVisualsFormValid) {
+      // Validate forms - only validate if forms are attached to widget tree
+      final eventDetailsValid =
+          eventDetailsKey.currentState?.validate() ?? true;
+      final visualsValid = eventVisualsFormKey.currentState?.validate() ?? true;
+
+      if (!eventDetailsValid || !visualsValid) {
         locator<SnackbarService>().showSnackbar(
           message: 'Please fill in all required fields',
           duration: const Duration(seconds: 3),
@@ -281,7 +278,7 @@ class EditEventViewModel extends CreateEventViewModel {
         title: eventTitleController.text.trim(),
         endTime: endTime,
         startTime: startTime,
-        location: addressController.text.trim(),
+        location: eventLocationController.text.trim(),
         flyerUrl: uploadFlyerPictureUrl.isNotEmpty
             ? uploadFlyerPictureUrl
             : _originalEvent!.flyerUrl,
@@ -378,7 +375,12 @@ class EditEventViewModel extends CreateEventViewModel {
       await super.previousPage();
     } else {
       if (_hasChanges) {
-        await showUnsavedChangesDialog(navigatorKey.currentContext!);
+        final context = navigatorKey.currentContext;
+        if (context != null) {
+          await showUnsavedChangesDialog(context);
+        } else {
+          navigationService.back();
+        }
       } else {
         navigationService.back();
       }
@@ -439,10 +441,10 @@ class UpdateEventRequest extends CreateEventRequest {
           startTime: startTime,
           location: location,
           flyerUrl: flyerUrl,
-          theme: theme!,
+          theme: theme ?? '',
           genres: genres,
           isPrivate: isPrivate,
-          ticketPricing: ticketPricing!,
+          ticketPricing: ticketPricing ?? [],
           guestListEnabled: guestListEnabled,
           guestListLimit: guestListLimit,
           longitude: longitude,

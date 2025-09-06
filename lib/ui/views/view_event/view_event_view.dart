@@ -91,7 +91,7 @@ class ViewEventView extends StackedView<ViewEventViewModel> {
                                           Icons.share_outlined,
                                           color: kcWhiteColor,
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () => viewModel.shareEvent(),
                                       ),
                                     ),
                                     horizontalSpaceSmall,

@@ -19,7 +19,10 @@ class EditEventView extends StackedView<EditEventViewModel> {
 
   @override
   void onViewModelReady(EditEventViewModel viewModel) {
-    viewModel.initializeWithEvent(event);
+    // Use post frame callback to ensure widget tree is fully built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.initializeWithEvent(event);
+    });
     super.onViewModelReady(viewModel);
   }
 
@@ -130,11 +133,9 @@ class EditEventView extends StackedView<EditEventViewModel> {
   }
 
   Widget _buildEventDetailsEdit(EditEventViewModel viewModel) {
-    return Form(
-      key: viewModel.eventDetailsKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
           // Show original event info for context
           Container(
             padding: const EdgeInsets.all(12),
@@ -165,8 +166,7 @@ class EditEventView extends StackedView<EditEventViewModel> {
           // Since EditEventViewModel extends CreateEventViewModel, this should work
           EventDetails(viewModel: viewModel),
         ],
-      ),
-    );
+      );
   }
 
   Widget _buildTicketSetupEdit(EditEventViewModel viewModel) {

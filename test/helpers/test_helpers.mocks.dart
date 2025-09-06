@@ -2467,6 +2467,48 @@ class MockShareService extends _i1.Mock implements _i31.ShareService {
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  dynamic getShareEventLink({
+    required String? eventId,
+    required String? title,
+    String? description,
+    String? imageUrl,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #getShareEventLink,
+          [],
+          {
+            #eventId: eventId,
+            #title: title,
+            #description: description,
+            #imageUrl: imageUrl,
+          },
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  dynamic getShareProfileLink({
+    required String? userId,
+    required String? profileName,
+    String? username,
+    String? profilePicture,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #getShareProfileLink,
+          [],
+          {
+            #userId: userId,
+            #profileName: profileName,
+            #username: username,
+            #profilePicture: profilePicture,
+          },
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [UserService].
