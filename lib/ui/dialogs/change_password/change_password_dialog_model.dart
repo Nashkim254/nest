@@ -7,6 +7,7 @@ import 'package:stacked_services/stacked_services.dart';
 import '../../../app/app.locator.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/shared_preferences_service.dart';
+import '../../../models/password_reset_model.dart';
 
 class ChangePasswordDialogModel extends BaseViewModel {
   final formKey = GlobalKey<FormState>();
@@ -48,11 +49,12 @@ class ChangePasswordDialogModel extends BaseViewModel {
     if (formKey.currentState?.validate() ?? false) {
       isLoading = true;
       notifyListeners();
-      Map<String, dynamic> requestData = {
-        'email': prefsService.getUserInfo()!['email'],
-      };
+      final requestModel = PasswordResetRequestModel(
+        email: prefsService.getUserInfo()!['email'],
+        appLaunch: 'com.nesthaps.nest://',
+      );
       try {
-        authService.requestChangePassword(requestData).then((response) {
+        authService.requestChangePassword(requestModel).then((response) {
           if (response.statusCode == 200) {
             completer(DialogResponse(confirmed: true));
             locator<SnackbarService>().showSnackbar(
@@ -86,11 +88,12 @@ class ChangePasswordDialogModel extends BaseViewModel {
     if (formKey.currentState?.validate() ?? false) {
       isLoading = true;
       notifyListeners();
-      Map<String, dynamic> requestData = {
-        'email': prefsService.getUserInfo()!['email'],
-      };
+      final requestModel = PasswordResetRequestModel(
+        email: prefsService.getUserInfo()!['email'],
+        appLaunch: 'com.nesthaps.nest://',
+      );
       try {
-        authService.requestChangePassword(requestData).then((response) {
+        authService.requestChangePassword(requestModel).then((response) {
           if (response.statusCode == 200) {
             completer(DialogResponse(confirmed: true));
             locator<SnackbarService>().showSnackbar(

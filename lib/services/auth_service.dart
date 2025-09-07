@@ -13,6 +13,7 @@ import '../abstractClasses/abstract_class.dart';
 import '../app/app.locator.dart';
 import '../models/api_exceptions.dart';
 import '../models/registration_model.dart';
+import '../models/password_reset_model.dart';
 
 class AuthService with ListenableServiceMixin {
   final IApiService _apiService = locator<IApiService>();
@@ -43,30 +44,30 @@ class AuthService with ListenableServiceMixin {
     }
   }
 
-  Future requestChangePassword(Map<String, dynamic> body) async {
+  Future requestChangePassword(PasswordResetRequestModel model) async {
     try {
       final response =
-          await _apiService.post(AppUrls.reQuestPasswordReset, data: body);
+          await _apiService.post(AppUrls.reQuestPasswordReset, data: model.toJson());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
-        throw ApiException(response.message ?? 'Failed to create user');
+        throw ApiException(response.message ?? 'Failed to request password reset');
       }
     } catch (e) {
       rethrow;
     }
   }
 
-  Future resetPassword(Map<String, dynamic> body) async {
+  Future resetPassword(PasswordResetModel model) async {
     try {
       final response =
-          await _apiService.post(AppUrls.resetPassword, data: body);
+          await _apiService.post(AppUrls.resetPassword, data: model.toJson());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
-        throw ApiException(response.message ?? 'Failed to create user');
+        throw ApiException(response.message ?? 'Failed to reset password');
       }
     } catch (e) {
       rethrow;
@@ -91,53 +92,74 @@ class AuthService with ListenableServiceMixin {
   }
 
   Future<Map<String, dynamic>> signInWithGoogle() async {
-    var result;
     try {
-      result = await FlutterWebAuth2.authenticate(
+      final result = await FlutterWebAuth2.authenticate(
         url: AppUrls.oAuthUrl.toString(),
-        callbackUrlScheme:
-            Platform.isAndroid ? 'app.thedoor.studio' : "app.thedoor.studio",
+        callbackUrlScheme: 'com.nesthaps.nest',
       );
+      
+      if (result.isEmpty) {
+        throw ApiException('OAuth authentication was cancelled');
+      }
+
+      // Extract code from resulting url
+      final uri = Uri.parse(result);
+      final code = uri.queryParameters['code'];
+      final scope = uri.queryParameters['scope'];
+      final auth = uri.queryParameters['authuser'];
+      final prompt = uri.queryParameters['prompt'];
+      
+      if (code == null) {
+        throw ApiException('No authorization code received from Google');
+      }
+
+      Map<String, dynamic> params = {
+        'code': code,
+        'scope': scope,
+        'authuser': auth,
+        'prompt': prompt,
+        'client_id': AppUrls.NEXT_PUBLIC_GOOGLE_ACCESS_ID,
+        'redirect_uri': AppUrls.NEXT_PUBLIC_GOOGLE_REDIRECT,
+      };
+      return params;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Google sign-in error: $e');
+      rethrow;
     }
-    // Extract code from resulting url
-    final code = Uri.parse(result).queryParameters['code'];
-    final scope = Uri.parse(result).queryParameters['scope'];
-    final auth = Uri.parse(result).queryParameters['authuser'];
-    final prompt = Uri.parse(result).queryParameters['prompt'];
-    Map<String, dynamic> params = {
-      'code': code,
-      'scope': scope,
-      'authuser': auth,
-      'prompt': prompt,
-      'client_id': AppUrls.NEXT_PUBLIC_GOOGLE_ACCESS_ID,
-      'redirect_uri': 'app.thedoor.studio://',
-    };
-    return params;
   }
 
   Future<Map<String, dynamic>> appleSignIn() async {
-    var result;
     try {
-      result = await FlutterWebAuth2.authenticate(
+      final result = await FlutterWebAuth2.authenticate(
         url: AppUrls.appleUrl.toString(),
-        callbackUrlScheme:
-            Platform.isAndroid ? 'app.thedoor.studio' : "app.thedoor.studio",
+        callbackUrlScheme: 'com.nesthaps.nest',
       );
+      
+      if (result.isEmpty) {
+        throw ApiException('Apple authentication was cancelled');
+      }
+
+      // Extract parameters from resulting url
+      final uri = Uri.parse(result);
+      final code = uri.queryParameters['code'];
+      final state = uri.queryParameters['state'];
+      final id_token = uri.queryParameters['id_token'];
+      
+      if (code == null) {
+        throw ApiException('No authorization code received from Apple');
+      }
+
+      Map<String, dynamic> params = {
+        'code': code,
+        'state': state ?? '',
+        'id_token': id_token ?? '',
+        'redirect_uri': AppUrls.NEXT_PUBLIC_APPLE_REDIRECT,
+      };
+      return params;
     } catch (e) {
-      print(e.toString());
+      debugPrint('Apple sign-in error: $e');
+      rethrow;
     }
-    final code = Uri.parse(result).queryParameters['code'];
-    final state = Uri.parse(result).queryParameters['state'];
-    final id_token = Uri.parse(result).queryParameters['id_token'];
-    Map<String, dynamic> params = {
-      'code': code,
-      'state': '',
-      'id_token': '',
-      'redirect_uri': AppUrls.NEXT_PUBLIC_APPLE_REDIRECT,
-    };
-    return params;
   }
 
   Future<ApiResponse> oAuthGoogle(

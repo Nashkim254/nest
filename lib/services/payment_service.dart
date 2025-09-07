@@ -62,7 +62,7 @@ class PaymentService {
       //     paymentIntentClientSecret: paymentIntent.clientSecret,
       //     merchantDisplayName: 'Nest',
       //     style: ThemeMode.dark,
-      //     returnURL: 'com.example.nest://payment-return',
+      //     returnURL: 'com.nesthaps.nest://payment-return',
       //     billingDetails: const BillingDetails(
       //       email: '', // You can make this dynamic
       //     ),

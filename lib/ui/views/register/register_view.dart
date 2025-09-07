@@ -59,24 +59,24 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                verticalSpaceMedium,
-                Align(
-                  child: Container(
-                    height: 98,
-                    width: 98,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: kcContainerBorderColor),
-                        color: kcProfileColor),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        camera,
-                        height: 24,
-                        width: 24,
-                      ),
-                    ),
-                  ),
-                ),
+                // verticalSpaceMedium,
+                // Align(
+                //   child: Container(
+                //     height: 98,
+                //     width: 98,
+                //     decoration: BoxDecoration(
+                //         shape: BoxShape.circle,
+                //         border: Border.all(color: kcContainerBorderColor),
+                //         color: kcProfileColor),
+                //     child: Center(
+                //       child: SvgPicture.asset(
+                //         camera,
+                //         height: 24,
+                //         width: 24,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 verticalSpaceMedium,
                 Align(
                   child: Text(

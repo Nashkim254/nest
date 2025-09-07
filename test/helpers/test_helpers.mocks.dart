@@ -8,48 +8,49 @@ import 'dart:io' as _i15;
 import 'dart:ui' as _i13;
 
 import 'package:flutter/material.dart' as _i11;
-import 'package:flutter_stripe/flutter_stripe.dart' as _i42;
-import 'package:geolocator/geolocator.dart' as _i27;
+import 'package:flutter_stripe/flutter_stripe.dart' as _i43;
+import 'package:geolocator/geolocator.dart' as _i28;
 import 'package:logger/logger.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:nest/abstractClasses/abstract_class.dart' as _i2;
-import 'package:nest/abstractClasses/deep_link_handler_interface.dart' as _i29;
-import 'package:nest/models/add_team_member.dart' as _i34;
+import 'package:nest/abstractClasses/deep_link_handler_interface.dart' as _i30;
+import 'package:nest/models/add_team_member.dart' as _i35;
 import 'package:nest/models/api_response.dart' as _i4;
-import 'package:nest/models/create_event.dart' as _i39;
-import 'package:nest/models/create_post.dart' as _i45;
-import 'package:nest/models/login_model.dart' as _i25;
+import 'package:nest/models/create_event.dart' as _i40;
+import 'package:nest/models/create_post.dart' as _i46;
+import 'package:nest/models/login_model.dart' as _i26;
 import 'package:nest/models/message_models.dart' as _i19;
-import 'package:nest/models/organization_model.dart' as _i35;
+import 'package:nest/models/organization_model.dart' as _i36;
+import 'package:nest/models/password_reset_model.dart' as _i25;
 import 'package:nest/models/payments.dart' as _i8;
 import 'package:nest/models/places.dart' as _i5;
 import 'package:nest/models/registration_model.dart' as _i24;
 import 'package:nest/models/send_message_request.dart' as _i21;
-import 'package:nest/models/update_profile_input.dart' as _i33;
+import 'package:nest/models/update_profile_input.dart' as _i34;
 import 'package:nest/services/api_service.dart' as _i22;
 import 'package:nest/services/auth_service.dart' as _i23;
-import 'package:nest/services/comments_service.dart' as _i46;
-import 'package:nest/services/deep_link_generator_service.dart' as _i30;
-import 'package:nest/services/deep_link_service.dart' as _i28;
-import 'package:nest/services/event_service.dart' as _i37;
-import 'package:nest/services/file_service.dart' as _i36;
+import 'package:nest/services/comments_service.dart' as _i47;
+import 'package:nest/services/deep_link_generator_service.dart' as _i31;
+import 'package:nest/services/deep_link_service.dart' as _i29;
+import 'package:nest/services/event_service.dart' as _i38;
+import 'package:nest/services/file_service.dart' as _i37;
 import 'package:nest/services/global_service.dart' as _i14;
 import 'package:nest/services/image_service.dart' as _i16;
-import 'package:nest/services/location_service.dart' as _i26;
+import 'package:nest/services/location_service.dart' as _i27;
 import 'package:nest/services/message_service.dart' as _i20;
-import 'package:nest/services/payment_service.dart' as _i41;
-import 'package:nest/services/share_service.dart' as _i31;
-import 'package:nest/services/shared_coordinates_service.dart' as _i47;
+import 'package:nest/services/payment_service.dart' as _i42;
+import 'package:nest/services/share_service.dart' as _i32;
+import 'package:nest/services/shared_coordinates_service.dart' as _i48;
 import 'package:nest/services/shared_preferences_service.dart' as _i3;
-import 'package:nest/services/social_service.dart' as _i44;
-import 'package:nest/services/stripe_service.dart' as _i43;
-import 'package:nest/services/user_service.dart' as _i32;
+import 'package:nest/services/social_service.dart' as _i45;
+import 'package:nest/services/stripe_service.dart' as _i44;
+import 'package:nest/services/user_service.dart' as _i33;
 import 'package:nest/services/websocket_service.dart' as _i17;
 import 'package:nest/ui/common/app_enums.dart' as _i18;
-import 'package:nest/ui/views/edit_event/edit_event_viewmodel.dart' as _i38;
+import 'package:nest/ui/views/edit_event/edit_event_viewmodel.dart' as _i39;
 import 'package:nest/ui/views/ticket_scanning/ticket_scanning_viewmodel.dart'
-    as _i40;
+    as _i41;
 import 'package:shared_preferences/shared_preferences.dart' as _i6;
 import 'package:stacked_services/stacked_services.dart' as _i9;
 
@@ -1719,29 +1720,30 @@ class MockAuthService extends _i1.Mock implements _i23.AuthService {
       ) as _i12.Future<dynamic>);
 
   @override
-  _i12.Future<dynamic> requestChangePassword(Map<String, dynamic>? body) =>
+  _i12.Future<dynamic> requestChangePassword(
+          _i25.PasswordResetRequestModel? model) =>
       (super.noSuchMethod(
         Invocation.method(
           #requestChangePassword,
-          [body],
+          [model],
         ),
         returnValue: _i12.Future<dynamic>.value(),
         returnValueForMissingStub: _i12.Future<dynamic>.value(),
       ) as _i12.Future<dynamic>);
 
   @override
-  _i12.Future<dynamic> resetPassword(Map<String, dynamic>? body) =>
+  _i12.Future<dynamic> resetPassword(_i25.PasswordResetModel? model) =>
       (super.noSuchMethod(
         Invocation.method(
           #resetPassword,
-          [body],
+          [model],
         ),
         returnValue: _i12.Future<dynamic>.value(),
         returnValueForMissingStub: _i12.Future<dynamic>.value(),
       ) as _i12.Future<dynamic>);
 
   @override
-  _i12.Future<_i4.ApiResponse<dynamic>> sign(_i25.LoginModel? model) =>
+  _i12.Future<_i4.ApiResponse<dynamic>> sign(_i26.LoginModel? model) =>
       (super.noSuchMethod(
         Invocation.method(
           #sign,
@@ -1888,7 +1890,7 @@ class MockAuthService extends _i1.Mock implements _i23.AuthService {
 /// A class which mocks [LocationService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLocationService extends _i1.Mock implements _i26.LocationService {
+class MockLocationService extends _i1.Mock implements _i27.LocationService {
   @override
   _i2.IApiService get apiService => (super.noSuchMethod(
         Invocation.getter(#apiService),
@@ -1913,15 +1915,15 @@ class MockLocationService extends _i1.Mock implements _i26.LocationService {
       ) as _i12.Future<String?>);
 
   @override
-  _i12.Future<_i27.Position?> getCoordinatesFromCurrentLocation() =>
+  _i12.Future<_i28.Position?> getCoordinatesFromCurrentLocation() =>
       (super.noSuchMethod(
         Invocation.method(
           #getCoordinatesFromCurrentLocation,
           [],
         ),
-        returnValue: _i12.Future<_i27.Position?>.value(),
-        returnValueForMissingStub: _i12.Future<_i27.Position?>.value(),
-      ) as _i12.Future<_i27.Position?>);
+        returnValue: _i12.Future<_i28.Position?>.value(),
+        returnValueForMissingStub: _i12.Future<_i28.Position?>.value(),
+      ) as _i12.Future<_i28.Position?>);
 
   @override
   _i12.Future<List<_i5.PlaceModel>> searchPlaces(String? query) =>
@@ -2407,7 +2409,7 @@ class MockSharedPreferencesService extends _i1.Mock
 /// A class which mocks [DeepLinkService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDeepLinkService extends _i1.Mock implements _i28.DeepLinkService {
+class MockDeepLinkService extends _i1.Mock implements _i29.DeepLinkService {
   @override
   _i12.Future<void> initialize() => (super.noSuchMethod(
         Invocation.method(
@@ -2419,7 +2421,7 @@ class MockDeepLinkService extends _i1.Mock implements _i28.DeepLinkService {
       ) as _i12.Future<void>);
 
   @override
-  void registerHandler(_i29.DeepLinkHandler? handler) => super.noSuchMethod(
+  void registerHandler(_i30.DeepLinkHandler? handler) => super.noSuchMethod(
         Invocation.method(
           #registerHandler,
           [handler],
@@ -2432,12 +2434,12 @@ class MockDeepLinkService extends _i1.Mock implements _i28.DeepLinkService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDeepLinkGeneratorService extends _i1.Mock
-    implements _i30.DeepLinkGeneratorService {}
+    implements _i31.DeepLinkGeneratorService {}
 
 /// A class which mocks [ShareService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockShareService extends _i1.Mock implements _i31.ShareService {
+class MockShareService extends _i1.Mock implements _i32.ShareService {
   @override
   dynamic copyToClipboard(String? resource) => super.noSuchMethod(
         Invocation.method(
@@ -2514,7 +2516,7 @@ class MockShareService extends _i1.Mock implements _i31.ShareService {
 /// A class which mocks [UserService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserService extends _i1.Mock implements _i32.UserService {
+class MockUserService extends _i1.Mock implements _i33.UserService {
   @override
   _i3.SharedPreferencesService get prefsService => (super.noSuchMethod(
         Invocation.getter(#prefsService),
@@ -2597,7 +2599,7 @@ class MockUserService extends _i1.Mock implements _i32.UserService {
 
   @override
   _i12.Future<dynamic> editUserProfile(
-          {required _i33.UpdateProfileInput? profileUpdateInput}) =>
+          {required _i34.UpdateProfileInput? profileUpdateInput}) =>
       (super.noSuchMethod(
         Invocation.method(
           #editUserProfile,
@@ -2641,7 +2643,7 @@ class MockUserService extends _i1.Mock implements _i32.UserService {
   @override
   _i12.Future<dynamic> addTeamMember(
     int? id,
-    _i34.AddTeamMemberInput? input,
+    _i35.AddTeamMemberInput? input,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2680,7 +2682,7 @@ class MockUserService extends _i1.Mock implements _i32.UserService {
 
   @override
   _i12.Future<dynamic> createOrganization(
-          {required _i35.Organization? organization}) =>
+          {required _i36.Organization? organization}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createOrganization,
@@ -2693,7 +2695,7 @@ class MockUserService extends _i1.Mock implements _i32.UserService {
 
   @override
   _i12.Future<dynamic> updateOrganization(
-          {required _i35.Organization? organization}) =>
+          {required _i36.Organization? organization}) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateOrganization,
@@ -2773,7 +2775,7 @@ class MockUserService extends _i1.Mock implements _i32.UserService {
 /// A class which mocks [FileService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockFileService extends _i1.Mock implements _i36.FileService {
+class MockFileService extends _i1.Mock implements _i37.FileService {
   @override
   _i7.Logger get logger => (super.noSuchMethod(
         Invocation.getter(#logger),
@@ -2890,7 +2892,7 @@ class MockFileService extends _i1.Mock implements _i36.FileService {
 /// A class which mocks [EventService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEventService extends _i1.Mock implements _i37.EventService {
+class MockEventService extends _i1.Mock implements _i38.EventService {
   @override
   _i3.SharedPreferencesService get prefsService => (super.noSuchMethod(
         Invocation.getter(#prefsService),
@@ -2943,7 +2945,7 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
   @override
   _i12.Future<dynamic> updateEvent({
     required int? eventId,
-    required _i38.UpdateEventRequest? requestBody,
+    required _i39.UpdateEventRequest? requestBody,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2998,7 +3000,7 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
 
   @override
   _i12.Future<dynamic> createEvent(
-          {required _i39.CreateEventRequest? requestBody}) =>
+          {required _i40.CreateEventRequest? requestBody}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createEvent,
@@ -3066,7 +3068,7 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
       ) as _i12.Future<dynamic>);
 
   @override
-  _i12.Future<List<_i40.ScanHistoryItem>> getTicketScanHistory({
+  _i12.Future<List<_i41.ScanHistoryItem>> getTicketScanHistory({
     required int? eventId,
     int? page = 0,
     int? size = 50,
@@ -3081,18 +3083,18 @@ class MockEventService extends _i1.Mock implements _i37.EventService {
             #size: size,
           },
         ),
-        returnValue: _i12.Future<List<_i40.ScanHistoryItem>>.value(
-            <_i40.ScanHistoryItem>[]),
+        returnValue: _i12.Future<List<_i41.ScanHistoryItem>>.value(
+            <_i41.ScanHistoryItem>[]),
         returnValueForMissingStub:
-            _i12.Future<List<_i40.ScanHistoryItem>>.value(
-                <_i40.ScanHistoryItem>[]),
-      ) as _i12.Future<List<_i40.ScanHistoryItem>>);
+            _i12.Future<List<_i41.ScanHistoryItem>>.value(
+                <_i41.ScanHistoryItem>[]),
+      ) as _i12.Future<List<_i41.ScanHistoryItem>>);
 }
 
 /// A class which mocks [PaymentService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPaymentService extends _i1.Mock implements _i41.PaymentService {
+class MockPaymentService extends _i1.Mock implements _i42.PaymentService {
   @override
   _i12.Future<_i8.PaymentResult> processPayment({
     required double? amount,
@@ -3150,7 +3152,7 @@ class MockPaymentService extends _i1.Mock implements _i41.PaymentService {
     required String? currency,
     required String? provider,
     required int? bookingId,
-    required _i42.PaymentMethodParams? paymentMethodParams,
+    required _i43.PaymentMethodParams? paymentMethodParams,
     Map<String, dynamic>? metadata,
   }) =>
       (super.noSuchMethod(
@@ -3203,7 +3205,7 @@ class MockPaymentService extends _i1.Mock implements _i41.PaymentService {
 /// A class which mocks [StripeService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStripeService extends _i1.Mock implements _i43.StripeService {
+class MockStripeService extends _i1.Mock implements _i44.StripeService {
   @override
   _i2.IApiService get apiService => (super.noSuchMethod(
         Invocation.getter(#apiService),
@@ -3256,7 +3258,7 @@ class MockStripeService extends _i1.Mock implements _i43.StripeService {
 /// A class which mocks [SocialService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSocialService extends _i1.Mock implements _i44.SocialService {
+class MockSocialService extends _i1.Mock implements _i45.SocialService {
   @override
   _i3.SharedPreferencesService get prefsService => (super.noSuchMethod(
         Invocation.getter(#prefsService),
@@ -3271,7 +3273,7 @@ class MockSocialService extends _i1.Mock implements _i44.SocialService {
       ) as _i3.SharedPreferencesService);
 
   @override
-  _i12.Future<dynamic> createPost({required _i45.CreatePostRequest? post}) =>
+  _i12.Future<dynamic> createPost({required _i46.CreatePostRequest? post}) =>
       (super.noSuchMethod(
         Invocation.method(
           #createPost,
@@ -3336,7 +3338,7 @@ class MockSocialService extends _i1.Mock implements _i44.SocialService {
 /// A class which mocks [CommentsService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCommentsService extends _i1.Mock implements _i46.CommentsService {
+class MockCommentsService extends _i1.Mock implements _i47.CommentsService {
   @override
   _i2.IApiService get apiService => (super.noSuchMethod(
         Invocation.getter(#apiService),
@@ -3445,7 +3447,7 @@ class MockCommentsService extends _i1.Mock implements _i46.CommentsService {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSharedCoordinatesService extends _i1.Mock
-    implements _i47.SharedCoordinatesService {
+    implements _i48.SharedCoordinatesService {
   @override
   bool get hasCoordinates => (super.noSuchMethod(
         Invocation.getter(#hasCoordinates),

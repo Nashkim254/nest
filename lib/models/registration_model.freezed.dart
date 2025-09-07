@@ -29,6 +29,8 @@ mixin _$RegistrationModel {
   @JsonKey(name: 'phone_number')
   String get phoneNumber => throw _privateConstructorUsedError;
   List<String> get interests => throw _privateConstructorUsedError;
+  @JsonKey(name: 'app_launch')
+  String get appLaunch => throw _privateConstructorUsedError;
 
   /// Serializes this RegistrationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -52,7 +54,8 @@ abstract class $RegistrationModelCopyWith<$Res> {
       @JsonKey(name: 'first_name') String firstName,
       @JsonKey(name: 'last_name') String lastName,
       @JsonKey(name: 'phone_number') String phoneNumber,
-      List<String> interests});
+      List<String> interests,
+      @JsonKey(name: 'app_launch') String appLaunch});
 }
 
 /// @nodoc
@@ -76,6 +79,7 @@ class _$RegistrationModelCopyWithImpl<$Res, $Val extends RegistrationModel>
     Object? lastName = null,
     Object? phoneNumber = null,
     Object? interests = null,
+    Object? appLaunch = null,
   }) {
     return _then(_value.copyWith(
       email: null == email
@@ -102,6 +106,10 @@ class _$RegistrationModelCopyWithImpl<$Res, $Val extends RegistrationModel>
           ? _value.interests
           : interests // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      appLaunch: null == appLaunch
+          ? _value.appLaunch
+          : appLaunch // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -120,7 +128,8 @@ abstract class _$$RegistrationModelImplCopyWith<$Res>
       @JsonKey(name: 'first_name') String firstName,
       @JsonKey(name: 'last_name') String lastName,
       @JsonKey(name: 'phone_number') String phoneNumber,
-      List<String> interests});
+      List<String> interests,
+      @JsonKey(name: 'app_launch') String appLaunch});
 }
 
 /// @nodoc
@@ -142,6 +151,7 @@ class __$$RegistrationModelImplCopyWithImpl<$Res>
     Object? lastName = null,
     Object? phoneNumber = null,
     Object? interests = null,
+    Object? appLaunch = null,
   }) {
     return _then(_$RegistrationModelImpl(
       email: null == email
@@ -168,6 +178,10 @@ class __$$RegistrationModelImplCopyWithImpl<$Res>
           ? _value._interests
           : interests // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      appLaunch: null == appLaunch
+          ? _value.appLaunch
+          : appLaunch // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -181,7 +195,8 @@ class _$RegistrationModelImpl implements _RegistrationModel {
       @JsonKey(name: 'first_name') required this.firstName,
       @JsonKey(name: 'last_name') required this.lastName,
       @JsonKey(name: 'phone_number') required this.phoneNumber,
-      final List<String> interests = const []})
+      final List<String> interests = const [],
+      @JsonKey(name: 'app_launch') this.appLaunch = 'com.nesthaps.nest://'})
       : _interests = interests;
 
   factory _$RegistrationModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -210,8 +225,12 @@ class _$RegistrationModelImpl implements _RegistrationModel {
   }
 
   @override
+  @JsonKey(name: 'app_launch')
+  final String appLaunch;
+
+  @override
   String toString() {
-    return 'RegistrationModel(email: $email, password: $password, firstName: $firstName, lastName: $lastName, phoneNumber: $phoneNumber, interests: $interests)';
+    return 'RegistrationModel(email: $email, password: $password, firstName: $firstName, lastName: $lastName, phoneNumber: $phoneNumber, interests: $interests, appLaunch: $appLaunch)';
   }
 
   @override
@@ -229,13 +248,22 @@ class _$RegistrationModelImpl implements _RegistrationModel {
             (identical(other.phoneNumber, phoneNumber) ||
                 other.phoneNumber == phoneNumber) &&
             const DeepCollectionEquality()
-                .equals(other._interests, _interests));
+                .equals(other._interests, _interests) &&
+            (identical(other.appLaunch, appLaunch) ||
+                other.appLaunch == appLaunch));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, email, password, firstName,
-      lastName, phoneNumber, const DeepCollectionEquality().hash(_interests));
+  int get hashCode => Object.hash(
+      runtimeType,
+      email,
+      password,
+      firstName,
+      lastName,
+      phoneNumber,
+      const DeepCollectionEquality().hash(_interests),
+      appLaunch);
 
   /// Create a copy of RegistrationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -256,12 +284,14 @@ class _$RegistrationModelImpl implements _RegistrationModel {
 
 abstract class _RegistrationModel implements RegistrationModel {
   const factory _RegistrationModel(
-      {required final String email,
-      required final String password,
-      @JsonKey(name: 'first_name') required final String firstName,
-      @JsonKey(name: 'last_name') required final String lastName,
-      @JsonKey(name: 'phone_number') required final String phoneNumber,
-      final List<String> interests}) = _$RegistrationModelImpl;
+          {required final String email,
+          required final String password,
+          @JsonKey(name: 'first_name') required final String firstName,
+          @JsonKey(name: 'last_name') required final String lastName,
+          @JsonKey(name: 'phone_number') required final String phoneNumber,
+          final List<String> interests,
+          @JsonKey(name: 'app_launch') final String appLaunch}) =
+      _$RegistrationModelImpl;
 
   factory _RegistrationModel.fromJson(Map<String, dynamic> json) =
       _$RegistrationModelImpl.fromJson;
@@ -281,6 +311,9 @@ abstract class _RegistrationModel implements RegistrationModel {
   String get phoneNumber;
   @override
   List<String> get interests;
+  @override
+  @JsonKey(name: 'app_launch')
+  String get appLaunch;
 
   /// Create a copy of RegistrationModel
   /// with the given fields replaced by the non-null parameter values.

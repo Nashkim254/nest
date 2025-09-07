@@ -43,10 +43,10 @@ class AppUrls {
   static final String searchEventsUrl = '$baseUrl/events/search';
   static final String getEventsNearbyUrl = '$baseUrl/events/nearby';
 
-  //websockets
+  //websockets base url: https://api.nesthaps.com/
   static String websocketUrl = Platform.isAndroid
-      ? 'ws://10.0.2.2:8080/api/v1/ws'
-      : 'ws://localhost:8080/api/v1/ws';
+      ? 'ws://api.nesthaps.com/ws'
+      : 'ws://api.nesthaps.com/ws';
 
   //tickets
   static final String tickets = '$baseUrl/tickets';
@@ -101,7 +101,7 @@ grant_type=authorization_code''';
       Uri.https('accounts.google.com', '/o/oauth2/v2/auth', {
     'response_type': 'code',
     'client_id': NEXT_PUBLIC_GOOGLE_ACCESS_ID,
-    'redirect_uri': 'app.thedoor.studio://',
+    'redirect_uri': NEXT_PUBLIC_GOOGLE_REDIRECT,
     'scope':
         'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
   });

@@ -29,14 +29,30 @@ class StartupView extends StackedView<StartupViewModel> {
             ),
             child: Column(
               children: [
-                // Image Section
+                // Image Section with gradient blend
                 Container(
-                  height: screenHeight * 0.4, // 50% of screen height
+                  height: screenHeight * 0.5, // Increased height for better blend
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(splash),
                       fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.transparent,
+                          kcDarkColor.withValues(alpha: 0.3),
+                          kcDarkColor.withValues(alpha: 0.7),
+                          kcDarkColor,
+                        ],
+                        stops: const [0.0, 0.5, 0.7, 0.85, 1.0],
+                      ),
                     ),
                   ),
                 ),
@@ -47,7 +63,8 @@ class StartupView extends StackedView<StartupViewModel> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(height: 20),
+                      // Reduced spacing for seamless blend
+                      const SizedBox(height: 0),
 
                       // Title
                       Text(

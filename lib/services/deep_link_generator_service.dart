@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/services/api_service.dart';
 
 class DeepLinkGeneratorService {
-  static const String baseUrl = 'com.example.nest'; // Your domain
-  static const String shortDomain =
-      'com.example.nest'; // Short domain for links
+  static const String baseUrl = 'https://nesthaps.com'; // Your web domain
+  static const String shortDomain = 'https://nesthaps.com'; // Short domain for links
   static final apiService = locator<ApiService>();
   // Generate post sharing link
   static Future<String> generatePostLink({
@@ -105,33 +103,29 @@ class DeepLinkGeneratorService {
     }
   }
 
-  // Create direct link (no backend required)
+  // Create direct link (web URLs that are clickable everywhere)
   static String _createDirectLink(Map<String, dynamic> linkData) {
-    final String encodedData = base64Url
-        .encode(utf8.encode(jsonEncode(linkData)))
-        .replaceAll('=', ''); // Remove padding
-
     final String type = linkData['type'] ?? 'post';
     
     switch (type) {
       case 'post':
-        return '$baseUrl://post/${linkData['post_id']}';
+        return '$baseUrl/post/${linkData['post_id']}';
       case 'event':
-        return '$baseUrl://event/${linkData['event_id']}';
+        return '$baseUrl/event/${linkData['event_id']}';
       case 'profile':
-        return '$baseUrl://profile/${linkData['user_id']}';
+        return '$baseUrl/user/${linkData['user_id']}';
       case 'verification':
-        return '$baseUrl://verify?token=${linkData['token']}&email=${linkData['email']}';
+        return '$baseUrl/verify?token=${linkData['token']}&email=${linkData['email']}';
       default:
-        return '$baseUrl://post/${linkData['post_id']}';
+        return '$baseUrl/post/${linkData['post_id']}';
     }
   }
 
-  // Create short link (requires backend)
+  // Create short link (requires backend API)
   static Future<String> _createShortLink(Map<String, dynamic> linkData) async {
     try {
       final response = await apiService.post(
-        '$baseUrl/api/links/create',
+        '/links/create', // Use your API service which already has the base URL
         headers: {'Content-Type': 'application/json'},
         data: jsonEncode(linkData),
       );
@@ -146,14 +140,5 @@ class DeepLinkGeneratorService {
 
     // Fallback to direct link
     return _createDirectLink(linkData);
-  }
-
-  // Generate random short ID
-  static String _generateShortId({int length = 8}) {
-    const chars =
-        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final random = Random();
-    return String.fromCharCodes(Iterable.generate(
-        length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
   }
 }

@@ -18,6 +18,7 @@ _$RegistrationModelImpl _$$RegistrationModelImplFromJson(
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      appLaunch: json['app_launch'] as String? ?? 'com.nesthaps.nest://',
     );
 
 Map<String, dynamic> _$$RegistrationModelImplToJson(
@@ -29,4 +30,5 @@ Map<String, dynamic> _$$RegistrationModelImplToJson(
       'last_name': instance.lastName,
       'phone_number': instance.phoneNumber,
       'interests': instance.interests,
+      'app_launch': instance.appLaunch,
     };

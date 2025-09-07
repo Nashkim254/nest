@@ -34,6 +34,7 @@ class RegisterViewModel extends BaseViewModel with $RegisterView {
       lastName: nameController.text.split(' ').length > 1
           ? nameController.text.split(' ').sublist(1).join(' ')
           : '',
+      appLaunch: 'com.nesthaps.nest://',
     );
     setBusy(true);
     Logger().i(registrationModel.toJson());

@@ -12,6 +12,7 @@ class RegistrationModel with _$RegistrationModel {
     @JsonKey(name: 'last_name') required String lastName,
     @JsonKey(name: 'phone_number') required String phoneNumber,
     @Default([]) List<String> interests,
+    @JsonKey(name: 'app_launch') @Default('com.nesthaps.nest://') String appLaunch,
   }) = _RegistrationModel;
 
   factory RegistrationModel.fromJson(Map<String, dynamic> json) =>

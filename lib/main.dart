@@ -19,7 +19,6 @@ import 'handlers/verification_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ApiConfig.setPhysicalDevice(false);
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
