@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/models/registration_model.dart';
@@ -24,8 +25,14 @@ class RegisterViewModel extends BaseViewModel with $RegisterView {
     isPasswordVisible = !isPasswordVisible;
     notifyListeners();
   }
-
+bool isRegistering = false;
+  final formKey = GlobalKey<FormState>();
   register(RegistrationModel registrationModel) async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+    isRegistering = true;
+    notifyListeners();
     registrationModel = registrationModel.copyWith(
       email: emailController.text,
       password: passwordController.text,
@@ -34,9 +41,8 @@ class RegisterViewModel extends BaseViewModel with $RegisterView {
       lastName: nameController.text.split(' ').length > 1
           ? nameController.text.split(' ').sublist(1).join(' ')
           : '',
-      appLaunch: 'com.nesthaps.nest://',
+      appLaunch: 'https://nesthaps.com',
     );
-    setBusy(true);
     Logger().i(registrationModel.toJson());
     try {
       final response = await authService.register(registrationModel);
@@ -44,27 +50,30 @@ class RegisterViewModel extends BaseViewModel with $RegisterView {
       Logger().i(response);
       if (response.statusCode == 200) {
         Logger().i('Registration successful: ${response.data}');
-        setBusy(false);
 
         navigationService.clearStackAndShowView(const LoginView());
+        locator<SnackbarService>().showSnackbar(
+          message: response.data['message'] ?? 'Registration successful',
+          duration: const Duration(seconds: 3),
+        );
       } else {
-        setBusy(false);
         locator<SnackbarService>().showSnackbar(
           message: response.data['error'] ?? 'Registration failed',
           duration: const Duration(seconds: 3),
         );
       }
     } catch (e) {
-      setBusy(false);
       Logger().e('Registration failed: $e');
       locator<SnackbarService>().showSnackbar(
         message: e.toString(),
         duration: const Duration(seconds: 3),
       );
       return;
+    }finally{
+      isRegistering = false;
+      notifyListeners();
     }
 
-    setBusy(false);
   }
 
   Future sendAuthGoogleParams(Map<String, dynamic> params) async {

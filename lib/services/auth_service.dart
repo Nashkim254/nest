@@ -46,13 +46,14 @@ class AuthService with ListenableServiceMixin {
 
   Future requestChangePassword(PasswordResetRequestModel model) async {
     try {
-      final response =
-          await _apiService.post(AppUrls.reQuestPasswordReset, data: model.toJson());
+      final response = await _apiService.post(AppUrls.reQuestPasswordReset,
+          data: model.toJson());
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
-        throw ApiException(response.message ?? 'Failed to request password reset');
+        throw ApiException(
+            response.message ?? 'Failed to request password reset');
       }
     } catch (e) {
       rethrow;
@@ -97,7 +98,7 @@ class AuthService with ListenableServiceMixin {
         url: AppUrls.oAuthUrl.toString(),
         callbackUrlScheme: 'com.nesthaps.nest',
       );
-      
+
       if (result.isEmpty) {
         throw ApiException('OAuth authentication was cancelled');
       }
@@ -108,16 +109,13 @@ class AuthService with ListenableServiceMixin {
       final scope = uri.queryParameters['scope'];
       final auth = uri.queryParameters['authuser'];
       final prompt = uri.queryParameters['prompt'];
-      
+
       if (code == null) {
         throw ApiException('No authorization code received from Google');
       }
 
       Map<String, dynamic> params = {
         'code': code,
-        'scope': scope,
-        'authuser': auth,
-        'prompt': prompt,
         'client_id': AppUrls.NEXT_PUBLIC_GOOGLE_ACCESS_ID,
         'redirect_uri': AppUrls.NEXT_PUBLIC_GOOGLE_REDIRECT,
       };
@@ -134,7 +132,7 @@ class AuthService with ListenableServiceMixin {
         url: AppUrls.appleUrl.toString(),
         callbackUrlScheme: 'com.nesthaps.nest',
       );
-      
+
       if (result.isEmpty) {
         throw ApiException('Apple authentication was cancelled');
       }
@@ -144,15 +142,14 @@ class AuthService with ListenableServiceMixin {
       final code = uri.queryParameters['code'];
       final state = uri.queryParameters['state'];
       final id_token = uri.queryParameters['id_token'];
-      
+
       if (code == null) {
         throw ApiException('No authorization code received from Apple');
       }
 
       Map<String, dynamic> params = {
         'code': code,
-        'state': state ?? '',
-        'id_token': id_token ?? '',
+        'client_id': AppUrls.NEXT_PUBLIC_APPLE_ACCESS_ID,
         'redirect_uri': AppUrls.NEXT_PUBLIC_APPLE_REDIRECT,
       };
       return params;

@@ -40,4 +40,15 @@ class Validators {
     }
     return null;
   }
+  //validate phone
+  static String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Phone number cannot be empty';
+    }
+    final phoneRegex = RegExp(r'^\+?[0-9]{7,15}$');
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Invalid phone number format';
+    }
+    return null;
+  }
 }

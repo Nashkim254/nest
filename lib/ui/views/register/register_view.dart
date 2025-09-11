@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:nest/models/registration_model.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/views/register/register_view.form.dart';
+import 'package:nest/utils/validators.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
 
@@ -40,168 +41,175 @@ class RegisterView extends StackedView<RegisterViewModel> with $RegisterView {
             vertical: 20,
           ),
           child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                verticalSpaceMedium,
-                Align(
-                  child: SvgPicture.asset(logo),
-                ),
-                verticalSpaceSmall,
-                Align(
-                  child: Text(
-                    "Join the party! Create your\naccount.",
-                    style: titleTextMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: kcGreyColor,
-                    ),
-                    textAlign: TextAlign.center,
+            child: Form(
+              key: viewModel.formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  verticalSpaceMedium,
+                  Align(
+                    child: SvgPicture.asset(logo),
                   ),
-                ),
-                // verticalSpaceMedium,
-                // Align(
-                //   child: Container(
-                //     height: 98,
-                //     width: 98,
-                //     decoration: BoxDecoration(
-                //         shape: BoxShape.circle,
-                //         border: Border.all(color: kcContainerBorderColor),
-                //         color: kcProfileColor),
-                //     child: Center(
-                //       child: SvgPicture.asset(
-                //         camera,
-                //         height: 24,
-                //         width: 24,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                verticalSpaceMedium,
-                Align(
-                  child: Text(
-                    'Upload Profile Picture',
-                    style: titleTextMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: kcGreyColor,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                verticalSpaceMedium,
-                TextFormField(
-                  style: titleTextMedium.copyWith(color: kcWhiteColor),
-                  controller: nameController,
-                  decoration: AppInputDecoration.standard(
-                      hintText: 'Name', borderColor: kcBorderColor),
-                ),
-                verticalSpaceMedium,
-                TextFormField(
-                  style: titleTextMedium.copyWith(color: kcWhiteColor),
-                  controller: emailController,
-                  decoration: AppInputDecoration.standard(
-                      hintText: 'Email', borderColor: kcBorderColor),
-                ),
-                verticalSpaceMedium,
-                TextFormField(
-                  style: titleTextMedium.copyWith(color: kcWhiteColor),
-                  controller: phoneController,
-                  decoration: AppInputDecoration.standard(
-                      hintText: 'Phone', borderColor: kcBorderColor),
-                ),
-                verticalSpaceMedium,
-                TextFormField(
-                  style: titleTextMedium.copyWith(color: kcWhiteColor),
-                  controller: passwordController,
-                  obscureText: viewModel.isPasswordVisible,
-                  decoration: AppInputDecoration.standard(
-                    hintText: 'Password',
-                    borderColor: kcBorderColor,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        viewModel.isPasswordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: kcWhiteColor,
-                      ),
-                      onPressed: () {
-                        viewModel.togglePasswordVisibility();
-                      },
-                    ),
-                  ),
-                ),
-                verticalSpaceMedium,
-                AppButton(
-                  isBusy: viewModel.isBusy,
-                  labelText: 'Create My Account',
-                  onTap: () => viewModel.register(
-                    registrationModel,
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(child: spacedDivider),
-                    horizontalSpaceSmall,
-                    Text(
-                      "OR",
+                  verticalSpaceSmall,
+                  Align(
+                    child: Text(
+                      "Join the party! Create your\naccount.",
                       style: titleTextMedium.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: kcGreyColor,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                    horizontalSpaceSmall,
-                    Expanded(child: spacedDivider),
-                  ],
-                ),
-                AppButton(
-                  labelText: 'Continue with Google',
-                  isBusy: viewModel.isBusy,
-                  onTap: () async =>
-                      await locator<AuthService>().signInWithGoogle().then(
-                            (value) async =>
-                                await viewModel.sendAuthGoogleParams(value),
-                          ),
-                  buttonColor: kcOffWhite8Grey,
-                  borderColor: kcBorderColor,
-                  leadingIcon: chrome,
-                ),
-                verticalSpaceMedium,
-                Text(
-                  'By signing up, you agree to our Terms & Privacy',
-                  style: titleTextMedium.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: kcGreyColor,
                   ),
-                ),
-                Align(
-                  child: Text(
-                    "Already have an account?",
+                  // verticalSpaceMedium,
+                  // Align(
+                  //   child: Container(
+                  //     height: 98,
+                  //     width: 98,
+                  //     decoration: BoxDecoration(
+                  //         shape: BoxShape.circle,
+                  //         border: Border.all(color: kcContainerBorderColor),
+                  //         color: kcProfileColor),
+                  //     child: Center(
+                  //       child: SvgPicture.asset(
+                  //         camera,
+                  //         height: 24,
+                  //         width: 24,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // verticalSpaceMedium,
+                  // Align(
+                  //   child: Text(
+                  //     'Upload Profile Picture',
+                  //     style: titleTextMedium.copyWith(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.bold,
+                  //       color: kcGreyColor,
+                  //     ),
+                  //     textAlign: TextAlign.center,
+                  //   ),
+                  // ),
+                  verticalSpaceMedium,
+                  TextFormField(
+                    style: titleTextMedium.copyWith(color: kcWhiteColor),
+                    controller: nameController,
+                    decoration: AppInputDecoration.standard(
+                        hintText: 'Name', borderColor: kcBorderColor),
+                    validator: (value) => Validators.validateRequired(value),
+                  ),
+                  verticalSpaceMedium,
+                  TextFormField(
+                    style: titleTextMedium.copyWith(color: kcWhiteColor),
+                    controller: emailController,
+                    validator: (value) => Validators.validateEmail(value),
+                    decoration: AppInputDecoration.standard(
+                        hintText: 'Email', borderColor: kcBorderColor),
+                  ),
+                  verticalSpaceMedium,
+                  TextFormField(
+                    style: titleTextMedium.copyWith(color: kcWhiteColor),
+                    controller: phoneController,
+                    validator: (value) => Validators.validatePhone(value),
+                    decoration: AppInputDecoration.standard(
+                        hintText: 'Phone', borderColor: kcBorderColor),
+                  ),
+                  verticalSpaceMedium,
+                  TextFormField(
+                    style: titleTextMedium.copyWith(color: kcWhiteColor),
+                    controller: passwordController,
+                    validator: (value) => Validators.validatePassword(value),
+                    obscureText: viewModel.isPasswordVisible,
+                    decoration: AppInputDecoration.standard(
+                      hintText: 'Password',
+                      borderColor: kcBorderColor,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          viewModel.isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: kcWhiteColor,
+                        ),
+                        onPressed: () {
+                          viewModel.togglePasswordVisibility();
+                        },
+                      ),
+                    ),
+                  ),
+                  verticalSpaceMedium,
+                  AppButton(
+                    isBusy: viewModel.isRegistering,
+                    labelText: 'Create My Account',
+                    onTap: () => viewModel.register(
+                      registrationModel,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(child: spacedDivider),
+                      horizontalSpaceSmall,
+                      Text(
+                        "OR",
+                        style: titleTextMedium.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: kcGreyColor,
+                        ),
+                      ),
+                      horizontalSpaceSmall,
+                      Expanded(child: spacedDivider),
+                    ],
+                  ),
+                  AppButton(
+                    labelText: 'Continue with Google',
+                    isBusy: viewModel.isBusy,
+                    onTap: () async =>
+                        await locator<AuthService>().signInWithGoogle().then(
+                              (value) async =>
+                                  await viewModel.sendAuthGoogleParams(value),
+                            ),
+                    buttonColor: kcOffWhite8Grey,
+                    borderColor: kcBorderColor,
+                    leadingIcon: chrome,
+                  ),
+                  verticalSpaceMedium,
+                  Text(
+                    'By signing up, you agree to our Terms & Privacy',
                     style: titleTextMedium.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: kcGreyColor,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-                Align(
-                  child: TextButton(
-                    onPressed: () => viewModel.signin(),
+                  Align(
                     child: Text(
-                      "Sign in",
+                      "Already have an account?",
                       style: titleTextMedium.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: kcPrimaryColor,
+                        color: kcGreyColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-              ],
+                  Align(
+                    child: TextButton(
+                      onPressed: () => viewModel.signin(),
+                      child: Text(
+                        "Sign in",
+                        style: titleTextMedium.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: kcPrimaryColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -51,7 +51,7 @@ class ChangePasswordDialogModel extends BaseViewModel {
       notifyListeners();
       final requestModel = PasswordResetRequestModel(
         email: prefsService.getUserInfo()!['email'],
-        appLaunch: 'com.nesthaps.nest://',
+        appLaunch: 'https://nesthaps.com',
       );
       try {
         authService.requestChangePassword(requestModel).then((response) {
@@ -90,7 +90,7 @@ class ChangePasswordDialogModel extends BaseViewModel {
       notifyListeners();
       final requestModel = PasswordResetRequestModel(
         email: prefsService.getUserInfo()!['email'],
-        appLaunch: 'com.nesthaps.nest://',
+        appLaunch: 'https://nesthaps.com',
       );
       try {
         authService.requestChangePassword(requestModel).then((response) {
