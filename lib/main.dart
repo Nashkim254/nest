@@ -6,6 +6,7 @@ import 'package:nest/app/app.dialogs.dart';
 import 'package:nest/app/app.locator.dart';
 import 'package:nest/app/app.router.dart';
 import 'package:nest/services/api_service.dart';
+import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/deep_link_service.dart';
 import 'package:nest/utils/env_config.dart';
 import 'package:nest/utils/stripe_configs.dart';
@@ -88,9 +89,30 @@ class _MainAppState extends State<MainApp> {
 
     deepLinkService.registerHandler(
       VerificationDeepLinkHandler(
-        onVerificationRequested: (token, email) {
-          // Handle verification link - could navigate to verification view
+        onVerificationRequested: (token, email) async {
+          // Handle verification link - call API to verify email
           print('Verification requested for $email with token: $token');
+          
+          try {
+            final authService = locator<AuthService>();
+            final response = await authService.verifyEmail(token);
+            
+            if (response.statusCode == 200 || response.statusCode == 201) {
+              // Show success message
+              final snackbarService = locator<SnackbarService>();
+              snackbarService.showSnackbar(
+                message: 'Email verified successfully!',
+                title: 'Success',
+              );
+            }
+          } catch (e) {
+            // Show error message
+            final snackbarService = locator<SnackbarService>();
+            snackbarService.showSnackbar(
+              message: 'Email verification failed: $e',
+              title: 'Error',
+            );
+          }
         },
       ),
     );

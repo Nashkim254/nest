@@ -195,4 +195,21 @@ class AuthService with ListenableServiceMixin {
       rethrow;
     }
   }
+
+  Future<ApiResponse> verifyEmail(String token) async {
+    try {
+      final response = await _apiService.post(
+        AppUrls.verifyEmail,
+        data: {'token': token},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to verify email');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

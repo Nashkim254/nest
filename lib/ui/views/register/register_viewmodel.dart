@@ -41,7 +41,7 @@ bool isRegistering = false;
       lastName: nameController.text.split(' ').length > 1
           ? nameController.text.split(' ').sublist(1).join(' ')
           : '',
-      appLaunch: 'https://nesthaps.com',
+      appLaunch: 'api.nesthaps.com',
     );
     Logger().i(registrationModel.toJson());
     try {

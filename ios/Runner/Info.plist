@@ -21,7 +21,7 @@
     </array>
     <key>com.apple.developer.associated-domains</key>
     <array>
-        <string>applinks:nesthaps.com</string>
+        <string>applinks:api.nesthaps.com</string>
     </array>
     <key>NSCameraUsageDescription</key>
     <string>This app needs access to camera to take photos and scan cards</string>

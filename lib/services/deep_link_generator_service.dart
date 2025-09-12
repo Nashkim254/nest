@@ -5,8 +5,8 @@ import 'package:nest/app/app.locator.dart';
 import 'package:nest/services/api_service.dart';
 
 class DeepLinkGeneratorService {
-  static const String baseUrl = 'https://nesthaps.com'; // Your web domain
-  static const String shortDomain = 'https://nesthaps.com'; // Short domain for links
+  static const String baseUrl = 'https://api.nesthaps.com'; // Your web domain
+  static const String shortDomain = 'https://api.nesthaps.com'; // Short domain for links
   static final apiService = locator<ApiService>();
   // Generate post sharing link
   static Future<String> generatePostLink({

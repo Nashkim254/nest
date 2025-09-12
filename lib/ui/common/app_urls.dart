@@ -10,6 +10,7 @@ class AppUrls {
   static final String baseAuthUrl = '$baseUrl/auth';
   static final String login = '$baseAuthUrl/login';
   static final String register = '$baseAuthUrl/register';
+  static final String verifyEmail = '$baseAuthUrl/verify-email';
   static final String reQuestPasswordReset = '$baseAuthUrl/reset-password';
   static final String resetPassword = '$baseAuthUrl/reset-password/confirm';
   static final String userProfile = '$baseUrl/users/me';
