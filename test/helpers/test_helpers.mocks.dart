@@ -1850,6 +1850,31 @@ class MockAuthService extends _i1.Mock implements _i23.AuthService {
       ) as _i12.Future<_i4.ApiResponse<dynamic>>);
 
   @override
+  _i12.Future<_i4.ApiResponse<dynamic>> verifyEmail(String? token) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #verifyEmail,
+          [token],
+        ),
+        returnValue: _i12.Future<_i4.ApiResponse<dynamic>>.value(
+            _FakeApiResponse_2<dynamic>(
+          this,
+          Invocation.method(
+            #verifyEmail,
+            [token],
+          ),
+        )),
+        returnValueForMissingStub: _i12.Future<_i4.ApiResponse<dynamic>>.value(
+            _FakeApiResponse_2<dynamic>(
+          this,
+          Invocation.method(
+            #verifyEmail,
+            [token],
+          ),
+        )),
+      ) as _i12.Future<_i4.ApiResponse<dynamic>>);
+
+  @override
   void listenToReactiveValues(List<dynamic>? reactiveValues) =>
       super.noSuchMethod(
         Invocation.method(

@@ -43,3 +43,36 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Security - Never commit sensitive files
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.pem
+*.key
+*.crt
+*.cer
+google-services.json
+GoogleService-Info.plist
+service-account*.json
+*-key.json
+
+# Environment and secrets
+.env.local
+.env.production
+.env.staging
+*.env.secret
+secrets/
+certificates/
+
+# iOS certificates and profiles
+ios/*.mobileprovision
+ios/Certificates/
+ios/exportOptions.plist
+
+# Android keystore and signing
+android/app/*.keystore
+android/app/*.jks
+android/key.properties
+android/keystore.properties
