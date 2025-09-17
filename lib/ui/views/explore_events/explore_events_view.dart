@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/common/app_event_image.dart';
 import 'package:nest/utils/utilities.dart';
 import 'package:stacked/stacked.dart';
 
@@ -187,7 +188,11 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                                     children: [
                                                       SizedBox(
                                                         height: 200,
-                                                        child: ClipRRect(
+                                                        child: AppEventImage(
+                                                          imageUrl: event.flyerUrl,
+                                                          width: double.infinity,
+                                                          height: 200,
+                                                          fit: BoxFit.cover,
                                                           borderRadius:
                                                               const BorderRadius
                                                                   .only(
@@ -197,12 +202,6 @@ class ExploreEventsView extends StackedView<ExploreEventsViewModel> {
                                                             topRight:
                                                                 Radius.circular(
                                                                     16),
-                                                          ),
-                                                          child: Image.network(
-                                                            event.flyerUrl,
-                                                            fit: BoxFit.cover,
-                                                            width:
-                                                                double.infinity,
                                                           ),
                                                         ),
                                                       ),

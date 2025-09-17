@@ -64,7 +64,7 @@ class HostingView extends StackedView<HostingViewModel> {
                     ),
                   ),
                 )
-              : viewModel.organizationAnalytics == null
+              : viewModel.isBusy
                   ? const Center(
                       child: CircularProgressIndicator(
                       color: kcPrimaryColor,
@@ -96,21 +96,24 @@ class HostingView extends StackedView<HostingViewModel> {
                                   children: [
                                     _buildQuickStatsContainer(
                                       title: 'Total Events',
-                                      value: viewModel.organizationAnalytics!
-                                          .eventAnalytics.totalEvents
-                                          .toString(),
+                                      value: viewModel.organizationAnalytics
+                                              ?.eventAnalytics.totalEvents
+                                              .toString() ??
+                                          '-',
                                     ),
                                     _buildQuickStatsContainer(
                                       title: 'Tickets Sold',
-                                      value: viewModel.organizationAnalytics!
-                                          .ticketAnalytics.validatedTickets
-                                          .toString(),
+                                      value: viewModel.organizationAnalytics
+                                              ?.ticketAnalytics.validatedTickets
+                                              .toString() ??
+                                          '-',
                                     ),
                                     _buildQuickStatsContainer(
                                       title: 'Views',
-                                      value: viewModel.organizationAnalytics!
-                                          .eventAnalytics.activeEvents
-                                          .toString(),
+                                      value: viewModel.organizationAnalytics
+                                              ?.eventAnalytics.activeEvents
+                                              .toString() ??
+                                          '-',
                                     ),
                                   ],
                                 ),

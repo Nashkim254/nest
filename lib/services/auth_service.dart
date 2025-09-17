@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:logger/logger.dart';
 import 'package:nest/models/api_response.dart';
 import 'package:nest/models/login_model.dart';
 import 'package:nest/services/shared_preferences_service.dart';
@@ -197,10 +198,14 @@ class AuthService with ListenableServiceMixin {
   }
 
   Future<ApiResponse> verifyEmail(String token) async {
+    var body = {
+      'token': token,
+    };
+    Logger().wtf('Verifying email with token: $token');
     try {
-      final response = await _apiService.post(
+      final response = await _apiService.get(
         AppUrls.verifyEmail,
-        data: {'token': token},
+        queryParameters: body,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

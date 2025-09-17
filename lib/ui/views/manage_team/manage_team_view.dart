@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 
+import '../../../models/events.dart';
 import '../../../models/organization_model.dart';
+import '../../../utils/utilities.dart';
 import '../../common/app_colors.dart';
+import '../../common/app_custom_button.dart';
+import '../../common/app_inputdecoration.dart';
+import '../../common/app_styles.dart';
+import '../../common/ui_helpers.dart';
 import 'manage_team_viewmodel.dart';
 
 class ManageTeamView extends StackedView<ManageTeamViewModel> {
@@ -23,60 +29,63 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
   ) {
     return DefaultTabController(
       length: 3, // Team, Details, Events
-      child: Scaffold(
-        backgroundColor: kcDarkColor,
-        appBar: AppBar(
+      child: SafeArea(
+        child: Scaffold(
           backgroundColor: kcDarkColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: viewModel.onBackPressed,
-          ),
-          title: Text(
-            organization.name ?? 'Organization',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+          appBar: AppBar(
+            backgroundColor: kcDarkColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => viewModel.onBackPressed(),
             ),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.white),
-              onPressed: () => viewModel.onEditOrganizationPressed(organization),
+            title: Text(
+              organization.name ?? 'Organization',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-            IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white),
-              onPressed: viewModel.onSettingsPressed,
-            ),
-          ],
-          bottom: const TabBar(
-            tabs: [
-              Tab(
-                icon: Icon(Icons.group),
-                text: 'Team',
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.white),
+                onPressed: () =>
+                    viewModel.onEditOrganizationPressed(organization),
               ),
-              Tab(
-                icon: Icon(Icons.info_outline),
-                text: 'Details',
-              ),
-              Tab(
-                icon: Icon(Icons.event),
-                text: 'Events',
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.settings, color: Colors.white),
+              //   onPressed: viewModel.onSettingsPressed,
+              // ),
             ],
-            indicatorColor: kcPrimaryColor,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.grey,
+            bottom: const TabBar(
+              tabs: [
+                Tab(
+                  icon: Icon(Icons.group),
+                  text: 'Team',
+                ),
+                Tab(
+                  icon: Icon(Icons.info_outline),
+                  text: 'Details',
+                ),
+                Tab(
+                  icon: Icon(Icons.event),
+                  text: 'Events',
+                ),
+              ],
+              indicatorColor: kcPrimaryColor,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.grey,
+            ),
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _buildTeamTab(viewModel, organization),
-            _buildDetailsTab(),
-            _buildEventsTab(viewModel),
-          ],
+          body: TabBarView(
+            children: [
+              _buildTeamTab(viewModel, organization),
+              _buildDetailsTab(),
+              _buildEventsTab(viewModel),
+            ],
+          ),
         ),
       ),
     );
@@ -314,7 +323,7 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
           if (organization.serviceFee != null)
             _buildDetailCard(
               'Service Fee',
-              '${organization.serviceFee}%',
+              '${organization.serviceFee}',
               Icons.monetization_on,
             ),
 
@@ -346,10 +355,12 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
   }
 
   Widget _buildEventsTab(ManageTeamViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
           // Create Event Button
           // SizedBox(
           //   width: double.infinity,
@@ -378,18 +389,29 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
 
           // Events List
           Expanded(
-            child: viewModel.organizationEvents.isEmpty
-                ? _buildEmptyEventsState()
-                : ListView.builder(
-                    itemCount: viewModel.organizationEvents.length,
-                    itemBuilder: (context, index) {
-                      final event = viewModel.organizationEvents[index];
-                      return _buildEventCard(event);
-                    },
-                  ),
+            child: viewModel.isBusy
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: kcPrimaryColor,
+                    ),
+                  )
+                : viewModel.organizationEvents.isEmpty
+                    ? _buildEmptyEventsState(viewModel)
+                    : ListView.builder(
+                        itemCount: viewModel.organizationEvents.length,
+                        itemBuilder: (context, index) {
+                          final event = viewModel.organizationEvents[index];
+                          return _buildEventCard(event, viewModel);
+                        },
+                      ),
           ),
-        ],
-      ),
+            ],
+          ),
+        ),
+        // Password dialog overlay
+        if (viewModel.showPasswordDialogState)
+          _buildPasswordDialog(viewModel),
+      ],
     );
   }
 
@@ -466,15 +488,18 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
     );
   }
 
-  Widget _buildEventCard(dynamic event) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2A2A2A),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
+  Widget _buildEventCard(Event event, ManageTeamViewModel viewModel) {
+    return InkWell(
+      onTap: () => viewModel.onEventTapped(event),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2A2A2A),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -497,7 +522,7 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      event['title'] ?? 'Event Title',
+                      event.title,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -505,40 +530,102 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
                       ),
                     ),
                     Text(
-                      event['date'] ?? 'Date TBD',
+                      formatter.format(event.startTime),
                       style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 14,
                       ),
                     ),
+                    if (event.location.isNotEmpty)
+                      Text(
+                        event.location,
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 12,
+                        ),
+                      ),
                   ],
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.more_vert, color: Colors.white),
-                onPressed: () {
-                  // Show event options
-                },
+              Column(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: event.status == 'published'
+                          ? Colors.green
+                          : Colors.orange,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      event.status.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${event.totalTickets} tickets',
+                    style: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          if (event['description'] != null && event['description']!.isNotEmpty)
+          if (event.description.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 12),
               child: Text(
-                event['description'],
+                event.description,
                 style: TextStyle(
                   color: Colors.grey[300],
                   fontSize: 14,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.people, color: Colors.grey[400], size: 16),
+              const SizedBox(width: 4),
+              Text(
+                '${event.goingUsers.length} going',
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Icon(Icons.remove_red_eye, color: Colors.grey[400], size: 16),
+              const SizedBox(width: 4),
+              Text(
+                '${event.viewCount} views',
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 12,
+                ),
+              ),
+              if (event.isPasswordProtected) const SizedBox(width: 16),
+              if (event.isPasswordProtected)
+                Icon(Icons.lock, color: Colors.orange, size: 16),
+            ],
+          ),
         ],
+        ),
       ),
     );
   }
 
-  Widget _buildEmptyEventsState() {
+  Widget _buildEmptyEventsState(ManageTeamViewModel viewModel) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -563,6 +650,27 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: viewModel.onCreateEventPressed,
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text(
+              'Create Event',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kcPrimaryColor,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 0,
             ),
           ),
         ],
@@ -645,6 +753,128 @@ class ManageTeamView extends StackedView<ManageTeamViewModel> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordDialog(ManageTeamViewModel viewModel) {
+    return Container(
+      color: Colors.black54,
+      child: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: kcDarkGreyColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: kcContainerBorderColor),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.lock,
+                    color: Colors.orange,
+                    size: 24,
+                  ),
+                  horizontalSpaceSmall,
+                  Text(
+                    'Password Required',
+                    style: titleTextMedium.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: kcWhiteColor,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () => viewModel.closePasswordDialog(),
+                    icon: const Icon(
+                      Icons.close,
+                      color: kcGreyColor,
+                    ),
+                  ),
+                ],
+              ),
+              verticalSpaceMedium,
+              Text(
+                'This event is password protected. Please enter the password to view details.',
+                style: titleTextMedium.copyWith(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: kcSubtitleColor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              verticalSpaceMedium,
+              TextFormField(
+                controller: viewModel.passwordController,
+                obscureText: !viewModel.showPassword,
+                style: titleTextMedium.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: kcWhiteColor,
+                ),
+                decoration: AppInputDecoration.standard(
+                  hintText: 'Enter password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      viewModel.showPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: kcGreyColor,
+                    ),
+                    onPressed: () => viewModel.togglePasswordVisibility(),
+                  ),
+                ),
+              ),
+              if (viewModel.passwordError.isNotEmpty) ...[
+                verticalSpaceSmall,
+                Text(
+                  viewModel.passwordError,
+                  style: titleTextMedium.copyWith(
+                    fontSize: 12,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+              verticalSpaceMedium,
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => viewModel.closePasswordDialog(),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: kcGreyColor),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: titleTextMedium.copyWith(
+                          fontSize: 14,
+                          color: kcGreyColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  horizontalSpaceSmall,
+                  Expanded(
+                    child: AppButton(
+                      labelText: viewModel.isValidatingPassword
+                          ? 'Validating...'
+                          : 'Enter',
+                      onTap: () => viewModel.validatePassword(),
+                    ),
+                  ),
+                ],
+              ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

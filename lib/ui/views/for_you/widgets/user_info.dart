@@ -7,11 +7,13 @@ import '../../../common/app_styles.dart';
 class FeedUserInfoWidget extends StatelessWidget {
   final Post post;
   final VoidCallback onFollow;
+  final Function(int)? onProfileTap;
 
   const FeedUserInfoWidget({
     Key? key,
     required this.post,
     required this.onFollow,
+    this.onProfileTap,
   }) : super(key: key);
 
   @override
@@ -25,18 +27,33 @@ class FeedUserInfoWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundImage: post.user?.profilePicture != null
-                    ? NetworkImage(post.user!.profilePicture!)
-                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+              GestureDetector(
+                onTap: () {
+                  if (post.user?.id != null && onProfileTap != null) {
+                    onProfileTap!(post.user!.id);
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: post.user?.profilePicture != null
+                      ? NetworkImage(post.user!.profilePicture!)
+                      : const AssetImage('assets/images/default_avatar.png')
+                          as ImageProvider,
+                ),
               ),
               const SizedBox(width: 12),
-              Text(
-                post.user?.displayName ?? 'Unknown User',
-                style: titleTextMedium.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              GestureDetector(
+                onTap: () {
+                  if (post.user?.id != null && onProfileTap != null) {
+                    onProfileTap!(post.user!.id);
+                  }
+                },
+                child: Text(
+                  post.user?.displayName ?? 'Unknown User',
+                  style: titleTextMedium.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -48,12 +65,12 @@ class FeedUserInfoWidget extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: kcPrimaryColor,
+                    color: (false) ? kcGreyColor : kcPrimaryColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Text(
-                    'Follow',
-                    style: TextStyle(
+                  child: Text(
+                    (false) ? 'Following' : 'Follow',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -65,9 +82,7 @@ class FeedUserInfoWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            post.createdAt != null 
-                ? _getTimeAgo(post.createdAt!)
-                : 'Just now',
+            post.createdAt != null ? _getTimeAgo(post.createdAt!) : 'Just now',
             style: const TextStyle(
               color: Colors.grey,
               fontSize: 12,

@@ -27,61 +27,63 @@ class CheckoutView extends StackedView<CheckoutViewModel> {
     CheckoutViewModel viewModel,
     Widget? child,
   ) {
-    return Scaffold(
-      backgroundColor: kcDarkColor,
-      appBar: AppBar(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: kcDarkColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: kcWhiteColor,
+        appBar: AppBar(
+          backgroundColor: kcDarkColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: kcWhiteColor,
+            ),
+            onPressed: viewModel.goBack,
           ),
-          onPressed: viewModel.goBack,
-        ),
-        title: const Text(
-          'Checkout',
-          style: TextStyle(
-            color: kcWhiteColor,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+          title: const Text(
+            'Checkout',
+            style: TextStyle(
+              color: kcWhiteColor,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            spacedDivider,
-            // Tickets Section (updated for multiple tickets)
-            _buildTicketsSection(viewModel),
-            const SizedBox(height: 32),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              spacedDivider,
+              // Tickets Section (updated for multiple tickets)
+              _buildTicketsSection(viewModel),
+              const SizedBox(height: 32),
 
-            // Password Requirements Notice
-            if (viewModel.requiresPassword || viewModel.isMixedProtection)
-              _buildPasswordNotice(viewModel),
+              // Password Requirements Notice
+              if (viewModel.requiresPassword || viewModel.isMixedProtection)
+                _buildPasswordNotice(viewModel),
 
-            // Agreement Checkboxes
-            _buildAgreementSection(viewModel),
-            const SizedBox(height: 32),
+              // Agreement Checkboxes
+              _buildAgreementSection(viewModel),
+              const SizedBox(height: 32),
 
-            // Order Summary
-            _buildOrderSummary(viewModel),
-            const SizedBox(height: 32),
+              // Order Summary
+              _buildOrderSummary(viewModel),
+              const SizedBox(height: 32),
 
-            // Payment Method
-            _buildPaymentMethodSection(viewModel),
-            const SizedBox(height: 32),
+              // Payment Method
+              _buildPaymentMethodSection(viewModel),
+              const SizedBox(height: 32),
 
-            // Confirmation Method
-            _buildConfirmationSection(viewModel),
-            const SizedBox(height: 40),
+              // Confirmation Method
+              _buildConfirmationSection(viewModel),
+              const SizedBox(height: 40),
 
-            // Confirm Button
-            _buildConfirmButton(viewModel),
-          ],
+              // Confirm Button
+              _buildConfirmButton(viewModel),
+            ],
+          ),
         ),
       ),
     );

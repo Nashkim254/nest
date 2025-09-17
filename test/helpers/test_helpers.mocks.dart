@@ -3358,6 +3358,18 @@ class MockSocialService extends _i1.Mock implements _i45.SocialService {
         returnValue: _i12.Future<dynamic>.value(),
         returnValueForMissingStub: _i12.Future<dynamic>.value(),
       ) as _i12.Future<dynamic>);
+
+  @override
+  _i12.Future<dynamic> getPostById({required String? postId}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPostById,
+          [],
+          {#postId: postId},
+        ),
+        returnValue: _i12.Future<dynamic>.value(),
+        returnValueForMissingStub: _i12.Future<dynamic>.value(),
+      ) as _i12.Future<dynamic>);
 }
 
 /// A class which mocks [CommentsService].

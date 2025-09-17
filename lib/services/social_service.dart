@@ -78,4 +78,18 @@ class SocialService {
       rethrow;
     }
   }
+
+  Future getPostById({required String postId}) async {
+    try {
+      final response = await _apiService.get('${AppUrls.fetchPosts}/$postId');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        throw ApiException(response.message ?? 'Failed to fetch post');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

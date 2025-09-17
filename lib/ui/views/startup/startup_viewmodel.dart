@@ -9,6 +9,23 @@ class StartupViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
   final prefsService = locator<SharedPreferencesService>();
 
+  void onViewModelReady() {
+    _checkAuthenticationStatus();
+  }
+
+  /// Check authentication status on app startup
+  Future<void> _checkAuthenticationStatus() async {
+    // Give a small delay for splash screen effect
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    // Check if user has a valid (non-expired) token
+    if (prefsService.hasValidToken()) {
+      // Token is valid, navigate directly to main app
+      _navigationService.replaceWithNavigationView();
+    }
+    // If no valid token, stay on startup view for user to decide
+  }
+
   // Place anything here that needs to happen before we get into the application
   Future getStarted() async {
     bool isFirstLaunch = prefsService.isFirstTimeLaunch();

@@ -1,7 +1,7 @@
 import '../abstractClasses/deep_link_handler_interface.dart';
 
 class PostDeepLinkHandler implements DeepLinkHandler {
-  final Function(String postId) onPostRequested;
+  final Future<void> Function(String postId) onPostRequested;
 
   PostDeepLinkHandler({required this.onPostRequested});
 
@@ -22,6 +22,7 @@ class PostDeepLinkHandler implements DeepLinkHandler {
     }
 
     if (postId != null && postId.isNotEmpty) {
+      // Call the async function without awaiting since handle() must be void
       onPostRequested(postId);
     }
   }

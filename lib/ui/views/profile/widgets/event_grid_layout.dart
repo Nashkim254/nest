@@ -68,17 +68,36 @@ class EventGalleryGrid extends StatelessWidget {
           Image.network(
             post.videoThumbnail!,
             fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                  color: kcPrimaryColor,
+                ),
+              );
+            },
             errorBuilder: (context, error, stackTrace) {
               // Fallback if thumbnail fails to load
               return _buildVideoPlaceholder();
             },
           ),
-          // Play icon overlay
-          const Center(
-            child: Icon(
-              Icons.play_circle_fill,
-              color: Colors.white,
-              size: 40,
+          // Play icon overlay with shadow for better visibility
+          Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: const Icon(
+                Icons.play_arrow,
+                color: Colors.white,
+                size: 32,
+              ),
             ),
           ),
           // Video indicator badge
@@ -111,6 +130,18 @@ class EventGalleryGrid extends StatelessWidget {
       return Image.network(
         post.imageUrls.first,
         fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+              color: kcPrimaryColor,
+            ),
+          );
+        },
         errorBuilder: (context, error, stackTrace) {
           return _buildImagePlaceholder();
         },

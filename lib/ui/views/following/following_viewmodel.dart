@@ -4,13 +4,14 @@ import 'package:nest/services/comments_service.dart';
 import 'package:nest/services/share_service.dart';
 import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/services/social_service.dart';
+import 'package:nest/services/user_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../app/app.bottomsheets.dart';
-import '../../../app/app.dialogs.dart';
 import '../../../app/app.locator.dart';
+import '../../../app/app.router.dart';
 import '../../../models/post_models.dart';
 
 class FollowingViewModel extends BaseViewModel {
@@ -22,8 +23,10 @@ class FollowingViewModel extends BaseViewModel {
   final socialService = locator<SocialService>();
   final comments = locator<CommentsService>();
   final share = locator<ShareService>();
+  final userService = locator<UserService>();
+  final navigationService = locator<NavigationService>();
   Logger logger = Logger();
-  
+
   VideoPlayerController? get controller => _controller;
   bool get isInitialized => _isInitialized;
 
@@ -95,7 +98,7 @@ class FollowingViewModel extends BaseViewModel {
 
   void onPageChanged(int index) {
     _currentIndex = index;
-    
+
     // Handle video for current post
     if (posts.isNotEmpty && index < posts.length) {
       final currentPost = posts[index];
@@ -106,7 +109,7 @@ class FollowingViewModel extends BaseViewModel {
         pauseVideo();
       }
     }
-    
+
     notifyListeners();
   }
 
@@ -144,7 +147,8 @@ class FollowingViewModel extends BaseViewModel {
         // Convert each JSON object to Post model
         final newPosts = postsJson
             .map((postJson) => Post.fromJson(postJson))
-            .where((post) => post.id > 0 && post.content.isNotEmpty) // Basic validation
+            .where((post) =>
+                post.id > 0 && post.content.isNotEmpty) // Basic validation
             .toList();
 
         if (isRefresh) {
@@ -157,9 +161,11 @@ class FollowingViewModel extends BaseViewModel {
         _hasMoreData = newPosts.length == size;
 
         notifyListeners();
-        
+
         // Auto-play first video if available
-        if (posts.isNotEmpty && posts[0].hasVideo && posts[0].videoUrl != null) {
+        if (posts.isNotEmpty &&
+            posts[0].hasVideo &&
+            posts[0].videoUrl != null) {
           initializeVideo(posts[0].videoUrl!);
         }
       } else {
@@ -195,13 +201,15 @@ class FollowingViewModel extends BaseViewModel {
 
       if (response.statusCode == 200 && response.data != null) {
         final List<dynamic> postsJson = response.data['posts'] ?? response.data;
-        debugPrint('More following posts loaded successfully: ${postsJson.length}',
+        debugPrint(
+            'More following posts loaded successfully: ${postsJson.length}',
             wrapWidth: 1024);
 
         // Convert and add new posts
         final newPosts = postsJson
             .map((postJson) => Post.fromJson(postJson))
-            .where((post) => post.id > 0 && post.content.isNotEmpty) // Basic validation
+            .where((post) =>
+                post.id > 0 && post.content.isNotEmpty) // Basic validation
             .toList();
         posts.addAll(newPosts);
 
@@ -285,9 +293,58 @@ class FollowingViewModel extends BaseViewModel {
     }
   }
 
-  void toggleFollow(String postId) {
-    // Implementation for follow toggle
-    notifyListeners();
+  Future<void> toggleFollow(String postId) async {
+    final post = posts.firstWhere((p) => p.id.toString() == postId,
+        orElse: () => throw Exception('Post not found'));
+
+    if (post.user?.id == null) {
+      locator<SnackbarService>().showSnackbar(
+        message: 'User information not available',
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    final userId = post.user!.id;
+    final isCurrentlyFollowing = false;
+
+    // Optimistically update the UI
+    final index = posts.indexWhere((p) => p.id == post.id);
+    if (index != -1) {
+      notifyListeners();
+    }
+
+    try {
+      final response = await userService.followUnfollowUser(
+        id: userId,
+        isFollow: !isCurrentlyFollowing,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        logger.i('Follow status updated successfully for user $userId');
+        locator<SnackbarService>().showSnackbar(
+          message: !isCurrentlyFollowing ? 'Following user' : 'Unfollowed user',
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        // Revert optimistic update on failure
+        if (index != -1) {
+          notifyListeners();
+        }
+        throw Exception('Failed to update follow status');
+      }
+    } catch (e) {
+      // Revert optimistic update on error
+      if (index != -1) {
+        notifyListeners();
+      }
+
+      logger.e('Follow toggle error: $e');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to update follow status',
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   Future openComments(int id) async {
@@ -311,5 +368,19 @@ class FollowingViewModel extends BaseViewModel {
 
   void repost(String postId) {
     // Implementation for sharing post
+  }
+
+  void navigateToProfile(int userId) {
+    print('Navigating to profile of userId: $userId');
+    print(
+        'Current userId: ${locator<SharedPreferencesService>().getUserInfo()!['id']}');
+    // navigationService.navigateToProfileView(
+    //   isOtherUser: userId ==
+    //           int.parse(locator<SharedPreferencesService>()
+    //               .getUserInfo()!['id']
+    //               .toString())
+    //       ? false
+    //       : true,
+    // );
   }
 }

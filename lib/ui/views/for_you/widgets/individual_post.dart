@@ -14,6 +14,7 @@ class FeedPostWidget extends StatelessWidget {
   final VoidCallback onShare;
   final VoidCallback onRepost;
   final bool isVisible;
+  final Function(int)? onProfileTap;
 
   const FeedPostWidget({
     Key? key,
@@ -24,6 +25,7 @@ class FeedPostWidget extends StatelessWidget {
     required this.onShare,
     required this.onRepost,
     required this.isVisible,
+    this.onProfileTap,
   }) : super(key: key);
 
   @override
@@ -68,6 +70,7 @@ class FeedPostWidget extends StatelessWidget {
         FeedUserInfoWidget(
           post: post,
           onFollow: onFollow,
+          onProfileTap: onProfileTap,
         ),
       ],
     );

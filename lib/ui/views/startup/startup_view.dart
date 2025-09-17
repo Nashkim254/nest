@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
-import 'package:nest/ui/common/ui_helpers.dart';
 import 'package:nest/ui/views/startup/widgets/dots_widget.dart';
 import 'package:stacked/stacked.dart';
 import 'package:nest/ui/common/app_colors.dart';
@@ -10,13 +9,14 @@ import 'startup_viewmodel.dart';
 
 class StartupView extends StackedView<StartupViewModel> {
   const StartupView({Key? key}) : super(key: key);
-
+  @override
+  onViewModelReady(StartupViewModel viewModel) => viewModel.onViewModelReady();
   @override
   Widget builder(
-      BuildContext context,
-      StartupViewModel viewModel,
-      Widget? child,
-      ) {
+    BuildContext context,
+    StartupViewModel viewModel,
+    Widget? child,
+  ) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return SafeArea(
@@ -31,7 +31,8 @@ class StartupView extends StackedView<StartupViewModel> {
               children: [
                 // Image Section with gradient blend
                 Container(
-                  height: screenHeight * 0.5, // Increased height for better blend
+                  height:
+                      screenHeight * 0.4, // Increased height for better blend
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -83,18 +84,18 @@ class StartupView extends StackedView<StartupViewModel> {
                       const SizedBox(height: 24),
 
                       // Dots indicator
-                       DotWidget(),
-                      const SizedBox(height: 32),
+                      DotWidget(),
+                      const SizedBox(height: 24),
 
                       // Get Started Button
                       SizedBox(
                         width: double.infinity,
                         child: AppButton(
                           labelText: 'Get Started',
-                          onTap:() => viewModel.getStarted(),
+                          onTap: () => viewModel.getStarted(),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // Skip Button
                       SizedBox(
@@ -105,7 +106,6 @@ class StartupView extends StackedView<StartupViewModel> {
                           onTap: () => viewModel.navigateToLogin(),
                         ),
                       ),
-                      const SizedBox(height: 20),
                     ],
                   ),
                 ),

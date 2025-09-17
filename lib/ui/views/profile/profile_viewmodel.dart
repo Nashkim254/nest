@@ -32,15 +32,26 @@ class ProfileViewModel extends ReactiveViewModel {
   }
 
   void handleEventTap(Post selected) {
-    if (selected.hasVideo &&
-        selected.videoUrl != null &&
-        selected.videoUrl!.isNotEmpty) {
-      // Navigate to video player for video posts
-      locator<NavigationService>().navigateToVideoPlayerView(
-        post: selected,
-      );
+    if (selected.hasVideo) {
+      // Check if video is ready and has URL
+      if (selected.videoReady &&
+          selected.videoUrl != null &&
+          selected.videoUrl!.isNotEmpty) {
+        // Navigate to video player for ready video posts
+        locator<NavigationService>().navigateToVideoPlayerView(
+          post: selected,
+        );
+      } else {
+        // Show message for videos that aren't ready yet
+        locator<SnackbarService>().showSnackbar(
+          message: selected.videoReady
+            ? 'Video URL not available'
+            : 'Video is still processing. Please try again later.',
+          duration: const Duration(seconds: 3),
+        );
+      }
     } else {
-      // Navigate to event activity for image posts
+      // Navigate to event activity for image posts or text posts
       // final reorderedList = [
       //   selected,
       //   ...posts.where((e) => e != selected),

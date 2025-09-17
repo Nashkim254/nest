@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:logger/logger.dart';
 import 'package:nest/app/app.bottomsheets.dart';
 import 'package:nest/app/app.dialogs.dart';
 import 'package:nest/app/app.locator.dart';
@@ -8,9 +9,11 @@ import 'package:nest/app/app.router.dart';
 import 'package:nest/services/api_service.dart';
 import 'package:nest/services/auth_service.dart';
 import 'package:nest/services/deep_link_service.dart';
-import 'package:nest/utils/env_config.dart';
+import 'package:nest/services/social_service.dart';
 import 'package:nest/utils/stripe_configs.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:nest/ui/views/startup/startup_view.dart';
+import 'package:nest/models/post_models.dart';
 
 import 'abstractClasses/abstract_class.dart';
 import 'handlers/event_deeplink_handler.dart';
@@ -48,7 +51,6 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   @override
   void initState() {
     super.initState();
@@ -62,9 +64,53 @@ class _MainAppState extends State<MainApp> {
     // Register handlers
     deepLinkService.registerHandler(
       PostDeepLinkHandler(
-        onPostRequested: (postId) {
-          // Navigate to event activity view to show the specific post
-          locator<NavigationService>().navigateToEventActivityView();
+        onPostRequested: (postId) async {
+          // Fetch the specific post and navigate to VideoPlayerView
+          try {
+            final socialService = locator<SocialService>();
+            final response = await socialService.getPostById(postId: postId);
+
+            if (response.statusCode == 200 || response.statusCode == 201) {
+              final postData = response.data;
+              final post = Post.fromJson(postData);
+
+              // Navigate to appropriate view based on post type
+              if (post.hasVideo && post.videoReady && post.videoUrl != null && post.videoUrl!.isNotEmpty) {
+                // Navigate to VideoPlayerView for ready video posts
+                locator<NavigationService>().navigateToVideoPlayerView(post: post);
+              } else if (post.hasImages) {
+                // Navigate to ForYouView for image posts to show in feed context
+                locator<NavigationService>().navigateToForYouView();
+              } else if (post.hasVideo && !post.videoReady) {
+                // Show message for videos that aren't ready yet
+                locator<SnackbarService>().showSnackbar(
+                  message: 'Video is still processing. Please try again later.',
+                  title: 'Video Processing',
+                  duration: const Duration(seconds: 3),
+                );
+                locator<NavigationService>().navigateToForYouView();
+              } else {
+                // Navigate to ForYouView for text posts or other content
+                locator<NavigationService>().navigateToForYouView();
+              }
+            } else {
+              // If post fetch fails, show error and navigate to general feed
+              locator<SnackbarService>().showSnackbar(
+                message: 'Post not found or access denied',
+                title: 'Error',
+                duration: const Duration(seconds: 3),
+              );
+              locator<NavigationService>().navigateToForYouView();
+            }
+          } catch (e) {
+            // Handle error - show message and navigate to general feed
+            locator<SnackbarService>().showSnackbar(
+              message: 'Failed to load post: $e',
+              title: 'Error',
+              duration: const Duration(seconds: 3),
+            );
+            locator<NavigationService>().navigateToForYouView();
+          }
         },
       ),
     );
@@ -91,26 +137,29 @@ class _MainAppState extends State<MainApp> {
       VerificationDeepLinkHandler(
         onVerificationRequested: (token, email) async {
           // Handle verification link - call API to verify email
-          print('Verification requested for $email with token: $token');
-          
+          Logger().i('Verification requested for $email with token: $token');
+
           try {
             final authService = locator<AuthService>();
+
             final response = await authService.verifyEmail(token);
-            
+            Logger().i('Verification response: ${response.data}');
             if (response.statusCode == 200 || response.statusCode == 201) {
+              //navigate to login
+              locator<NavigationService>().clearStackAndShow(Routes.loginView);
               // Show success message
-              final snackbarService = locator<SnackbarService>();
-              snackbarService.showSnackbar(
+              locator<SnackbarService>().showSnackbar(
                 message: 'Email verified successfully!',
                 title: 'Success',
+                duration: const Duration(seconds: 3),
               );
             }
           } catch (e) {
             // Show error message
-            final snackbarService = locator<SnackbarService>();
-            snackbarService.showSnackbar(
+            locator<SnackbarService>().showSnackbar(
               message: 'Email verification failed: $e',
               title: 'Error',
+              duration: const Duration(seconds: 3),
             );
           }
         },
@@ -125,6 +174,12 @@ class _MainAppState extends State<MainApp> {
       onGenerateRoute: StackedRouter().onGenerateRoute,
       navigatorKey: StackedService.navigatorKey,
       navigatorObservers: [StackedService.routeObserver],
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => const StartupView(),
+          settings: settings,
+        );
+      },
     );
   }
 }

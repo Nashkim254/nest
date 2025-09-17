@@ -205,8 +205,36 @@ class SharedPreferencesService with InitializableDependency {
     return await setString(PreferenceKeys.authToken, token);
   }
 
-  Future<bool> setExpiry(String token) async {
-    return await setString(PreferenceKeys.authToken, token);
+  Future<bool> setExpiry(String expiry) async {
+    return await setString(PreferenceKeys.expiryTime, expiry);
+  }
+
+  String? getExpiry() {
+    return getString(PreferenceKeys.expiryTime);
+  }
+
+  /// Check if the current token is expired
+  bool isTokenExpired() {
+    final expiryString = getExpiry();
+    if (expiryString == null) return true;
+
+    try {
+      final expiryTime = DateTime.parse(expiryString);
+      return DateTime.now().isAfter(expiryTime);
+    } catch (e) {
+      // If we can't parse the expiry time, consider it expired
+      return true;
+    }
+  }
+
+  /// Check if user has a valid (non-expired) token
+  bool hasValidToken() {
+    final token = getAuthToken();
+    final isLoggedIn = getIsLoggedIn();
+
+    if (token == null || !isLoggedIn) return false;
+
+    return !isTokenExpired();
   }
 
   String? getAuthToken() {

@@ -43,12 +43,12 @@ class FeedActionsWidget extends StatelessWidget {
             onTap: onComment,
           ),
           const SizedBox(height: 24),
-          _buildActionButton(
-            icon: repost,
-            count: _formatCount(reposts),
-            onTap: onRepost,
-          ),
-          const SizedBox(height: 24),
+          // _buildActionButton(
+          //   icon: repost,
+          //   count: _formatCount(reposts),
+          //   onTap: onRepost,
+          // ),
+          // const SizedBox(height: 24),
           _buildActionButton(
             icon: sharePost,
             count: _formatCount(shares),

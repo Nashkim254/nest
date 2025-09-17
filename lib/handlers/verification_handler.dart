@@ -7,8 +7,17 @@ class VerificationDeepLinkHandler implements DeepLinkHandler {
 
   @override
   bool canHandle(Uri uri) {
-    return uri.path.startsWith('/verify') ||
-        uri.queryParameters.containsKey('verification_token');
+    print('VerificationHandler checking URI: ${uri.toString()}');
+    print('Path: ${uri.path}');
+    print('Query params: ${uri.queryParameters}');
+
+    final canHandle =
+        uri.path.contains('/verify-email')||
+        uri.queryParameters.containsKey('verification_token') ||
+        uri.queryParameters.containsKey('token');
+
+    print('Can handle: $canHandle');
+    return canHandle;
   }
 
   @override

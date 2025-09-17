@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
+import 'package:nest/ui/common/app_event_image.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/views/upcoming/widgets/my_tickets.dart';
@@ -207,20 +208,14 @@ class UpcomingView extends StackedView<UpcomingViewModel> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Container(
+                                child: AppEventImage(
+                                  imageUrl: viewModel.upcomingEvents[i].flyerUrl,
                                   height: 60,
                                   width: 60,
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(13),
-                                    ),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        viewModel.upcomingEvents[i].flyerUrl,
-                                      ),
-                                      fit: BoxFit.fill,
-                                    ),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(13),
                                   ),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                               horizontalSpaceSmall,

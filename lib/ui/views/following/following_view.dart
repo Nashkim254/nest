@@ -51,6 +51,7 @@ class FollowingView extends StackedView<FollowingViewModel> {
                               isVisible: index == viewModel.currentIndex,
                               onRepost: () => viewModel
                                   .repost(viewModel.posts[index].id.toString()),
+                              onProfileTap: (userId) => viewModel.navigateToProfile(userId),
                             );
                           },
                         ),

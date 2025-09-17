@@ -63,7 +63,6 @@ class ViewEventViewModel extends BaseViewModel {
         logger.i('Upcoming Events: ${response.data['event']}');
 
         final result = response.data;
-        logger.i('event: ${result['']}');
         event = Event.fromJson(result);
         logger.w('Event: ${event!.toJson()}');
         notifyListeners();
@@ -152,13 +151,15 @@ class ViewEventViewModel extends BaseViewModel {
       return {
         'index': index,
         'id': ticket.id,
+        'ticket_id': ticket.id, // Add ticket_id for consistency
         'event_id': event!.id,
-        'name': ticket.name ?? 'Ticket ${index + 1}',
-        'price': ticket.price ?? 0.0,
-        'type': ticket.type ?? 'paid',
-        'available': (ticket.quantity ?? 0) > 0,
-        'limit': ticket.quantity ?? 10,
-        'password_required': ticket.isPasswordProtected ?? false,
+        'name': ticket.name.isNotEmpty ? ticket.name : 'Ticket ${index + 1}',
+        'price': ticket.price,
+        'type': ticket.type.isNotEmpty ? ticket.type : 'paid',
+        'available': ticket.quantity > 0,
+        'limit': ticket.quantity > 0 ? ticket.quantity : 10,
+        'quantity': ticket.quantity, // Add quantity field
+        'password_required': ticket.isPasswordProtected,
         'description': '',
       };
     }).toList();
@@ -183,19 +184,25 @@ class ViewEventViewModel extends BaseViewModel {
   }
 
 // Process purchase for direct single ticket flow
-  Future<void> _processPurchase(dynamic ticket) async {
+  Future<void> _processPurchase(TicketPricingPreview ticket) async {
     logger.i('Processing purchase for ticket: ${ticket.id}');
 
     // Create checkout data for single ticket
     final checkoutData = {
       'tickets': [
         {
-          ...ticket.toJson(), // or however you convert ticket to map
+          'id': ticket.id,
+          'ticket_id': ticket.id,
+          'name': ticket.name.isNotEmpty ? ticket.name : 'Ticket',
+          'price': ticket.price,
+          'type': ticket.type.isNotEmpty ? ticket.type : 'paid',
           'selected_quantity': 1,
-          'subtotal': ticket.price ?? 0.0,
+          'quantity': 1,
+          'password_required': ticket.isPasswordProtected,
+          'subtotal': ticket.price,
         }
       ],
-      'total_price': ticket.price ?? 0.0,
+      'total_price': ticket.price,
       'total_quantity': 1,
       'requires_password': false, // Already validated
     };
@@ -206,7 +213,7 @@ class ViewEventViewModel extends BaseViewModel {
   }
 
   bool isValidating = false;
-  Future validateTicketPassword(
+  Future<bool> validateTicketPassword(
       String password, int eventId, int ticketId) async {
     isValidating = true;
     notifyListeners();
@@ -227,12 +234,14 @@ class ViewEventViewModel extends BaseViewModel {
         if (result != null) {
           logger.i(result.data);
         }
+        return true; // Password validation successful
       } else {
         logger.e(response.message);
         locator<SnackbarService>().showSnackbar(
           message: response.message ?? 'Failed to validate ticket password',
           duration: const Duration(seconds: 3),
         );
+        return false; // Password validation failed
       }
     } catch (e, s) {
       logger.e(s.toString());
@@ -240,11 +249,13 @@ class ViewEventViewModel extends BaseViewModel {
         message: '$e',
         duration: const Duration(seconds: 3),
       );
+      return false; // Exception occurred
     } finally {
       isValidating = false;
       notifyListeners();
     }
   }
+
   goToEdit(Event event) {
     locator<NavigationService>().navigateToEditEventView(event: event);
   }

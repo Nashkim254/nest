@@ -89,12 +89,12 @@ class SettingsView extends StackedView<SettingsViewModel> {
                   assetUrl: privacy,
                   title: "Privacy Policy",
                   onTap: () {
-                    viewModel.navigateToEditProfile();
+                    viewModel.openPrivacyPolicy();
                   },
                   secondaryAssetUrl: terms,
                   secondaryTitle: 'Terms of Service',
                   secondaryOnTap: () {
-                    viewModel.navigateToNotifications();
+                    viewModel.openTermsOfService();
                   },
                 ),
                 verticalSpaceMedium,
@@ -113,7 +113,7 @@ class SettingsView extends StackedView<SettingsViewModel> {
                 verticalSpaceMedium,
                 AppButton(
                   labelText: 'Logout',
-                  onTap: () {},
+                  onTap: viewModel.logout,
                   buttonColor: kcRedColor,
                 ),
               ],

@@ -188,11 +188,12 @@ class CreateOrganizationViewModel extends ReactiveViewModel {
           await userService.createOrganization(organization: organization);
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('My Organizations: ${response.data}');
+        navigationService.back(result: true);
         locator<SnackbarService>().showSnackbar(
           message: 'Organization created successfully',
           duration: const Duration(seconds: 3),
         );
-        navigationService.back(result: true);
+
       } else {
         // Handle error response
         logger.e('Failed to load organizations: ${response.message}');

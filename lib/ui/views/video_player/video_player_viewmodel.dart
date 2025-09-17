@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 import 'package:video_player/video_player.dart';
+import '../../../app/app.bottomsheets.dart';
+import '../../../app/app.locator.dart';
 import '../../../models/post_models.dart';
+import '../../../services/comments_service.dart';
+import '../../../services/share_service.dart';
 
 class VideoPlayerViewModel extends BaseViewModel {
   VideoPlayerController? _controller;
@@ -11,9 +15,13 @@ class VideoPlayerViewModel extends BaseViewModel {
   String _errorMessage = '';
   Logger logger = Logger();
 
+  final comments = locator<CommentsService>();
+  final bottomSheet = locator<BottomSheetService>();
+
   VideoPlayerController? get controller => _controller;
   bool get isInitialized => _isInitialized;
   bool get isPlaying => _controller?.value.isPlaying ?? false;
+  @override
   bool get hasError => _hasError;
   String get errorMessage => _errorMessage;
 
@@ -34,7 +42,7 @@ class VideoPlayerViewModel extends BaseViewModel {
       await _disposeController();
 
       // Create new controller
-      _controller = VideoPlayerController.network(post.videoUrl!);
+      _controller = VideoPlayerController.networkUrl(Uri.parse(post.videoUrl!));
       
       // Initialize the controller
       await _controller!.initialize();
@@ -84,12 +92,14 @@ class VideoPlayerViewModel extends BaseViewModel {
     }
   }
 
-  Future<void> retry() async {
-    // This will be called from the view with the post data
-    // The view should call initializeVideo again
+  Future<void> retry(Post post) async {
+    // Reset error state and reinitialize
     _hasError = false;
     _errorMessage = '';
     notifyListeners();
+
+    // Reinitialize the video
+    await initializeVideo(post);
   }
 
   Future<void> _disposeController() async {
@@ -104,6 +114,50 @@ class VideoPlayerViewModel extends BaseViewModel {
         _isInitialized = false;
       }
     }
+  }
+
+  // Like functionality
+  Future<void> toggleLike(Post post) async {
+    try {
+      final response = await comments.toggleLikePost(post.id);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Show feedback - in a real implementation, you'd update the post state
+        locator<SnackbarService>().showSnackbar(
+          message: post.isLiked ? 'Unliked' : 'Liked',
+          duration: const Duration(seconds: 1),
+        );
+      }
+    } catch (e) {
+      logger.e('Error toggling like: $e');
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to update like status',
+        duration: const Duration(seconds: 2),
+      );
+    }
+  }
+
+  // Comment functionality
+  Future<void> openComments(Post post) async {
+    final result = await bottomSheet.showCustomSheet(
+      variant: BottomSheetType.comments,
+      title: 'Comments',
+      data: post.id.toString(),
+      isScrollControlled: true,
+    );
+    if (result != null && result.confirmed) {
+      // Handle any comment actions if needed
+    }
+    notifyListeners();
+  }
+
+  // Share functionality
+  void sharePost(Post post) {
+    ShareService.sharePost(
+      postId: post.id.toString(),
+      title: post.content,
+      description: post.content,
+      imageUrl: post.videoThumbnail,
+    );
   }
 
   @override

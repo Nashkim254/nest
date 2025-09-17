@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/models/ticket.dart';
 import 'package:nest/ui/common/app_colors.dart';
+import 'package:nest/ui/common/app_event_image.dart';
 import 'package:nest/ui/common/app_strings.dart';
 import 'package:nest/ui/common/app_styles.dart';
 import 'package:nest/ui/common/ui_helpers.dart';
@@ -43,12 +44,20 @@ class MyTicketWidget extends StatelessWidget {
                 // Image - Further optimized
                 Flexible(
                   flex: 4,
-                  child: Container(
+                  child: AppEventImage(
+                    imageUrl: null, // Tickets don't have individual images
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      image: DecorationImage(
-                          image: AssetImage(ev1), fit: BoxFit.cover),
+                    borderRadius: const BorderRadius.all(Radius.circular(12)),
+                    fit: BoxFit.cover,
+                    placeholder: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        image: DecorationImage(
+                          image: AssetImage(ev1),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),

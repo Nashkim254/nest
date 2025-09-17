@@ -35,44 +35,118 @@ class CheckoutViewModel extends BaseViewModel {
       : TicketItem(name: '', price: 0, quantity: 0);
 
   void init(Map<dynamic, dynamic> ticketInfo) {
-    if (ticketInfo.containsKey('tickets')) {
-      // New multi-ticket format
-      _isMultipleTickets = true;
-      _requiresPassword = ticketInfo['requires_password'] ?? false;
-      _isMixedProtection = ticketInfo['is_mixed_protection'] ?? false;
+    try {
+      if (ticketInfo.containsKey('tickets') && ticketInfo['tickets'] != null) {
+        // New multi-ticket format
+        _isMultipleTickets = true;
+        _requiresPassword = ticketInfo['requires_password'] ?? false;
+        _isMixedProtection = ticketInfo['is_mixed_protection'] ?? false;
 
-      final ticketsData = ticketInfo['tickets'] as List<Map<String, dynamic>>;
-      _tickets = ticketsData
-          .map((ticketData) => TicketItem(
-                name: ticketData['name'] ?? '',
-                price: double.parse(ticketData['price'].toString()),
-                quantity: ticketData['selected_quantity'] ?? 1,
-                passwordRequired: ticketData['password_required'] ?? false,
-                ticketId: ticketData['id']?.toString(),
-                index: ticketData['index'],
-                type: ticketData['type'] ?? 'paid',
-              ))
-          .toList();
+        final ticketsData = ticketInfo['tickets'] as List;
+        _tickets = ticketsData.map((ticketData) {
+          final data = ticketData as Map<String, dynamic>;
+          // Get ticket ID from data or SharedPreferences as fallback
+          String? ticketId =
+              data['ticket_id']?.toString() ?? data['id']?.toString();
+          if (ticketId == null || ticketId.isEmpty) {
+            final storedTicketId =
+                locator<SharedPreferencesService>().getInt('ticketId');
+            if (storedTicketId != null) {
+              ticketId = storedTicketId.toString();
+            }
+          }
 
-      logger.i('Initialized with ${_tickets.length} tickets');
-      logger.i('Requires password: $_requiresPassword');
-      logger.i('Mixed protection: $_isMixedProtection');
-    } else {
-      // Legacy single ticket format
-      _isMultipleTickets = false;
+          return TicketItem(
+            name: data['name']?.toString() ?? 'Ticket',
+            price: _parseDouble(data['price']) ?? 0.0,
+            quantity:
+                _parseInt(data['selected_quantity'] ?? data['quantity']) ?? 1,
+            passwordRequired: data['password_required'] ?? false,
+            ticketId: ticketId ?? '',
+            index: _parseInt(data['index']),
+            type: data['type']?.toString() ?? 'paid',
+          );
+        }).toList();
+
+        logger.i('Initialized with ${_tickets.length} tickets');
+        logger.i('Requires password: $_requiresPassword');
+        logger.i('Mixed protection: $_isMixedProtection');
+      } else {
+        // Legacy single ticket format
+        _isMultipleTickets = false;
+
+        // Get ticket ID from data or SharedPreferences as fallback
+        String? ticketId =
+            ticketInfo['ticket_id']?.toString() ?? ticketInfo['id']?.toString();
+        if (ticketId == null || ticketId.isEmpty) {
+          final storedTicketId =
+              locator<SharedPreferencesService>().getInt('ticketId');
+          if (storedTicketId != null) {
+            ticketId = storedTicketId.toString();
+          }
+        }
+
+        _tickets = [
+          TicketItem(
+            name: ticketInfo['name']?.toString() ?? 'Ticket',
+            price: _parseDouble(ticketInfo['price']) ?? 0.0,
+            quantity: _parseInt(ticketInfo['quantity']) ?? 1,
+            passwordRequired: ticketInfo['password_required'] ?? false,
+            ticketId: ticketId ?? '',
+            type: ticketInfo['type']?.toString() ?? 'paid',
+          )
+        ];
+      }
+
+      // Validate that we have valid tickets
+      if (_tickets.isEmpty) {
+        throw Exception('No valid tickets found in ticket info');
+      }
+
+      // Remove any tickets with invalid data
+      _tickets.removeWhere((ticket) =>
+          ticket.name.isEmpty || ticket.price < 0 || ticket.quantity <= 0);
+
+      if (_tickets.isEmpty) {
+        throw Exception('All tickets have invalid data');
+      }
+    } catch (e, s) {
+      logger.e('Error initializing checkout: $e');
+      logger.e('Stack trace: $s');
+      logger.e('Ticket info received: $ticketInfo');
+
+      // Create a fallback ticket to prevent complete failure
       _tickets = [
         TicketItem(
-          name: ticketInfo['name'] ?? '',
-          price: double.parse(ticketInfo['price'].toString()),
-          quantity: int.parse(ticketInfo['quantity'].toString()),
-          passwordRequired: ticketInfo['password_required'] ?? false,
-          ticketId: ticketInfo['id']?.toString(),
-          type: ticketInfo['type'] ?? 'paid',
+          name: 'Error Ticket',
+          price: 0.0,
+          quantity: 1,
+          passwordRequired: false,
+          ticketId: '0',
+          type: 'paid',
         )
       ];
+      _isMultipleTickets = false;
     }
 
     notifyListeners();
+  }
+
+  // Helper methods for safe type conversion
+  double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
+  }
+
+  int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   // Agreement states
@@ -130,7 +204,11 @@ class CheckoutViewModel extends BaseViewModel {
   // Order calculations - now supports multiple tickets
   double get subtotal =>
       _tickets.fold(0.0, (sum, ticket) => sum + ticket.totalPrice);
-  double get serviceFee => subtotal * 0.05; // 5% service fee
+  double get serviceFee {
+    // Get organization service fee from SharedPreferences
+    final orgServiceFee = locator<SharedPreferencesService>().getDouble('service_fee');
+    return orgServiceFee ?? 0.0; // Use organization's flat service fee or 0 if not set
+  }
   double get total => subtotal + serviceFee;
 
   int get totalQuantity =>
@@ -260,10 +338,26 @@ class CheckoutViewModel extends BaseViewModel {
           locator<SharedPreferencesService>().getInt('eventId');
       final List<int> bookingIds = [];
 
+      // Validate eventId
+      if (eventId == null) {
+        throw Exception('Event ID not found. Please try again.');
+      }
+
       // Create booking for each ticket type
       for (final ticket in _tickets) {
+        // Validate ticket data
+        if (ticket.ticketId == null || ticket.ticketId!.isEmpty) {
+          throw Exception('Invalid ticket ID for ${ticket.name}');
+        }
+
+        final ticketId = int.tryParse(ticket.ticketId!);
+        if (ticketId == null) {
+          throw Exception(
+              'Invalid ticket ID format for ${ticket.name}: ${ticket.ticketId}');
+        }
+
         final body = {
-          'ticket_id': int.parse(ticket.ticketId!),
+          'ticket_id': ticketId,
           'quantity': ticket.quantity,
           'description': 'Booking for ${ticket.name}',
           'password_required': ticket.passwordRequired,
@@ -439,18 +533,36 @@ class CheckoutViewModel extends BaseViewModel {
     int? bookingId;
     try {
       setBusy(true);
-      int? eventId = locator<SharedPreferencesService>().getInt('eventId');
+
+      final int? eventId =
+          locator<SharedPreferencesService>().getInt('eventId');
+      if (eventId == null) {
+        throw Exception('Event ID not found. Please try again.');
+      }
 
       final firstTicket = _tickets.first;
+
+      // Try to get ticket ID from SharedPreferences first, then from ticket data
+      int? ticketId = locator<SharedPreferencesService>().getInt('ticketId');
+      if (ticketId == null) {
+        if (firstTicket.ticketId != null && firstTicket.ticketId!.isNotEmpty) {
+          ticketId = int.tryParse(firstTicket.ticketId!);
+        }
+      }
+
+      if (ticketId == null) {
+        throw Exception('Ticket ID not found for ${firstTicket.name}');
+      }
+
       Map<String, dynamic> body = {
-        'ticket_id': locator<SharedPreferencesService>().getInt('ticketId'),
+        'ticket_id': ticketId,
         'quantity': firstTicket.quantity,
         'description': 'Booking for ${firstTicket.name}',
       };
 
       logger.i('Booking: $body');
-      final response = await eventService.createBooking(
-          eventId: eventId!, requestBody: body);
+      final response =
+          await eventService.createBooking(eventId: eventId, requestBody: body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i('Booking: ${response.data}');
