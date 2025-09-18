@@ -76,3 +76,4 @@ android/app/*.keystore
 android/app/*.jks
 android/key.properties
 android/keystore.properties
+key.properties
