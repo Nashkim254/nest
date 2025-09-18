@@ -47,6 +47,7 @@ class ChangePasswordDialogModel extends BaseViewModel {
 
   void submitForm(Function(DialogResponse) completer) {
     if (formKey.currentState?.validate() ?? false) {
+
       isLoading = true;
       notifyListeners();
       final requestModel = PasswordResetRequestModel(
@@ -129,6 +130,19 @@ class ChangePasswordDialogModel extends BaseViewModel {
     }
     // Add additional validation logic if needed
     return null;
+  }
+
+  void requestPasswordReset(Function(DialogResponse) completer) {
+    if (formKey.currentState?.validate() ?? false) {
+      // Return the new password data to the caller
+      completer(DialogResponse(
+        confirmed: true,
+        data: {
+          'newPassword': newPasswordController.text,
+          'confirmPassword': confirmPasswordController.text,
+        },
+      ));
+    }
   }
 
   String? validateNewPassword(String? value) {

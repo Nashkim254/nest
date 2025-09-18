@@ -2296,14 +2296,34 @@ class MockSharedPreferencesService extends _i1.Mock
       ) as _i12.Future<bool>);
 
   @override
-  _i12.Future<bool> setExpiry(String? token) => (super.noSuchMethod(
+  _i12.Future<bool> setExpiry(String? expiry) => (super.noSuchMethod(
         Invocation.method(
           #setExpiry,
-          [token],
+          [expiry],
         ),
         returnValue: _i12.Future<bool>.value(false),
         returnValueForMissingStub: _i12.Future<bool>.value(false),
       ) as _i12.Future<bool>);
+
+  @override
+  bool isTokenExpired() => (super.noSuchMethod(
+        Invocation.method(
+          #isTokenExpired,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool hasValidToken() => (super.noSuchMethod(
+        Invocation.method(
+          #hasValidToken,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 
   @override
   _i12.Future<bool> clearAuthToken() => (super.noSuchMethod(

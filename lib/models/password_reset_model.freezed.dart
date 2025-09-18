@@ -200,14 +200,8 @@ PasswordResetModel _$PasswordResetModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PasswordResetModel {
-  String get email => throw _privateConstructorUsedError;
   String get token => throw _privateConstructorUsedError;
-  @JsonKey(name: 'new_password')
-  String get newPassword => throw _privateConstructorUsedError;
-  @JsonKey(name: 'confirm_password')
-  String get confirmPassword => throw _privateConstructorUsedError;
-  @JsonKey(name: 'app_launch')
-  String get appLaunch => throw _privateConstructorUsedError;
+  String get password => throw _privateConstructorUsedError;
 
   /// Serializes this PasswordResetModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -225,12 +219,7 @@ abstract class $PasswordResetModelCopyWith<$Res> {
           PasswordResetModel value, $Res Function(PasswordResetModel) then) =
       _$PasswordResetModelCopyWithImpl<$Res, PasswordResetModel>;
   @useResult
-  $Res call(
-      {String email,
-      String token,
-      @JsonKey(name: 'new_password') String newPassword,
-      @JsonKey(name: 'confirm_password') String confirmPassword,
-      @JsonKey(name: 'app_launch') String appLaunch});
+  $Res call({String token, String password});
 }
 
 /// @nodoc
@@ -248,32 +237,17 @@ class _$PasswordResetModelCopyWithImpl<$Res, $Val extends PasswordResetModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? email = null,
     Object? token = null,
-    Object? newPassword = null,
-    Object? confirmPassword = null,
-    Object? appLaunch = null,
+    Object? password = null,
   }) {
     return _then(_value.copyWith(
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
       token: null == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
               as String,
-      newPassword: null == newPassword
-          ? _value.newPassword
-          : newPassword // ignore: cast_nullable_to_non_nullable
-              as String,
-      confirmPassword: null == confirmPassword
-          ? _value.confirmPassword
-          : confirmPassword // ignore: cast_nullable_to_non_nullable
-              as String,
-      appLaunch: null == appLaunch
-          ? _value.appLaunch
-          : appLaunch // ignore: cast_nullable_to_non_nullable
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -287,12 +261,7 @@ abstract class _$$PasswordResetModelImplCopyWith<$Res>
       __$$PasswordResetModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String email,
-      String token,
-      @JsonKey(name: 'new_password') String newPassword,
-      @JsonKey(name: 'confirm_password') String confirmPassword,
-      @JsonKey(name: 'app_launch') String appLaunch});
+  $Res call({String token, String password});
 }
 
 /// @nodoc
@@ -308,32 +277,17 @@ class __$$PasswordResetModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? email = null,
     Object? token = null,
-    Object? newPassword = null,
-    Object? confirmPassword = null,
-    Object? appLaunch = null,
+    Object? password = null,
   }) {
     return _then(_$PasswordResetModelImpl(
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
       token: null == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
               as String,
-      newPassword: null == newPassword
-          ? _value.newPassword
-          : newPassword // ignore: cast_nullable_to_non_nullable
-              as String,
-      confirmPassword: null == confirmPassword
-          ? _value.confirmPassword
-          : confirmPassword // ignore: cast_nullable_to_non_nullable
-              as String,
-      appLaunch: null == appLaunch
-          ? _value.appLaunch
-          : appLaunch // ignore: cast_nullable_to_non_nullable
+      password: null == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -342,33 +296,19 @@ class __$$PasswordResetModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$PasswordResetModelImpl implements _PasswordResetModel {
-  const _$PasswordResetModelImpl(
-      {required this.email,
-      required this.token,
-      @JsonKey(name: 'new_password') required this.newPassword,
-      @JsonKey(name: 'confirm_password') required this.confirmPassword,
-      @JsonKey(name: 'app_launch') this.appLaunch = 'com.nesthaps.nest://'});
+  const _$PasswordResetModelImpl({required this.token, required this.password});
 
   factory _$PasswordResetModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PasswordResetModelImplFromJson(json);
 
   @override
-  final String email;
-  @override
   final String token;
   @override
-  @JsonKey(name: 'new_password')
-  final String newPassword;
-  @override
-  @JsonKey(name: 'confirm_password')
-  final String confirmPassword;
-  @override
-  @JsonKey(name: 'app_launch')
-  final String appLaunch;
+  final String password;
 
   @override
   String toString() {
-    return 'PasswordResetModel(email: $email, token: $token, newPassword: $newPassword, confirmPassword: $confirmPassword, appLaunch: $appLaunch)';
+    return 'PasswordResetModel(token: $token, password: $password)';
   }
 
   @override
@@ -376,20 +316,14 @@ class _$PasswordResetModelImpl implements _PasswordResetModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PasswordResetModelImpl &&
-            (identical(other.email, email) || other.email == email) &&
             (identical(other.token, token) || other.token == token) &&
-            (identical(other.newPassword, newPassword) ||
-                other.newPassword == newPassword) &&
-            (identical(other.confirmPassword, confirmPassword) ||
-                other.confirmPassword == confirmPassword) &&
-            (identical(other.appLaunch, appLaunch) ||
-                other.appLaunch == appLaunch));
+            (identical(other.password, password) ||
+                other.password == password));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, email, token, newPassword, confirmPassword, appLaunch);
+  int get hashCode => Object.hash(runtimeType, token, password);
 
   /// Create a copy of PasswordResetModel
   /// with the given fields replaced by the non-null parameter values.
@@ -410,29 +344,16 @@ class _$PasswordResetModelImpl implements _PasswordResetModel {
 
 abstract class _PasswordResetModel implements PasswordResetModel {
   const factory _PasswordResetModel(
-      {required final String email,
-      required final String token,
-      @JsonKey(name: 'new_password') required final String newPassword,
-      @JsonKey(name: 'confirm_password') required final String confirmPassword,
-      @JsonKey(name: 'app_launch')
-      final String appLaunch}) = _$PasswordResetModelImpl;
+      {required final String token,
+      required final String password}) = _$PasswordResetModelImpl;
 
   factory _PasswordResetModel.fromJson(Map<String, dynamic> json) =
       _$PasswordResetModelImpl.fromJson;
 
   @override
-  String get email;
-  @override
   String get token;
   @override
-  @JsonKey(name: 'new_password')
-  String get newPassword;
-  @override
-  @JsonKey(name: 'confirm_password')
-  String get confirmPassword;
-  @override
-  @JsonKey(name: 'app_launch')
-  String get appLaunch;
+  String get password;
 
   /// Create a copy of PasswordResetModel
   /// with the given fields replaced by the non-null parameter values.

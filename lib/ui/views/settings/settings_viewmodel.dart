@@ -4,6 +4,8 @@ import 'package:stacked_services/stacked_services.dart';
 
 import '../../../app/app.dialogs.dart';
 import '../../../app/app.locator.dart';
+import '../../../models/password_reset_model.dart';
+import '../../../services/auth_service.dart';
 import '../../../services/shared_preferences_service.dart';
 import '../../../services/user_service.dart';
 
@@ -12,6 +14,7 @@ class SettingsViewModel extends BaseViewModel {
   final DialogService _dialogService = locator<DialogService>();
   final UserService _userService = locator<UserService>();
   final SharedPreferencesService _sharedPreferencesService = locator<SharedPreferencesService>();
+  final AuthService _authService = locator<AuthService>();
   void navigateToEditProfile() {
     _navigationService.navigateToEditProfileView();
   }
@@ -46,6 +49,101 @@ class SettingsViewModel extends BaseViewModel {
 
   void openTermsOfService() {
     _userService.openSocialLink('https://nesthaps.com/terms');
+  }
+
+  void sendFeedback() {
+    _userService.openSocialLink('mailto:support@nestapp.com?subject=App Feedback');
+  }
+
+  Future<void> showPasswordResetDialog() async {
+    final result = await _dialogService.showCustomDialog(
+      variant: DialogType.changePassword,
+      title: 'Reset Password',
+      description: 'Enter your new password. We will send you a confirmation email.',
+      barrierDismissible: true,
+    );
+
+    if (result?.confirmed == true && result?.data != null) {
+      final newPassword = result!.data['newPassword'] as String?;
+      final confirmPassword = result.data['confirmPassword'] as String?;
+
+      if (newPassword != null && confirmPassword != null) {
+        await _requestPasswordResetWithPassword(newPassword, confirmPassword);
+      }
+    }
+  }
+
+  Future<void> _requestPasswordResetWithPassword(String newPassword, String confirmPassword) async {
+    setBusy(true);
+
+    try {
+      // Get user email from shared preferences
+      final userInfo = _sharedPreferencesService.getUserInfo();
+      final email = userInfo?['email'] as String?;
+
+      if (email == null || email.isEmpty) {
+        locator<SnackbarService>().showSnackbar(
+          message: 'User email not found. Please login again.',
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      // Save the password temporarily for when we get the token back
+      await _sharedPreferencesService.setString('temp_reset_password', newPassword);
+      await _sharedPreferencesService.setString('temp_reset_confirm_password', confirmPassword);
+
+      final resetRequestModel = PasswordResetRequestModel(
+        email: email,
+        appLaunch: 'api.nesthaps.com',
+      );
+
+      await _authService.requestChangePassword(resetRequestModel);
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Password reset email sent! Check your email and click the link to confirm.',
+        duration: const Duration(seconds: 5),
+      );
+    } catch (e) {
+      // Clear temp passwords on error
+      await _sharedPreferencesService.remove('temp_reset_password');
+      await _sharedPreferencesService.remove('temp_reset_confirm_password');
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to send password reset email: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  Future<void> resetPasswordWithToken(String token, String password) async {
+    setBusy(true);
+
+    try {
+      final resetModel = PasswordResetModel(
+        token: token,
+        password: password,
+      );
+
+      await _authService.resetPassword(resetModel);
+
+      locator<SnackbarService>().showSnackbar(
+        message: 'Password reset successfully! Please login with your new password.',
+        duration: const Duration(seconds: 3),
+      );
+
+      // Navigate to login after successful reset
+      _navigationService.clearStackAndShow('/login-view');
+    } catch (e) {
+      locator<SnackbarService>().showSnackbar(
+        message: 'Failed to reset password: $e',
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   Future<void> logout() async {

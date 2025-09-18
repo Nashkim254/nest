@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart' hide PaymentIntent;
 import 'package:logger/logger.dart';
 import 'package:nest/app/app.router.dart';
-import 'package:nest/services/shared_preferences_service.dart';
 import 'package:nest/services/stripe_service.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -77,10 +75,10 @@ class PaymentService {
         message: 'Payment successful',
         paymentIntent: paymentIntent,
       );
-    } on StripeException catch (e) {
+    } on Exception catch (e) {
       return PaymentResult(
         success: false,
-        message: _handleStripeError(e),
+        message: 'Payment failed: ${e.toString()}',
       );
     } catch (e) {
       return PaymentResult(
@@ -90,67 +88,5 @@ class PaymentService {
     }
   }
 
-  Future<PaymentResult> processCustomPayment({
-    required double amount,
-    required String currency,
-    required String provider,
-    required int bookingId,
-    required PaymentMethodParams paymentMethodParams,
-    Map<String, dynamic>? metadata,
-  }) async {
-    try {
-      final amountInCents = (amount * 100).toInt();
 
-      PaymentIntent? paymentIntent =
-          await _stripeApiService.createPaymentIntent(
-        amount: amountInCents,
-        currency: currency,
-        provider: provider,
-        bookingId: bookingId,
-        metadata: metadata,
-      );
-      Logger().w(paymentIntent!.toJson());
-      if (paymentIntent == null) {
-        return PaymentResult(
-          success: false,
-          message: 'Failed to create payment intent',
-        );
-      }
-      Logger().w(paymentIntent.clientSecret);
-      // Confirm payment with custom payment method
-      final result = await Stripe.instance.confirmPayment(
-        paymentIntentClientSecret: paymentIntent.clientSecret,
-        data: paymentMethodParams,
-      );
-
-      return PaymentResult(
-        success: true,
-        message: 'Payment successful',
-        paymentIntent: paymentIntent,
-      );
-    } on StripeException catch (e) {
-      return PaymentResult(
-        success: false,
-        message: _handleStripeError(e),
-      );
-    } catch (e) {
-      return PaymentResult(
-        success: false,
-        message: 'An unexpected error occurred: ${e.toString()}',
-      );
-    }
-  }
-
-  String _handleStripeError(StripeException error) {
-    switch (error.error.code) {
-      case FailureCode.Canceled:
-        return 'Payment was canceled';
-      case FailureCode.Failed:
-        return 'Payment failed';
-      case FailureCode.Unknown:
-        return 'Invalid payment request';
-      default:
-        return error.error.message ?? 'Payment error occurred';
-    }
-  }
 }

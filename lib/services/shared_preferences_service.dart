@@ -8,9 +8,6 @@ class SharedPreferencesService with InitializableDependency {
   static SharedPreferences? _preferences;
   static bool _initialized = false;
 
-  // Public constructor for dependency injection
-  SharedPreferencesService();
-
   @override
   Future<void> init() async {
     if (!_initialized) {

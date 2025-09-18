@@ -23,19 +23,13 @@ Map<String, dynamic> _$$PasswordResetRequestModelImplToJson(
 _$PasswordResetModelImpl _$$PasswordResetModelImplFromJson(
         Map<String, dynamic> json) =>
     _$PasswordResetModelImpl(
-      email: json['email'] as String,
       token: json['token'] as String,
-      newPassword: json['new_password'] as String,
-      confirmPassword: json['confirm_password'] as String,
-      appLaunch: json['app_launch'] as String? ?? 'com.nesthaps.nest://',
+      password: json['password'] as String,
     );
 
 Map<String, dynamic> _$$PasswordResetModelImplToJson(
         _$PasswordResetModelImpl instance) =>
     <String, dynamic>{
-      'email': instance.email,
       'token': instance.token,
-      'new_password': instance.newPassword,
-      'confirm_password': instance.confirmPassword,
-      'app_launch': instance.appLaunch,
+      'password': instance.password,
     };

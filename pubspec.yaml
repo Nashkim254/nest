@@ -1,7 +1,7 @@
 name: nest
 description: Social event hosting and ticketing platform with real-time chat, location features, and QR code tickets.
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ">=3.0.3 <4.0.0"
@@ -33,7 +33,6 @@ dependencies:
   flutter_map: ^5.0.0
   latlong2: ^0.9.1
   shimmer: ^3.0.0
-  flutter_stripe: ^11.5.0
   webview_flutter: ^4.13.0
   fl_chart: ^1.0.0
   mobile_scanner: ^7.0.1

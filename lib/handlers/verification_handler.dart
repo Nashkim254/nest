@@ -12,9 +12,7 @@ class VerificationDeepLinkHandler implements DeepLinkHandler {
     print('Query params: ${uri.queryParameters}');
 
     final canHandle =
-        uri.path.contains('/verify-email')||
-        uri.queryParameters.containsKey('verification_token') ||
-        uri.queryParameters.containsKey('token');
+        uri.path.contains('/verify-email');
 
     print('Can handle: $canHandle');
     return canHandle;

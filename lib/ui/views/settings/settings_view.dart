@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nest/ui/common/app_colors.dart';
 import 'package:nest/ui/common/app_custom_button.dart';
 import 'package:nest/ui/common/app_strings.dart';
@@ -56,9 +55,9 @@ class SettingsView extends StackedView<SettingsViewModel> {
                     viewModel.navigateToEditProfile();
                   },
                   secondaryAssetUrl: lock,
-                  secondaryTitle: 'Change Password',
+                  secondaryTitle: 'Reset Password',
                   secondaryOnTap: () {
-                    viewModel.showChangePasswordDialog();
+                    viewModel.showPasswordResetDialog();
                   },
                 ),
                 verticalSpaceMedium,
@@ -101,13 +100,20 @@ class SettingsView extends StackedView<SettingsViewModel> {
                 BuildOptions(
                   assetUrl: info,
                   title: "App Version",
+                  trailing: Text(
+                    '1.0.0',
+                    style: titleTextMedium.copyWith(
+                      fontSize: 14,
+                      color: kcSubtitleColor,
+                    ),
+                  ),
                   onTap: () {
                     viewModel.navigateToEditProfile();
                   },
                   secondaryAssetUrl: feedback,
                   secondaryTitle: 'Send Feedback',
                   secondaryOnTap: () {
-                    viewModel.navigateToNotifications();
+                    viewModel.sendFeedback();
                   },
                 ),
                 verticalSpaceMedium,

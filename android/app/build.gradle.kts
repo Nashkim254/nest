@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -32,11 +35,28 @@ android {
 
     signingConfigs {
         create("release") {
-            // You'll need to provide these values before building for production
-            keyAlias = System.getenv("KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD") 
-            storeFile = System.getenv("KEYSTORE_PATH")?.let { file(it) }
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            val keystorePropertiesFile = file("../../key.properties")
+            if (keystorePropertiesFile.exists()) {
+                val keystoreProperties = Properties()
+                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+                val alias = keystoreProperties["keyAlias"] as? String
+                val keyPass = keystoreProperties["keyPassword"] as? String
+                val storePass = keystoreProperties["storePassword"] as? String
+                val storeFilePath = keystoreProperties["storeFile"] as? String
+
+                if (alias != null && keyPass != null && storePass != null && storeFilePath != null) {
+                    keyAlias = alias
+                    keyPassword = keyPass
+                    storePassword = storePass
+                    storeFile = file(storeFilePath)
+                    println("Release signing configured with keystore: $storeFilePath")
+                } else {
+                    println("Missing signing properties - some values are null")
+                }
+            } else {
+                println("Key properties file not found: ${keystorePropertiesFile.absolutePath}")
+            }
         }
     }
 

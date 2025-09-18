@@ -27,6 +27,8 @@ class ChangePasswordDialog extends StackedView<ChangePasswordDialogModel> {
     ChangePasswordDialogModel viewModel,
     Widget? child,
   ) {
+    final isPasswordReset = request.title == 'Reset Password';
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       backgroundColor: kcContainerColor,
@@ -39,37 +41,39 @@ class ChangePasswordDialog extends StackedView<ChangePasswordDialogModel> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Current Password',
-                style: titleTextMedium.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: kcWhiteColor,
-                ),
-              ),
-              verticalSpaceSmall,
-              TextFormField(
-                style: titleTextMedium.copyWith(color: kcWhiteColor),
-                controller: viewModel.currentPasswordController,
-                decoration: AppInputDecoration.standard(
-                  hintText: 'Current Password',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      viewModel.isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: kcWhiteColor,
-                    ),
-                    onPressed: () {
-                      viewModel.togglePasswordVisibility();
-                    },
+              if (!isPasswordReset) ...[
+                Text(
+                  'Current Password',
+                  style: titleTextMedium.copyWith(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: kcWhiteColor,
                   ),
                 ),
-                obscureText: viewModel.isPasswordVisible,
-                onChanged: (value) {},
-                validator: (value) => viewModel.validateCurrentPassword(value),
-              ),
-              verticalSpaceSmall,
+                verticalSpaceSmall,
+                TextFormField(
+                  style: titleTextMedium.copyWith(color: kcWhiteColor),
+                  controller: viewModel.currentPasswordController,
+                  decoration: AppInputDecoration.standard(
+                    hintText: 'Current Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        viewModel.isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: kcWhiteColor,
+                      ),
+                      onPressed: () {
+                        viewModel.togglePasswordVisibility();
+                      },
+                    ),
+                  ),
+                  obscureText: viewModel.isPasswordVisible,
+                  onChanged: (value) {},
+                  validator: (value) => viewModel.validateCurrentPassword(value),
+                ),
+                verticalSpaceSmall,
+              ],
               Text(
                 'New Password',
                 style: titleTextMedium.copyWith(
@@ -133,9 +137,11 @@ class ChangePasswordDialog extends StackedView<ChangePasswordDialogModel> {
               ),
               verticalSpaceMedium,
               AppButton(
-                labelText: 'Change Password',
+                labelText: isPasswordReset ? 'Reset Password' : 'Change Password',
                 isBusy: viewModel.isLoading,
-                onTap: () => viewModel.submitForm(completer),
+                onTap: () => isPasswordReset
+                    ? viewModel.requestPasswordReset(completer)
+                    : viewModel.submitForm(completer),
               ),
               verticalSpaceMedium
             ],

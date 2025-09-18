@@ -17,11 +17,8 @@ class PasswordResetRequestModel with _$PasswordResetRequestModel {
 @freezed
 class PasswordResetModel with _$PasswordResetModel {
   const factory PasswordResetModel({
-    required String email,
     required String token,
-    @JsonKey(name: 'new_password') required String newPassword,
-    @JsonKey(name: 'confirm_password') required String confirmPassword,
-    @JsonKey(name: 'app_launch') @Default('com.nesthaps.nest://') String appLaunch,
+    required String password,
   }) = _PasswordResetModel;
 
   factory PasswordResetModel.fromJson(Map<String, dynamic> json) =>
